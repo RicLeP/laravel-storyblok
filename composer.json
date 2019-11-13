@@ -1,0 +1,64 @@
+{
+    "name": "riclep/laravel-storyblok",
+    "description": "A Laravel wrapper around the Storyblok API to provide a familiar experience for Laravel devs",
+    "keywords": [
+        "storyblok",
+        "laravel",
+        "cms",
+        "content management",
+        "headless cms"
+    ],
+    "homepage": "https://bitbucket.org/rlepoidevin/storyblok/src",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Richard Le Poidevin",
+            "email": "ric@wearebwi.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "^6.0",
+		"league/commonmark": "^1.0",
+        "league/commonmark-ext-table": "^2.1",
+		"mundschenk-at/php-typography": "^6.5",
+		"storyblok/php-client": "dev-master",
+		"ext-json": "*"
+	},
+    "require-dev": {
+        "mockery/mockery": "^1.2",
+        "orchestra/testbench": "4.0.*",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Riclep\\Storyblok\\": "src",
+            "Testcomponents\\Storyblok\\": "testcomponents/storyblok"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Riclep\\Storyblok\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Riclep\\Storyblok\\StoryblokServiceProvider"
+            ],
+            "aliases": {
+                "Storyblok": "Riclep\\Storyblok\\StoryblokFacade"
+            }
+        }
+    }
+}

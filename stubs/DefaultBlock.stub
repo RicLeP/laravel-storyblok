@@ -1,0 +1,11 @@
+<?php
+
+
+namespace App\Storyblok;
+
+use Riclep\Storyblok\Block;
+
+class DefaultBlock extends Block
+{
+
+}
