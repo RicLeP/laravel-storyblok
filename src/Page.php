@@ -11,6 +11,7 @@ abstract class Page
 
 	private $processedJson;
 	private $content;
+	private $seo;
 	protected $usePageTitle;
 	protected $title;
 
@@ -75,6 +76,7 @@ abstract class Page
 				'title' => $this->title(),
 				'meta_description' => $this->metaDescription(),
 				'content' => $this->content(),
+				'seo' => $this->seo,
 			]
 		);
 	}
