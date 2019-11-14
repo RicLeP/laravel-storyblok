@@ -88,4 +88,8 @@ trait RequestsStories
 
 		return $this;
 	}
+
+	public function childStory($uuid) {
+		return $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
+	}
 }

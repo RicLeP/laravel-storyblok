@@ -40,8 +40,6 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess
 	{
 		$this->processStoryblokKeys($block);
 
-	//	$this->component = $this->getComponentType($block, $key);
-
 		$this->content->transform(function($item, $key) {
 			return $this->processBlock($item, $key);
 		});

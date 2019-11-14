@@ -19,31 +19,12 @@ trait ProcessesBlocks
 		return $this->getBlockType($block, $key) ?: $block;
 	}
 
-	/**
-	 * Works out the component type - this can come from either the component specified in
-	 * the response from Storyblok or, in the case of plugins, the plugin name is used
-	 */
-	/*private function getComponentType($block, $key) {
-
-		if (array_key_exists('plugin', $block)) {
-			return $block['plugin'];
-		}
-
-		if (array_key_exists('component', $block) && !is_null($block['component'])) {
-			return $block['component'];
-		}
-
-		return $key;
-	}*/
-
 
 	private function getBlockType($block, $key) {
-	//	dump($block);
-
 		if (is_int($key) && $this->isUuid($block)) {
 			$blockClass = $this->getBlockClass(Str::singular($this->component));
 
-			return new $blockClass($this->requestStory(resolve('Storyblok\Client'), $block, true), $key);
+			return new $blockClass($this->childStory($block), $key);
 		}
 
 		if (is_array($block)) {
@@ -68,18 +49,6 @@ trait ProcessesBlocks
 		}
 
 		return $key;
-	}
-
-	private function uuidBlock($uuid) {
-
-		return $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
-
-dump($block);
-	//	$this->storyblokResponse = $this->byUuid($block);
-		$this->read();
-
-		//$class = config('storyblok.component_class_namespace') . 'DefaultBlock';
-		//return new $class($story['content'], $key);
 	}
 
 	private function arrayBlock($block, $key) {
