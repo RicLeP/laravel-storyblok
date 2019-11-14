@@ -70,6 +70,8 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
+		//dd($this);
+
 		return view()->first(
 			$this->view(),
 			[

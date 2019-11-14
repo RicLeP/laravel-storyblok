@@ -1,4 +1,4 @@
-# Use Storyblok’s amazing headless CMS in way that feel familiar to Laravel developers
+# Use Storyblok’s amazing headless CMS in way that feels familiar to Laravel developers
 ## This is Work In Progress and not production ready!
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)

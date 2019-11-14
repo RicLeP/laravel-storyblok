@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Cache;
 trait RequestsStories
 {
 
-	////////// temp
-	public $page;
+	public $storyblokResponse;
+
 
 	public function read()
 	{
@@ -23,11 +23,7 @@ trait RequestsStories
 
 		return $this;
 	}
-	//// temp
 
-
-
-	public $storyblokResponse;
 
 	/**
 	 * Requests the story from the Storyblok API
@@ -91,5 +87,9 @@ trait RequestsStories
 		$this->storyblokResponse = $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
 
 		return $this;
+	}
+
+	public function childStory($uuid) {
+		return $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
 	}
 }
