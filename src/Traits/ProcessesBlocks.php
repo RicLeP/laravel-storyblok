@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 trait ProcessesBlocks
 {
-	//use RequestsStories;
 
 	private function processBlock($block, $key) {
 		if (is_array($block) && !array_key_exists('component', $block)) {
@@ -39,8 +38,12 @@ trait ProcessesBlocks
 
 
 	private function getBlockType($block, $key) {
+	//	dump($block);
+
 		if (is_int($key) && $this->isUuid($block)) {
-			return $this->uuidBlock($block, $key);
+			$blockClass = $this->getBlockClass(Str::singular($this->component));
+
+			return new $blockClass($this->requestStory(resolve('Storyblok\Client'), $block, true), $key);
 		}
 
 		if (is_array($block)) {
@@ -67,10 +70,13 @@ trait ProcessesBlocks
 		return $key;
 	}
 
-	private function uuidBlock($block, $key) {
+	private function uuidBlock($uuid) {
 
-		$story = $this->byUuid($block)->read();
+		return $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
 
+dump($block);
+	//	$this->storyblokResponse = $this->byUuid($block);
+		$this->read();
 
 		//$class = config('storyblok.component_class_namespace') . 'DefaultBlock';
 		//return new $class($story['content'], $key);
