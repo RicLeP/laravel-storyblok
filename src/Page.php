@@ -3,6 +3,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Str;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
 abstract class Page
@@ -12,7 +13,6 @@ abstract class Page
 	private $processedJson;
 	private $content;
 	private $seo;
-	protected $usePageTitle;
 	protected $title;
 
 	public function __construct($rawStory)
@@ -53,13 +53,32 @@ abstract class Page
 	 * @return array
 	 */
 	protected function view() {
+		$views = [];
+
 		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
 		if ($viewFile !== 'default') {
 			$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
 		}
 
-		$views[] = config('storyblok.view_path') . 'pages.default';
+
+		$segments = explode('/', rtrim($this->slug(), '/'));
+		// creates an array of dot paths for each path segment
+		// site.com/this/that/them becomes:
+		// this.that.them
+		// this.that
+		// this
+		while (count($segments) >= 1) {
+			$views[] = 'storyblok.pages.' . implode('.', $segments);
+
+			if (!in_array($singular = 'storyblok.pages.' . Str::singular(implode('.', $segments)), $views)) {
+				$views[] = $singular;
+			}
+
+			array_pop($segments);
+		}
+
+		$views[] = 'storyblok.pages.default';
 
 		return $views;
 	}
@@ -82,16 +101,11 @@ abstract class Page
 	}
 
 	public function title() {
-
 		if ($this->seo) {
 			return $this->seo['title'];
 		}
 
-		if ($this->usePageTitle) {
-			return $this->title;
-		}
-
-		return config('seo.default_title');
+		return $this->processedJson['name'];
 	}
 
 	public function metaDescription() {
@@ -104,5 +118,10 @@ abstract class Page
 
 	public function content() {
 		return $this->content;
+	}
+
+	public function slug()
+	{
+		return $this->processedJson['full_slug'];
 	}
 }
