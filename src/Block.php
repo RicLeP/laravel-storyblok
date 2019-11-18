@@ -239,6 +239,10 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess
 		}
 	}
 
+	public function isEmpty() {
+		return $this->content->isEmpty();
+	}
+
 	/*
 	 * Methods for Iterator trait allowing us to foreach over a collection of
 	 * Blocks and return their content. This makes accessing child content
