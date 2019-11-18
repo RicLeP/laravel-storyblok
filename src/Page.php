@@ -53,7 +53,7 @@ abstract class Page
 	 * @return array
 	 */
 	protected function view() {
-		$viewFile = strtolower(subStr(basename(get_class($this)), 0, -4));
+		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
 		if ($viewFile !== 'default') {
 			$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
@@ -70,8 +70,6 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
-		//dd($this);
-
 		return view()->first(
 			$this->view(),
 			[

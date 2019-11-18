@@ -22,7 +22,7 @@ trait ProcessesBlocks
 
 	private function getBlockType($block, $key) {
 		if (is_int($key) && $this->isUuid($block)) {
-			$blockClass = $this->getBlockClass(Str::singular($this->component));
+			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
 
 			return new $blockClass($this->childStory($block), $key);
 		}

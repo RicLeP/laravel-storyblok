@@ -16,7 +16,10 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">src/</directory>
+            <directory suffix=".php">src/traits</directory>
+            <file>src/Block.php</file>
+            <file>src/Page.php</file>
+            <file>src/Storyblok.php</file>
         </whitelist>
     </filter>
     <logging>

@@ -22,7 +22,9 @@ class TestCase extends Orchestra
 
 		$app['config']->set('seo.default_title', 'Default title from config');
 
-		$app['config']->set('view.paths', array_merge(config('view.paths'), [__DIR__ . '/../testcomponents/views/']));
+		$viewPath = str_replace('tests' . DIRECTORY_SEPARATOR . '..', '', __DIR__ . DIRECTORY_SEPARATOR .'..' . 'testcomponents' . DIRECTORY_SEPARATOR. 'views');
+
+		$app['config']->set('view.paths', array_merge(config('view.paths'), [$viewPath]));
 
 		app()->singleton('storyblok', function () {
 			return new Storyblok;
