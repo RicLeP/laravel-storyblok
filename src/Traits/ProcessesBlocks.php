@@ -31,6 +31,12 @@ trait ProcessesBlocks
 			return $this->arrayBlock($block, $key);
 		}
 
+		if ($this->isUuid($block) && !in_array($key, ['uuid', 'group_id'])) {
+			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
+
+			return new $blockClass($this->childStory($block), $key);
+		}
+
 		return false;
 	}
 
@@ -39,7 +45,6 @@ trait ProcessesBlocks
 	 * the response from Storyblok or, in the case of plugins, the plugin name is used
 	 */
 	private function getComponentType($block, $key) {
-
 		if (array_key_exists('plugin', $block)) {
 			return $block['plugin'];
 		}
