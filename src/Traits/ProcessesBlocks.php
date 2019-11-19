@@ -16,12 +16,25 @@ trait ProcessesBlocks
 			$block['component'] = $this->getComponentType($block, $key);
 		}
 
-		return $this->getBlockType($block, $key) ?: $block;
+		$blockType = $this->getBlockType($block, $key);
+
+		if ($blockType) {
+			return $blockType;
+		}
+
+		return $block ?: false;
 	}
 
 
 	private function getBlockType($block, $key) {
+
 		if (is_int($key) && $this->isUuid($block)) {
+			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
+
+			return new $blockClass($this->childStory($block), $key);
+		}
+
+		if (!in_array($key, ['uuid', 'group_id']) && $this->isUuid($block)) {
 			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
 
 			return new $blockClass($this->childStory($block), $key);
@@ -29,12 +42,6 @@ trait ProcessesBlocks
 
 		if (is_array($block)) {
 			return $this->arrayBlock($block, $key);
-		}
-
-		if ($this->isUuid($block) && !in_array($key, ['uuid', 'group_id'])) {
-			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
-
-			return new $blockClass($this->childStory($block), $key);
 		}
 
 		return false;
