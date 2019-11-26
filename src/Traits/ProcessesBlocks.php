@@ -34,7 +34,7 @@ trait ProcessesBlocks
 			return new $blockClass($this->childStory($block), $key);
 		}
 
-		if (!in_array($key, ['uuid', 'group_id']) && $this->isUuid($block)) {
+		if (!in_array($key, ['id', 'uuid', 'group_id']) && $this->isUuid($block)) {
 			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
 
 			return new $blockClass($this->childStory($block), $key);
