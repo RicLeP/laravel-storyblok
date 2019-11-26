@@ -19,7 +19,7 @@ use ReflectionMethod;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 use Riclep\Storyblok\Traits\RequestsStories;
 
-abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess
+abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Countable
 {
 	use ProcessesBlocks;
 	use RequestsStories; // TODO cab we dynamically add this just for blocks that make requests
@@ -295,6 +295,15 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess
 
 	public function offsetGet($offset) {
 		return isset($this->content[$offset]) ? $this->content[$offset] : null;
+	}
+
+
+	/*
+	 * Countable trait
+	 * */
+	public function count()
+	{
+		return $this->content->count();
 	}
 
 }
