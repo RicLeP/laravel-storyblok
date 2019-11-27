@@ -30,18 +30,18 @@ trait ProcessesBlocks
 			$child = $this->childStory($block);
 			$blockClass = $this->getBlockClass($child['content']['component']);
 
-			return new $blockClass($child, $key);
+			return new $blockClass($child);
 		}
 
 		if (!in_array($key, ['id', 'uuid', 'group_id']) && $this->isUuid($block)) {
 			$child = $this->childStory($block);
 			$blockClass = $this->getBlockClass($child['content']['component']);
 
-			return new $blockClass($child, $key);
+			return new $blockClass($child);
 		}
 
 		if (is_array($block)) {
-			return $this->arrayBlock($block, $key);
+			return $this->arrayBlock($block);
 		}
 
 		return false;
@@ -63,11 +63,11 @@ trait ProcessesBlocks
 		return $key;
 	}
 
-	private function arrayBlock($block, $key) {
+	private function arrayBlock($block) {
 		$blockClass = $this->getBlockClass($block['component']);
 
 		// or return the default block
-		return new $blockClass($block, $key);
+		return new $blockClass($block);
 	}
 
 	private function getBlockClass($component) {

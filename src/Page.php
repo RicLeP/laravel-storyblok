@@ -3,6 +3,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
@@ -52,23 +53,26 @@ abstract class Page
 	/**
 	 * @return array
 	 */
-	protected function view() {
+	protected function views() {
 		$views = [];
 
-		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
-
-		if ($viewFile !== 'default') {
-	//		$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
-		}
+		//$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
 		$segments = explode('/', rtrim($this->slug(), '/'));
+
+		// match full path first
+		$views[] = 'storyblok.pages.' . implode('.', $segments);
+
 		// creates an array of dot paths for each path segment
 		// site.com/this/that/them becomes:
 		// this.that.them
 		// this.that
 		// this
 		while (count($segments) >= 1) {
-			$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
+			// singular views next so we match children with a folder
+			if (!in_array($path = 'storyblok.pages.' . Str::singular(implode('.', $segments)), $views)) {
+				$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
+			}
 
 			if (!in_array($path = 'storyblok.pages.' . implode('.', $segments), $views)) {
 				$views[] = $path;
@@ -82,23 +86,36 @@ abstract class Page
 		return $views;
 	}
 
+
+	public function view() {
+		foreach ($this->views() as $view) {
+			$view = view()->exists($view) ? $view : false;
+			break;
+		}
+
+		return $view;
+	}
+
 	/**
 	 * Reads the story
 	 *
 	 * @return array
 	 */
-	public function render() {
+	public function render($additionalContent = null) {
+		$content = [
+			'title' => $this->title(),
+			'meta_description' => $this->metaDescription(),
+			'content' => $this->content(),
+			'seo' => $this->seo,
+		];
 
-		dd($this->view());
+		if ($additionalContent) {
+			$content = array_merge($content, $additionalContent);
+		}
 
 		return view()->first(
-			$this->view(),
-			[
-				'title' => $this->title(),
-				'meta_description' => $this->metaDescription(),
-				'content' => $this->content(),
-				'seo' => $this->seo,
-			]
+			$this->views(),
+			$content,
 		);
 	}
 

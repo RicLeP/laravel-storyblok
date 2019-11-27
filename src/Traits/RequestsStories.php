@@ -6,6 +6,7 @@ namespace Riclep\Storyblok\Traits;
 
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Storyblok\Client;
 
 trait RequestsStories
 {
@@ -26,13 +27,13 @@ trait RequestsStories
 	/**
 	 * Requests the story from the Storyblok API
 	 *
-	 * @param \Storyblok\Client $storyblok
+	 * @param Client $storyblok
 	 * @param $slugOrUuid
 	 * @param bool $byUuid
 	 * @return array
 	 * @throws \Storyblok\ApiException
 	 */
-	public function requestStory(\Storyblok\Client $storyblokClient, $slugOrUuid, $byUuid = false)
+	public function requestStory(Client $storyblokClient, $slugOrUuid, $byUuid = false)
 	{
 		// caching should be done better than this. Maybe using a decorator to add the functionality. https://matthewdaly.co.uk/blog/2017/03/01/decorating-laravel-repositories/
 		// tests if we are in the editor and bypasses the cache
