@@ -57,10 +57,6 @@ abstract class Page
 
 		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
-		if ($viewFile !== 'default') {
-	//		$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
-		}
-
 		$segments = explode('/', rtrim($this->slug(), '/'));
 		// creates an array of dot paths for each path segment
 		// site.com/this/that/them becomes:
@@ -88,9 +84,6 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
-
-		dd($this->view());
-
 		return view()->first(
 			$this->view(),
 			[
