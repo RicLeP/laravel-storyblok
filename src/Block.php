@@ -27,7 +27,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	protected $_uid;
 	protected $component;
 	protected $content;
-	protected $meta;
+	public $meta;
 	private $iteratorIndex = 0;
 
 	/**

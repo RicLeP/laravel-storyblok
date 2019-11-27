@@ -58,7 +58,7 @@ abstract class Page
 		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
 		if ($viewFile !== 'default') {
-			$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
+	//		$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
 		}
 
 		$segments = explode('/', rtrim($this->slug(), '/'));
@@ -68,10 +68,10 @@ abstract class Page
 		// this.that
 		// this
 		while (count($segments) >= 1) {
-			$views[] = 'storyblok.pages.' . implode('.', $segments);
+			$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
 
-			if (!in_array($singular = 'storyblok.pages.' . Str::singular(implode('.', $segments)), $views)) {
-				$views[] = $singular;
+			if (!in_array($path = 'storyblok.pages.' . implode('.', $segments), $views)) {
+				$views[] = $path;
 			}
 
 			array_pop($segments);
@@ -88,6 +88,9 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
+
+		dd($this->view());
+
 		return view()->first(
 			$this->view(),
 			[
