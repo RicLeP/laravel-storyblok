@@ -88,8 +88,6 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
-		dump($this->view());
-
 		return view()->first(
 			$this->view(),
 			[
