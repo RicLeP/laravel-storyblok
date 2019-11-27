@@ -67,7 +67,6 @@ class TestCase extends Orchestra
 				  "image": "//a.storyblok.com/f/44162/1500x500/68b522b06d/1500x500.jpeg",
 				  "title": "Block Title",
 				  "subtitle": "Block Title",
-				  "author": "22f4fb1b-50b3-4bf2-816e-7d589e307421",
 				  "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce interdum scelerisque aliquet. Nam gravida dapibus tincidunt. Cras tempor sollicitudin lectus id accumsan. Morbi ante nulla, elementum quis imperdiet vel, pretium a magna. Cras posuere nunc a risus eleifend hendrerit. In porta nisl non odio suscipit consectetur. Fusce egestas tellus vel neque pulvinar faucibus. Phasellus dignissim nunc id nibh vehicula congue.",
 				  "schedule": "2020-10-10 05:05:05",
 				  "description": "Description"
@@ -128,7 +127,6 @@ class TestCase extends Orchestra
 				  "component": "specific",
 				  "image": "//a.storyblok.com/f/44162/1500x500/68b522b06d/1500x500.jpeg",
 				  "title": "My second title",
-				  "author": "22f4fb1b-50b3-4bf2-816e-7d589e307421",
 				  "body": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". Fusce interdum scelerisque aliquet. Nam gravida dapibus tincidunt. Cras tempor sollicitudin lectus id accumsan. Morbi ante nulla, elementum quis imperdiet vel, pretium a magna. Cras posuere nunc a risus eleifend hendrerit. In porta nisl non odio suscipit consectetur. Fusce egestas tellus vel neque pulvinar faucibus. Phasellus dignissim nunc id nibh vehicula congue.",
 				  "schedule": "2020-10-10 05:05:05",
 				  "description": "Description"

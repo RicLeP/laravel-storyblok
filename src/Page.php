@@ -61,7 +61,6 @@ abstract class Page
 			$views[] = config('storyblok.view_path') . 'pages.' . $viewFile;
 		}
 
-
 		$segments = explode('/', rtrim($this->slug(), '/'));
 		// creates an array of dot paths for each path segment
 		// site.com/this/that/them becomes:
@@ -78,7 +77,7 @@ abstract class Page
 			array_pop($segments);
 		}
 
-		$views[] = 'storyblok.pages.default';
+		$views[] = config('storyblok.view_path') . 'pages.default';
 
 		return $views;
 	}
@@ -89,6 +88,8 @@ abstract class Page
 	 * @return array
 	 */
 	public function render() {
+		dump($this->view());
+
 		return view()->first(
 			$this->view(),
 			[
