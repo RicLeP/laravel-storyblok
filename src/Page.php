@@ -55,16 +55,23 @@ abstract class Page
 	protected function view() {
 		$views = [];
 
-		$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
+		//$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
 
 		$segments = explode('/', rtrim($this->slug(), '/'));
+
+		// match full path first
+		$views[] = 'storyblok.pages.' . implode('.', $segments);
+
 		// creates an array of dot paths for each path segment
 		// site.com/this/that/them becomes:
 		// this.that.them
 		// this.that
 		// this
 		while (count($segments) >= 1) {
-			$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
+			// singular views next so we match children with a folder
+			if (!in_array($path = 'storyblok.pages.' . Str::singular(implode('.', $segments)), $views)) {
+				$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
+			}
 
 			if (!in_array($path = 'storyblok.pages.' . implode('.', $segments), $views)) {
 				$views[] = $path;
