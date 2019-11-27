@@ -35,9 +35,8 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	 * with the Storyblok UUID, the component name and any content under it’s own content key
 	 *
 	 * @param $block
-	 * @param $key
 	 */
-	public function __construct($block, $key)
+	public function __construct($block)
 	{
 		if (array_key_exists('content', $block)) {
 			// child story so go straight to the contents but store a few useful meta items from the Story
