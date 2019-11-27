@@ -27,7 +27,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	protected $_uid;
 	protected $component;
 	protected $content;
-	protected $meta;
+	public $meta;
 	private $iteratorIndex = 0;
 
 	/**
@@ -240,7 +240,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		if (array_key_exists('dates', $properties)) {
 			foreach ($properties['dates'] as $date) {
 				if ($this->content->has($date)) {
-					$this->content[$date] = $this->content[$date] ? Carbon::parse($this->content[$date]) : null;
+					$this->content[$date] = Carbon::parse($this->content[$date]) ?: $this->content[$date];
 				}
 			}
 		}
