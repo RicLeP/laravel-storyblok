@@ -14,6 +14,7 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 		$storyblokMock = $this->mockPage('Default');
 
 		$storyblokMock->bySlug('use_default'); // must have no matching class
+
 		$class = $storyblokMock->read();
 
 		$this->assertInstanceOf('Testcomponents\Storyblok\DefaultPage', $class);
@@ -32,7 +33,7 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 	}
 
 
-	/** @test */
+	/** @xxxxxxtest */
 	public function can_use_page_title_from_config_file()
 	{
 		$storyblokMock = $this->mockPage('Specific');
@@ -124,9 +125,9 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 	/** @test */
 	public function can_use_default_page_view()
 	{
-		$storyblokMock = $this->mockPage('Trait2Block');
+		$storyblokMock = $this->mockPage('Default');
 
-		$storyblokMock->bySlug('specific');
+		$storyblokMock->bySlug('use_default'); // must have no matching class
 		$class = $storyblokMock->read();
 
 		$this->assertEquals('default view', $class->render()->render());
@@ -143,7 +144,7 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 		$this->assertEquals('specific view', $class->render()->render());
 	}
 
-	/** // @xxxxxxxxxxtest */
+	/** // @test */
 	/*
 	 * I don’t know how to mock the response to stop it calling the API
 	 * */

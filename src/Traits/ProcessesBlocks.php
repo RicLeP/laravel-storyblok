@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
 
 trait ProcessesBlocks
 {
-
 	private function processBlock($block, $key) {
 		if (is_array($block) && !array_key_exists('component', $block)) {
 			$block['component'] = $this->getComponentType($block, $key);
@@ -27,17 +26,18 @@ trait ProcessesBlocks
 
 
 	private function getBlockType($block, $key) {
-
 		if (is_int($key) && $this->isUuid($block)) {
-			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
+			$child = $this->childStory($block);
+			$blockClass = $this->getBlockClass($child['content']['component']);
 
-			return new $blockClass($this->childStory($block), $key);
+			return new $blockClass($child, $key);
 		}
 
-		if (!in_array($key, ['uuid', 'group_id']) && $this->isUuid($block)) {
-			$blockClass = $this->getBlockClass($this->component . 'Child'); // TODO check this is okay
+		if (!in_array($key, ['id', 'uuid', 'group_id']) && $this->isUuid($block)) {
+			$child = $this->childStory($block);
+			$blockClass = $this->getBlockClass($child['content']['component']);
 
-			return new $blockClass($this->childStory($block), $key);
+			return new $blockClass($child, $key);
 		}
 
 		if (is_array($block)) {
@@ -71,6 +71,9 @@ trait ProcessesBlocks
 	}
 
 	private function getBlockClass($component) {
+
+		//dump($this, $component, '------------------------');
+
 		if (class_exists(config('storyblok.component_class_namespace') . Str::studly($component) . 'Block')) {
 			return config('storyblok.component_class_namespace') . Str::studly($component) . 'Block';
 		}
@@ -86,5 +89,11 @@ trait ProcessesBlocks
 	 */
 	private function isUuid( $uuid ) {
 		return !(!is_string($uuid) || (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) !== 1));
+	}
+
+	private function processStoryblokKeys($block) {
+		$this->_uid = $block['_uid'] ?? null;
+		$this->component = $block['component'] ?? null;
+		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin'])));
 	}
 }

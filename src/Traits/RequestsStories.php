@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Cache;
 
 trait RequestsStories
 {
-
-	public $storyblokResponse;
-
+	//public $storyblokResponse;
 
 	public function read()
 	{
