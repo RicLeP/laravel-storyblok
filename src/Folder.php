@@ -34,8 +34,6 @@ abstract class Folder
 			return new $blockClass($story);
 		});
 
-		dd($stories);
-
 		return $stories;
 	}
 

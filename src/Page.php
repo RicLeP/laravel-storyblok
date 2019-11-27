@@ -3,6 +3,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
@@ -52,7 +53,7 @@ abstract class Page
 	/**
 	 * @return array
 	 */
-	protected function view() {
+	protected function views() {
 		$views = [];
 
 		//$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
@@ -85,20 +86,36 @@ abstract class Page
 		return $views;
 	}
 
+
+	public function view() {
+		foreach ($this->views() as $view) {
+			$view = view()->exists($view) ? $view : false;
+			break;
+		}
+
+		return $view;
+	}
+
 	/**
 	 * Reads the story
 	 *
 	 * @return array
 	 */
-	public function render() {
+	public function render($additionalContent = null) {
+		$content = [
+			'title' => $this->title(),
+			'meta_description' => $this->metaDescription(),
+			'content' => $this->content(),
+			'seo' => $this->seo,
+		];
+
+		if ($additionalContent) {
+			$content = array_merge($content, $additionalContent);
+		}
+
 		return view()->first(
-			$this->view(),
-			[
-				'title' => $this->title(),
-				'meta_description' => $this->metaDescription(),
-				'content' => $this->content(),
-				'seo' => $this->seo,
-			]
+			$this->views(),
+			$content,
 		);
 	}
 

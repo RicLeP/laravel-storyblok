@@ -67,7 +67,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin'])));
 	}
 
-	protected function view() {
+	protected function views() {
 		$views[] = 'storyblok.blocks.uuid.' . $this->_uid;
 		$segments = explode('/', rtrim(app()->make('Page')->slug(), '/'));
 		// creates an array of dot paths for each path segment
@@ -96,7 +96,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	public function render()
 	{
 		return view()->first(
-			$this->view(),
+			$this->views(),
 			[
 				'block' => $this
 			]
