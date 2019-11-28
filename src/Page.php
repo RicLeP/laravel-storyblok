@@ -105,7 +105,7 @@ abstract class Page
 		$content = [
 			'title' => $this->title(),
 			'meta_description' => $this->metaDescription(),
-			'content' => $this->content(),
+			'story' => $this->content(),
 			'seo' => $this->seo,
 		];
 
