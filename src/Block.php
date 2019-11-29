@@ -67,42 +67,6 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin'])));
 	}
 
-	protected function views() {
-		$views[] = 'storyblok.blocks.uuid.' . $this->_uid;
-		$segments = explode('/', rtrim(app()->make('Page')->slug(), '/'));
-		// creates an array of dot paths for each path segment
-		// site.com/this/that/them becomes:
-		// this.that.them
-		// this.that
-		// this
-		$views[] = 'storyblok.blocks.' . implode('.', $segments) . '.=' . $this->component;
-		$views[] = 'storyblok.blocks.' . implode('.', $segments) . '.' . $this->component;
-		while (count($segments) > 1) {
-			array_pop($segments);
-			$views[] = 'storyblok.blocks.' . implode('.', $segments) . '.' . $this->component;
-		}
-
-		$views[] = 'storyblok.blocks.' . $this->component;
-		$views[] = 'storyblok.blocks.default';
-
-		return $views;
-	}
-
-	/**
-	 * Finds the view used to display this block’s content
-	 * it will always fall back to a default view.
-	 *
-	 */
-	public function render()
-	{
-		return view()->first(
-			$this->views(),
-			[
-				'block' => $this
-			]
-		);
-	}
-
 	/**
 	 * @return mixed
 	 */
