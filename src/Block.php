@@ -16,13 +16,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use Riclep\Storyblok\Traits\ConvertsMarkdown;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 use Riclep\Storyblok\Traits\RequestsStories;
 
 abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Countable
 {
 	use ProcessesBlocks;
-	use RequestsStories; // TODO cab we dynamically add this just for blocks that make requests
+	use RequestsStories;
+	use ConvertsMarkdown;
 
 	protected $_uid;
 	protected $component;
@@ -51,6 +53,8 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		});
 
 		$this->carboniseDates();
+
+		$this->convertMarkdown();
 
 		if ($this->getMethods()->contains('transform')) {
 			$this->transform();
