@@ -87,6 +87,14 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	/**
 	 * @return mixed
 	 */
+	public function random()
+	{
+		return $this->content->random();
+	}
+
+	/**
+	 * @return mixed
+	 */
 	public function content()
 	{
 		return $this->content;
