@@ -45,11 +45,11 @@ trait RequestsStories
 			}
 		} else {
 			if ($byUuid) {
-				$response = Cache::remember($slugOrUuid, config('config.cache_duration') * 60, function () use ($storyblokClient, $slugOrUuid) {
+				$response = Cache::remember($slugOrUuid, config('storyblok.cache_duration') * 60, function () use ($storyblokClient, $slugOrUuid) {
 					return $storyblokClient->getStoryByUuid($slugOrUuid)->getBody();
 				});
 			} else {
-				$response = Cache::remember($slugOrUuid, config('config.cache_duration') * 60, function () use ($storyblokClient, $slugOrUuid) {
+				$response = Cache::remember($slugOrUuid, config('storyblok.cache_duration') * 60, function () use ($storyblokClient, $slugOrUuid) {
 					return $storyblokClient->getStoryBySlug($slugOrUuid)->getBody();
 				});
 			}
