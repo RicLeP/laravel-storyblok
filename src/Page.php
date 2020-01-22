@@ -30,7 +30,10 @@ abstract class Page
 		if (array_key_exists('seo', $this->processedJson['content'])) {
 			$this->processedJson['seo'] = $this->processedJson['content']['seo'];
 			unset($this->processedJson['content']['seo']);
+
+			$this->seo = $this->processedJson['seo'];
 		}
+
 
 		return $this;
 	}
@@ -39,8 +42,6 @@ abstract class Page
 	 * Processes the page’s meta content
 	 */
 	public function process() {
-		$this->seo = array_key_exists('seo', $this->processedJson) ? $this->processedJson['seo'] : null;
-
 		return $this;
 	}
 
@@ -114,8 +115,8 @@ abstract class Page
 		}
 
 		return view()->first(
-			$this->views(),
-			$content,
+			Arr::wrap($this->views()),
+			$content
 		);
 	}
 
