@@ -68,6 +68,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	private function processStoryblokKeys($block) {
 		$this->_uid = $block['_uid'] ?? null;
 		$this->component = $block['component'] ?? null;
+		$this->_editable = $block['_editable'] ?? null;
 		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin'])));
 	}
 
@@ -76,12 +77,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	 */
 	public function editableBridge()
 	{
-		// TODO - make this work
-		if (!$this->slug) {
-			return $this->_editable ?: null;
-		}
-
-		return null;
+		return $this->_editable;
 	}
 
 	/**
