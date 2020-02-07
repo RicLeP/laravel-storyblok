@@ -100,7 +100,7 @@ abstract class Page
 	/**
 	 * Reads the story
 	 *
-	 * @return array
+	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
 	 */
 	public function render($additionalContent = null) {
 		$content = [
@@ -114,10 +114,7 @@ abstract class Page
 			$content = array_merge($content, $additionalContent);
 		}
 
-		return view()->first(
-			Arr::wrap($this->views()),
-			$content
-		);
+		return view($this->view(), $content);
 	}
 
 	public function title() {
