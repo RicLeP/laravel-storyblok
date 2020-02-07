@@ -21,8 +21,8 @@ class Storyblok
 
 	private function getPageClass($component)
 	{
-		if (class_exists(config('storyblok.component_class_namespace') . Str::studly($component) . 'Page')) {
-			return config('storyblok.component_class_namespace') . Str::studly($component) . 'Page';
+		if (class_exists(config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component))) {
+			return config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component);
 		}
 
 		return config('storyblok.component_class_namespace') . 'DefaultPage';

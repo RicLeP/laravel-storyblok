@@ -74,8 +74,8 @@ trait ProcessesBlocks
 
 		//dump($this, $component, '------------------------');
 
-		if (class_exists(config('storyblok.component_class_namespace') . Str::studly($component) . 'Block')) {
-			return config('storyblok.component_class_namespace') . Str::studly($component) . 'Block';
+		if (class_exists(config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component))) {
+			return config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component);
 		}
 
 		return config('storyblok.component_class_namespace') . 'DefaultBlock';

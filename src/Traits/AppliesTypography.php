@@ -15,7 +15,7 @@ trait AppliesTypography
 		$settings->set_dewidow(true);
 		$settings->set_max_dewidow_length(12);
 		$settings->set_dewidow_word_number(2);
-		$settings->set_hyphenation( false );
+		$settings->set_hyphenation(false);
 
 		$this->typographySettings = $settings;
 	}
