@@ -90,11 +90,10 @@ abstract class Page
 
 	public function view() {
 		foreach ($this->views() as $view) {
-			$view = view()->exists($view) ? $view : false;
-			break;
+			if (view()->exists($view)) {
+				return $view;
+			}
 		}
-
-		return $view;
 	}
 
 	/**
