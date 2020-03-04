@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": "^7.1",
-        "illuminate/support": "^6.0",
+        "illuminate/support": "^6.0|^7.0",
 		"league/commonmark": "^1.0",
         "league/commonmark-ext-table": "^2.1",
 		"mundschenk-at/php-typography": "^6.5",
