@@ -14,7 +14,7 @@ abstract class Folder
 
 	protected $startPage = false;
 	protected $currentPage = 1;
-	protected $perPage = 5;
+	protected $perPage = 10;
 	protected $sortBy = 'published_at:asc';
 	private $slug;
 	private $settings = [];
