@@ -10,6 +10,7 @@
 
 namespace Riclep\Storyblok;
 
+use App\Storyblok\Traits\AutoParagraphs;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
@@ -25,6 +26,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	use ProcessesBlocks;
 	use RequestsStories;
 	use ConvertsMarkdown;
+	use AutoParagraphs;
 
 	protected $_uid;
 	protected $component;
@@ -55,6 +57,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		$this->carboniseDates();
 
 		$this->convertMarkdown();
+		$this->autoParagraphs();
 
 		if ($this->getMethods()->contains('transform')) {
 			$this->transform();
