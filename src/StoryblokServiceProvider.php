@@ -42,8 +42,25 @@ class StoryblokServiceProvider extends ServiceProvider
             return new Storyblok;
         });
 
-        // register the Storyblok client
-		$client = new Client(config('storyblok.api_key'));
+		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');
+		if (!empty($storyblokRequest)) {
+			$pre_token = $storyblokRequest['space_id'] . ':' . config('storyblok.api_preview_key') . ':' . $storyblokRequest['timestamp'];
+			$token = sha1($pre_token);
+			if ($token == $storyblokRequest['token'] && (int)$storyblokRequest['timestamp'] > strtotime('now') - 3600) {
+				config(['storyblok.edit_mode' => true]);
+				config(['storyblok.draft' => true]);
+			}
+		}
+
+        // register the Storyblok client, checkking if we are in edit more of the dev requests draft content
+		if (config('storyblok.draft')) {
+			$client = new Client(config('storyblok.api_preview_key'));
+		} else {
+			$client = new Client(config('storyblok.api_public_key'));
+		}
+
+		$client->editMode(config('storyblok.draft'));
+
 		$this->app->instance('Storyblok\Client', $client);
     }
 }
