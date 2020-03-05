@@ -4,13 +4,26 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Storyblok API key
+    | Storyblok Preview API key
     |--------------------------------------------------------------------------
     |
-    | Enter your Storyblok API key to communicate with their API.
+    | Enter your Storyblok Preview API key to communicate with their API.
+    | The preview key allows you to access draft content and is used when
+    | in the editor or when debug mode is enabled.
     |
     */
-	'api_key' => env('STORYBLOK_API_KEY'),
+	'api_preview_key' => env('STORYBLOK_PREVIEW_API_KEY'),
+
+	/*
+    |--------------------------------------------------------------------------
+    | Storyblok Public API key
+    |--------------------------------------------------------------------------
+    |
+    | Enter your Storyblok Public API key to communicate with their API.
+    | This key is used when your website is live and debug is off.
+    |
+    */
+	'api_public_key' => env('STORYBLOK_PUBLIC_API_KEY'),
 
 	/*
     |--------------------------------------------------------------------------
