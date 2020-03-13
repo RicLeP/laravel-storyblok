@@ -10,13 +10,14 @@
 
 namespace Riclep\Storyblok;
 
-use App\Storyblok\Traits\AutoParagraphs;
+
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use Riclep\Storyblok\Traits\AutoParagraphs;
 use Riclep\Storyblok\Traits\ConvertsMarkdown;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 use Riclep\Storyblok\Traits\RequestsStories;
