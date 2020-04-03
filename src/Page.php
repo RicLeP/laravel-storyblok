@@ -62,7 +62,7 @@ abstract class Page
 		$segments = explode('/', rtrim($this->slug(), '/'));
 
 		// match full path first
-		$views[] = 'storyblok.pages.' . implode('.', $segments);
+		$views[] = config('storyblok.view_path') . 'pages.' . implode('.', $segments);
 
 		// creates an array of dot paths for each path segment
 		// site.com/this/that/them becomes:
@@ -71,11 +71,11 @@ abstract class Page
 		// this
 		while (count($segments) >= 1) {
 			// singular views next so we match children with a folder
-			if (!in_array($path = 'storyblok.pages.' . Str::singular(implode('.', $segments)), $views)) {
-				$views[] = 'storyblok.pages.' . Str::singular(implode('.', $segments));
+			if (!in_array($path = config('storyblok.view_path') . 'pages.' . Str::singular(implode('.', $segments)), $views)) {
+				$views[] = config('storyblok.view_path') . 'pages.' . Str::singular(implode('.', $segments));
 			}
 
-			if (!in_array($path = 'storyblok.pages.' . implode('.', $segments), $views)) {
+			if (!in_array($path = config('storyblok.view_path') . 'pages.' . implode('.', $segments), $views)) {
 				$views[] = $path;
 			}
 
