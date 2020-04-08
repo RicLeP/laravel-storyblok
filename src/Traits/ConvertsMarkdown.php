@@ -15,16 +15,16 @@ trait ConvertsMarkdown
 	protected $markdown = [];
 
 	private function convertMarkdown() {
-		$environment = Environment::createCommonMarkEnvironment();
-		$environment->addExtension(new TableExtension());
-		$environment->addExtension(new AutolinkExtension());
-
-		$converter = new Converter(new DocParser($environment), new HtmlRenderer($environment));
-
 		if ($this->markdown && count($this->markdown)) {
-			foreach ($this->markdown as $markdown) {
-				if ($this->content->has($markdown)) {
-					$this->content[$markdown . '_html'] = $converter->convertToHtml($this->content[$markdown]);
+			$environment = Environment::createCommonMarkEnvironment();
+			$environment->addExtension(new TableExtension());
+			$environment->addExtension(new AutolinkExtension());
+
+			$converter = new Converter(new DocParser($environment), new HtmlRenderer($environment));
+
+			foreach ($this->markdown as $markdownField) {
+				if ($this->content->has($markdownField)) {
+					$this->content[$markdownField . '_html'] = $converter->convertToHtml($this->content[$markdownField]);
 				}
 			}
 		}
