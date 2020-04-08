@@ -19,6 +19,7 @@ use ReflectionClass;
 use ReflectionMethod;
 use Riclep\Storyblok\Traits\AutoParagraphs;
 use Riclep\Storyblok\Traits\ConvertsMarkdown;
+use Riclep\Storyblok\Traits\ConvertsRichtext;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 use Riclep\Storyblok\Traits\RequestsStories;
 
@@ -27,6 +28,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	use ProcessesBlocks;
 	use RequestsStories;
 	use ConvertsMarkdown;
+	use ConvertsRichtext;
 	use AutoParagraphs;
 
 	protected $_uid;
@@ -58,6 +60,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		$this->carboniseDates();
 
 		$this->convertMarkdown();
+		$this->convertRichtext();
 		$this->autoParagraphs();
 
 		if ($this->getMethods()->contains('transform')) {

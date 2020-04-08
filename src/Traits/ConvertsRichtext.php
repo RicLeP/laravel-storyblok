@@ -11,6 +11,7 @@ trait ConvertsRichtext
 
 	public function convertRichtext() {
 		if ($this->richtext && count($this->richtext)) {
+
 			$richtextResolver = new Resolver();
 
 			foreach ($this->richtext as $richtextField) {
