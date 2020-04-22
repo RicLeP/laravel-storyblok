@@ -70,16 +70,16 @@ abstract class Page
 		// this.that
 		// this
 		while (count($segments) >= 1) {
-			// singular views next so we match children with a folder
-			if (!in_array($path = config('storyblok.view_path') . 'pages.' . Str::singular(implode('.', $segments)), $views)) {
-				$views[] = config('storyblok.view_path') . 'pages.' . Str::singular(implode('.', $segments));
-			}
-
 			if (!in_array($path = config('storyblok.view_path') . 'pages.' . implode('.', $segments), $views)) {
+				$views[] = config('storyblok.view_path') . 'pages.' . implode('.', $segments) . '.' . $this->content()->component();
 				$views[] = $path;
 			}
 
 			array_pop($segments);
+		}
+
+		if (!in_array($path = config('storyblok.view_path') . 'pages.' . $this->content()->component(), $views)) {
+			$views[] = config('storyblok.view_path') . 'pages.' . $this->content()->component();
 		}
 
 		$views[] = config('storyblok.view_path') . 'pages.default';
