@@ -16,8 +16,8 @@ abstract class Folder
 	protected $currentPage = 1;
 	protected $perPage = 10;
 	protected $sortBy = 'published_at:asc';
-	private $slug;
-	private $settings = [];
+	protected $slug;
+	protected $settings = [];
 
 	public function read() {
 		$response = $this->requestStories(resolve('Storyblok\Client'));
@@ -45,7 +45,7 @@ abstract class Folder
 		$this->settings = $settings;
 	}
 
-	private function requestStories(Client $storyblokClient) {
+	protected function requestStories(Client $storyblokClient) {
 
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $storyblokClient->getStories(array_merge([

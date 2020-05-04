@@ -34,7 +34,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	protected $_uid;
 	protected $component;
 	protected $content;
-	public $meta;
+	public $_meta;
 	private $iteratorIndex = 0;
 
 	/**
@@ -48,7 +48,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		if (array_key_exists('content', $block)) {
 			// child story so go straight to the contents but store a few useful meta items from the Story
 			$this->processStoryblokKeys($block['content']);
-			$this->meta = array_intersect_key($block, array_flip(['name', 'created_at', 'published_at', 'slug', 'full_slug']));
+			$this->_meta = array_intersect_key($block, array_flip(['name', 'created_at', 'published_at', 'slug', 'full_slug']));
 		} else {
 			$this->processStoryblokKeys($block);
 		}
