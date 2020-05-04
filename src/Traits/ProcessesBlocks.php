@@ -40,6 +40,11 @@ trait ProcessesBlocks
 			return new $blockClass($child);
 		}
 
+		// Richtext
+		if (is_array($block) && array_key_exists('type', $block) && $block['type'] === 'doc') {
+			return false;
+		}
+
 		if (is_array($block)) {
 			return $this->arrayBlock($block);
 		}
