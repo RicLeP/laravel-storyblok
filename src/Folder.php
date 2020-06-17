@@ -25,7 +25,7 @@ abstract class Folder
 		$stories = collect($response->responseBody['stories']);
 
 		$stories->transform(function ($story) {
-			$blockClass = $this->getBlockClass($story['content']['component']);
+			$blockClass = $this->getBlockClass($story['content']);
 
 			return new $blockClass($story);
 		});

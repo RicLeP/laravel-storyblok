@@ -25,6 +25,7 @@ class StoryblokServiceProvider extends ServiceProvider
 				__DIR__.'/../stubs/DefaultPage.stub' => app_path('Storyblok') . '/DefaultPage.php',
 				__DIR__.'/../stubs/DefaultBlock.stub' => app_path('Storyblok') . '/DefaultBlock.php',
 				__DIR__.'/../stubs/DefaultFolder.stub' => app_path('Storyblok') . '/DefaultFolder.php',
+				__DIR__.'/../stubs/DefaultAsset.stub' => app_path('Storyblok') . '/DefaultAsset.php',
 			], 'storyblok');
         }
     }
