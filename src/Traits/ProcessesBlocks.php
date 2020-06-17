@@ -28,14 +28,14 @@ trait ProcessesBlocks
 	private function getBlockType($block, $key) {
 		if (is_int($key) && $this->isUuid($block)) {
 			$child = $this->childStory($block);
-			$blockClass = $this->getBlockClass($child['content']['component']);
+			$blockClass = $this->getBlockClass($child['content']);
 
 			return new $blockClass($child);
 		}
 
 		if (!in_array($key, ['id', 'uuid', 'group_id']) && $this->isUuid($block)) {
 			$child = $this->childStory($block);
-			$blockClass = $this->getBlockClass($child['content']['component']);
+			$blockClass = $this->getBlockClass($child['content']);
 
 			return new $blockClass($child);
 		}
@@ -69,15 +69,23 @@ trait ProcessesBlocks
 	}
 
 	private function arrayBlock($block) {
-		$blockClass = $this->getBlockClass($block['component']);
+		$blockClass = $this->getBlockClass($block);
 
 		// or return the default block
 		return new $blockClass($block);
 	}
 
-	private function getBlockClass($component) {
+	private function getBlockClass($block) {
+		$component = $block['component'];
 
-		//dump($this, $component, '------------------------');
+		if (array_key_exists('fieldtype', $block) && $block['fieldtype'] === 'asset') {
+			if (class_exists(config('storyblok.component_class_namespace') . 'Assets\\' . Str::studly($component))) {
+				return config('storyblok.component_class_namespace') . 'Assets\\' . Str::studly($component);
+			}
+
+			return config('storyblok.component_class_namespace') . 'DefaultAsset';
+		}
+
 
 		if (class_exists(config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component))) {
 			return config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component);

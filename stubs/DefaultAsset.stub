@@ -1,0 +1,11 @@
+<?php
+
+
+namespace App\Storyblok;
+
+use Riclep\Storyblok\Asset;
+
+class DefaultAsset extends Asset
+{
+
+}
