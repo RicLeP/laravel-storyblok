@@ -16,7 +16,7 @@ class Storyblok
 		$pageClass = $this->getPageClass($this->storyblokResponse['content']['component']);
 		$this->page = new $pageClass($this->storyblokResponse);
 
-		return $this->page->preprocess()->process()->getBlocks();
+		return $this->page->preprocess()->process()->getBlocks()->postProcess();
 	}
 
 	private function getPageClass($component)

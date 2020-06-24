@@ -33,6 +33,7 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 
 	protected $_uid;
 	protected $component;
+	public $componentPath = [];
 	protected $content;
 	public $_meta;
 	private $iteratorIndex = 0;
@@ -111,10 +112,39 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		return $this->component;
 	}
 
+	public function makeComponentPath($componentPath)
+	{
+		$componentPath[] = $this->component();
+
+		$this->componentPath = $componentPath;
+
+		// loop over all child classes, pass down current component list
+		$this->content->each(function($block) use ($componentPath) {
+			if ($block instanceof Block || $block instanceof Asset) {
+				$block->makeComponentPath($componentPath);
+			}
+		});
+	}
+
 	public function filterComponent($componentName) {
 		return $this->content->filter(function ($block) use ($componentName) {
 			return $block->component === $componentName;
 		});
+	}
+
+	public function getAncestorComponent($generation)
+	{
+		return $this->componentPath[count($this->componentPath) - ($generation + 1)];
+	}
+
+	public function isChildOf($parent)
+	{
+		return $this->componentPath[count($this->componentPath) - 2] === $parent;
+	}
+
+	public function isAncestorOf($parent)
+	{
+		return in_array($parent, $this->componentPath);
 	}
 
 	/**
