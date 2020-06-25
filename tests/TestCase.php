@@ -159,7 +159,9 @@ class TestCase extends Orchestra
 				  "component": "trait1",
 				  "typography": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". 3 x 4.",
 				  "schedule": "2020-10-10 05:05:05",
-				  "description": "Description"
+				  "description": "Description",
+				  "markdown": "test **content** here [link](/galleries/peh). <fake@example.com>.",
+				  "table": "Table | Header\n--- | ---"
 				},
 				"position": -20,
 				"tag_list": [ ],

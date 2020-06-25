@@ -100,6 +100,22 @@ class PageTest extends TestCase
 	}
 
 	/** @test */
+	public function can_convert_markdown()
+	{
+		$storyblokMock = $this->mockPage('Trait1');
+
+		$storyblokMock->bySlug('use_default');
+		$class = $storyblokMock->read();
+
+		//dd($class->content()->table_html);
+
+		$this->assertEquals('<p>test <strong>content</strong> here <a href="/galleries/peh">link</a>. <a href="mailto:fake@example.com">fake@example.com</a>.</p>', trim($class->content()->markdown_html));
+
+		$this->assertEquals('<table><thead><tr><th>Table</th><th>Header</th></tr></thead></table>', trim(str_replace("\n", '', $class->content()->table_html)));
+
+	}
+
+	/** @test */
 	public function can_apply_typographic_fixes()
 	{
 		$storyblokMock = $this->mockPage('Trait1');
@@ -115,8 +131,6 @@ class PageTest extends TestCase
 	public function can_apply_custom_typographic_styles()
 	{
 		$storyblokMock = $this->mockPage('Trait2');
-
-
 
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
