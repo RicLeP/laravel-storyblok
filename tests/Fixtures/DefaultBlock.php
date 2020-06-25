@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Testcomponents\Storyblok;
+namespace Riclep\Storyblok\Tests\Fixtures;
 
 use Riclep\Storyblok\Block;
 use Riclep\Storyblok\Traits\CssClasses;

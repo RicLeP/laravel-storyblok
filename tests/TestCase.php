@@ -17,12 +17,12 @@ class TestCase extends Orchestra
 	protected function getEnvironmentSetUp($app)
 	{
 		// Setup default database to use sqlite :memory:
-		$app['config']->set('storyblok.component_class_namespace', 'Testcomponents\Storyblok\\');
+		$app['config']->set('storyblok.component_class_namespace', 'Riclep\Storyblok\Tests\Fixtures\\');
 		$app['config']->set('storyblok.view_path');
 
 		$app['config']->set('seo.default_title', 'Default title from config');
 
-		$viewPath = str_replace('tests' . DIRECTORY_SEPARATOR . '..', '', __DIR__ . DIRECTORY_SEPARATOR .'..' . 'testcomponents' . DIRECTORY_SEPARATOR. 'views');
+		$viewPath = str_replace('..', '', __DIR__ . DIRECTORY_SEPARATOR .'..' . 'Fixtures' . DIRECTORY_SEPARATOR. 'views');
 
 		$app['config']->set('view.paths', array_merge(config('view.paths'), [$viewPath]));
 
@@ -159,7 +159,9 @@ class TestCase extends Orchestra
 				  "component": "trait1",
 				  "typography": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". 3 x 4.",
 				  "schedule": "2020-10-10 05:05:05",
-				  "description": "Description"
+				  "description": "Description",
+				  "markdown": "test **content** here [link](/galleries/peh). <fake@example.com>.",
+				  "table": "Table | Header\n--- | ---"
 				},
 				"position": -20,
 				"tag_list": [ ],

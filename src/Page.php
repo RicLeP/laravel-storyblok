@@ -106,6 +106,8 @@ abstract class Page
 
 
 	public function view() {
+		//dd($this->views());
+
 		foreach ($this->views() as $view) {
 			if (view()->exists($view)) {
 				return $view;

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Testcomponents\Storyblok\Blocks;
+namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
 use PHP_Typography\Settings as TypographySettings;
 use Riclep\Storyblok\Block;

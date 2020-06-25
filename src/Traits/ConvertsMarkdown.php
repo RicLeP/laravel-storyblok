@@ -3,12 +3,9 @@
 
 namespace Riclep\Storyblok\Traits;
 
-use League\CommonMark\Converter;
-use League\CommonMark\DocParser;
+use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
-use League\CommonMark\Ext\Autolink\AutolinkExtension;
-use League\CommonMark\Ext\Table\TableExtension;
-use League\CommonMark\HtmlRenderer;
+use League\CommonMark\Extension\Table\TableExtension;
 
 trait ConvertsMarkdown
 {
@@ -18,9 +15,8 @@ trait ConvertsMarkdown
 		if ($this->markdown && count($this->markdown)) {
 			$environment = Environment::createCommonMarkEnvironment();
 			$environment->addExtension(new TableExtension());
-			$environment->addExtension(new AutolinkExtension());
 
-			$converter = new Converter(new DocParser($environment), new HtmlRenderer($environment));
+			$converter = new CommonMarkConverter([], $environment);
 
 			foreach ($this->markdown as $markdownField) {
 				if ($this->content->has($markdownField)) {

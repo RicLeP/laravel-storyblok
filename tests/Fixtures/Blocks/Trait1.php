@@ -1,14 +1,17 @@
 <?php
 
 
-namespace Testcomponents\Storyblok\Blocks;
+namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
 use Riclep\Storyblok\Block;
 use Riclep\Storyblok\Traits\AppliesTypography;
+use Riclep\Storyblok\Traits\ConvertsMarkdown;
 
 class Trait1 extends Block
 {
 	use AppliesTypography;
+
+	protected $markdown = ['markdown', 'table'];
 
 	private $applyTypography = ['typography'];
 
