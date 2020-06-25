@@ -1,13 +1,13 @@
 <?php
 
 
-namespace Testcomponents\Storyblok;
+namespace Testcomponents\Storyblok\Blocks;
 
 use PHP_Typography\Settings as TypographySettings;
 use Riclep\Storyblok\Block;
 use Riclep\Storyblok\Traits\AppliesTypography;
 
-class Trait2Block extends Block
+class Trait2 extends Block
 {
 	use AppliesTypography;
 

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Testcomponents\Storyblok;
+namespace Testcomponents\Storyblok\Blocks;
 
 use Riclep\Storyblok\Block;
 
-class DateBlock extends Block
+class Date extends Block
 {
 	protected $dates = ['schedule'];
 }

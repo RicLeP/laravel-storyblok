@@ -21,7 +21,6 @@ abstract class Page
 		$this->processedJson = $rawStory;
 	}
 
-
 	/**
 	 * Performs any actions on the Storyblok content before it is parsed into Block classes
 	 * Move SEO plugin out of content to the root of the page’s response
@@ -42,6 +41,24 @@ abstract class Page
 	 * Processes the page’s meta content
 	 */
 	public function process() {
+		return $this;
+	}
+
+	/**
+	 * Perform actions on the data after all blocks have been prepared
+	 *
+	 * @return void
+	 */
+	public function postProcess()
+	{
+		$this->content()->makeComponentPath([]);
+
+		foreach (class_uses_recursive($this) as $trait) {
+			if (method_exists($this, $method = 'init' . class_basename($trait))) {
+				$this->{$method}();
+			}
+		}
+
 		return $this;
 	}
 
