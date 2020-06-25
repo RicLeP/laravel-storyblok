@@ -2,10 +2,3 @@ preset: laravel
 
 disabled:
   - single_class_element_per_statement
-
-build:
-  nodes:
-    my-tests:
-      environment:
-        php:
-          version: 7.4
