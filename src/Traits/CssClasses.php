@@ -19,6 +19,8 @@ trait CssClasses
 		if ($layout = $this->getLayout()) {
 			return $this->component() . '@' . $layout;
 		}
+
+		return $this->component();
 	}
 
 
@@ -34,7 +36,7 @@ trait CssClasses
 
 	public function getLayout()
 	{
-		$path = $this->componentPath;
+		$path = $this->componentPath();
 		array_pop($path);
 		$path = array_reverse($path);
 
@@ -50,17 +52,4 @@ trait CssClasses
 	private function layoutCheck($componentName) {
 		return Str::startsWith($componentName, 'layout_');
 	}
-
-
-	/*
-	functions:
-
-	full path
-	first layout
-
-
-	 * */
-
-
-
 }

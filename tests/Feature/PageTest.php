@@ -173,8 +173,8 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$type1 = $class->content()->intro->filterComponent('text_with_links');
-		$type2 = $class->content()->intro->filterComponent('award');
+		$type1 = $class->content()->layout_intro->filterComponent('text_with_links');
+		$type2 = $class->content()->layout_intro->filterComponent('award');
 
 		$this->assertEquals($type1->count(), 2); // two sets of text_with_links
 		$this->assertEquals($type2->count(), 1); // 1 award
@@ -189,7 +189,7 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$this->assertEquals($class->content()->intro->component(), 'intro'); // 1 award
+		$this->assertEquals($class->content()->layout_intro->component(), 'layout_intro'); // 1 award
 	}
 
 	/** @test */
@@ -201,7 +201,7 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		foreach ($class->content()->intro[0]->links as $link) {
+		foreach ($class->content()->layout_intro[0]->links as $link) {
 			$this->assertEquals($link->component(), 'text_link');
 		}
 	}
@@ -215,6 +215,124 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$this->assertEquals($class->content()->intro[0]->links[2]->url->cached_url, 'services/third');
+		$this->assertEquals($class->content()->layout_intro[0]->links[2]->url->cached_url, 'services/third');
+	}
+
+	/** @test */
+	public function block_has_component_path()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		$path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertEquals($class->content()->layout_intro[0]->links[2]->url->componentPath(), $path);
+	}
+
+	/** @test */
+	public function check_block_is_child()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertTrue($class->content()->layout_intro[0]->links[2]->url->isChildOf('text_link'));
+		$this->assertFalse($class->content()->layout_intro[0]->links[2]->url->isChildOf('links'));
+	}
+
+	/** @test */
+	public function check_block_is_ancestor()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertTrue($class->content()->layout_intro[0]->links[2]->url->isAncestorOf('text_with_links'));
+		$this->assertFalse($class->content()->layout_intro[0]->links[2]->isAncestorOf('url'));
+	}
+
+	/** @test */
+	public function check_block_is_in_layout()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertEquals($class->content()->layout_intro[0]->links[2]->url->getLayout(), 'layout_intro');
+		$this->assertNotEquals($class->content()->layout_intro[0]->links[2]->url->getLayout(), 'layout_not');
+	}
+
+	/** @test */
+	public function check_block_is_layout()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertTrue($class->content()->layout_intro->isLayout());
+		$this->assertFalse($class->content()->layout_intro[0]->links[2]->url->isLayout());
+	}
+
+	/** @test */
+	public function get_css_class()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertEquals($class->content()->layout_intro[0]->links->cssClass(), 'links');
+
+	}
+
+	/** @test */
+	public function get_css_class_with_parent()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertEquals($class->content()->layout_intro[0]->links->cssClassWithParent(), 'links@text_with_links');
+	}
+
+	/** @test */
+	public function get_css_class_with_layout()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+
+		$storyblokMock->bySlug('use_default');
+
+		$class = $storyblokMock->read();
+
+		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
+
+		$this->assertEquals($class->content()->layout_intro[0]->links->cssClassWithLayout(), 'links@layout_intro');
+		$this->assertEquals($class->content()->cssClassWithLayout(), 'homepage'); // no layout
 	}
 }

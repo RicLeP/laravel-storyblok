@@ -274,7 +274,7 @@ class TestCase extends Orchestra
 				  }
 				}
 			  ],
-			  "intro": [
+			  "layout_intro": [
 				{
 				  "_uid": "42a35f5a-ca0c-45b8-a155-2baf7ecbd7fb",
 				  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
