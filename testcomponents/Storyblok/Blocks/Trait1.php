@@ -1,12 +1,12 @@
 <?php
 
 
-namespace Testcomponents\Storyblok;
+namespace Testcomponents\Storyblok\Blocks;
 
 use Riclep\Storyblok\Block;
 use Riclep\Storyblok\Traits\AppliesTypography;
 
-class TraitBlock extends Block
+class Trait1 extends Block
 {
 	use AppliesTypography;
 

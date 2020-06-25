@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Testcomponents\Storyblok;
+namespace Testcomponents\Storyblok\Blocks;
 
 use Riclep\Storyblok\Block;
 
-class ChildrenBlock extends Block
+class Children extends Block
 {
 	public function byUuid($block) {
 

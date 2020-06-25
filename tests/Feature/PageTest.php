@@ -4,9 +4,10 @@ namespace Riclep\Storyblok\Tests\Feature;
 
 
 use Riclep\Storyblok\Storyblok;
-use Tests\TestCase;
+use Riclep\Storyblok\Tests\TestCase;
 
-class PageTest extends \Riclep\Storyblok\Tests\TestCase
+
+class PageTest extends TestCase
 {
 	/** @test */
 	public function default_page_class_is_instantiated_when_specific_match_is_not_found()
@@ -29,7 +30,7 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Testcomponents\Storyblok\SpecificPage', $class);
+		$this->assertInstanceOf('Testcomponents\Storyblok\Pages\Specific', $class);
 	}
 
 
@@ -101,7 +102,7 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 	/** @test */
 	public function can_apply_typographic_fixes()
 	{
-		$storyblokMock = $this->mockPage('TraitBlock');
+		$storyblokMock = $this->mockPage('Trait1');
 
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
@@ -113,7 +114,9 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 	/** @test */
 	public function can_apply_custom_typographic_styles()
 	{
-		$storyblokMock = $this->mockPage('Trait2Block');
+		$storyblokMock = $this->mockPage('Trait2');
+
+
 
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
@@ -150,15 +153,15 @@ class PageTest extends \Riclep\Storyblok\Tests\TestCase
 	 * */
 	public function can_load_child_responses()
 	{
-		$mock = \Mockery::mock('overload:Testcomponents\Storyblok\ChildrenBlock')->makePartial();
+		$mock = \Mockery::mock('overload:Testcomponents\Storyblok\Blocks\Children')->makePartial();
 		$mock->shouldReceive('childStory')->andReturn('I don’t know......');
 
-		$storyblokMock = $this->mockPage('HasChildBlock');
+		$storyblokMock = $this->mockPage('HasChild');
 
 		$storyblokMock->bySlug('has-child');
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Testcomponents\Storyblok\ChildrenBlock', $class->content()->children); // test property of child
+		$this->assertInstanceOf('Testcomponents\Storyblok\Blocks\Children', $class->content()->children); // test property of child
 	}
 
 	/** @test */

@@ -145,7 +145,7 @@ class TestCase extends Orchestra
 		return json_decode($json, true)['story'];
 	}
 
-	protected function mockTraitBlockResponse() {
+	protected function mockTrait1Response() {
 		$json = '{"story": {
 				"id": 107350,
 				"uuid": "ac0d2ed0-e323-43ca-ae59-5cd7d38683cb",
@@ -156,7 +156,7 @@ class TestCase extends Orchestra
 				"published_at": "2018-12-07T01:31:36.134Z",
 				"first_published_at": "2018-08-07T09:40:13.000Z",
 				"content": {
-				  "component": "trait",
+				  "component": "trait1",
 				  "typography": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". 3 x 4.",
 				  "schedule": "2020-10-10 05:05:05",
 				  "description": "Description"
@@ -175,7 +175,7 @@ class TestCase extends Orchestra
 		return json_decode($json, true)['story'];
 	}
 
-	protected function mockTrait2BlockResponse() {
+	protected function mockTrait2Response() {
 		$json = '{"story": {
 				"id": 107350,
 				"uuid": "ac0d2ed0-e323-43ca-ae59-5cd7d38683cb",
@@ -205,7 +205,7 @@ class TestCase extends Orchestra
 		return json_decode($json, true)['story'];
 	}
 
-	protected function mockHasChildBlockResponse() {
+	protected function mockHasChildResponse() {
 		$json = '{"story": {
 				"id": 107350,
 				"uuid": "ac0d2ed0-e323-43ca-ae59-5cd7d38683cb",
