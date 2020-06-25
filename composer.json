@@ -37,8 +37,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Riclep\\Storyblok\\": "src",
-            "Testcomponents\\Storyblok\\": "testcomponents/Storyblok"
+            "Riclep\\Storyblok\\": "src"
         }
     },
     "autoload-dev": {

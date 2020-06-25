@@ -18,7 +18,7 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Testcomponents\Storyblok\DefaultPage', $class);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\DefaultPage', $class);
 	}
 
 
@@ -30,7 +30,7 @@ class PageTest extends TestCase
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Testcomponents\Storyblok\Pages\Specific', $class);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Pages\Specific', $class);
 	}
 
 
@@ -153,7 +153,7 @@ class PageTest extends TestCase
 	 * */
 	public function can_load_child_responses()
 	{
-		$mock = \Mockery::mock('overload:Testcomponents\Storyblok\Blocks\Children')->makePartial();
+		$mock = \Mockery::mock('overload:Riclep\Storyblok\Tests\Fixtures\Blocks\Children')->makePartial();
 		$mock->shouldReceive('childStory')->andReturn('I don’t know......');
 
 		$storyblokMock = $this->mockPage('HasChild');
@@ -161,7 +161,7 @@ class PageTest extends TestCase
 		$storyblokMock->bySlug('has-child');
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Testcomponents\Storyblok\Blocks\Children', $class->content()->children); // test property of child
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Children', $class->content()->children); // test property of child
 	}
 
 	/** @test */
