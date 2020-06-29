@@ -4,8 +4,6 @@
 namespace Riclep\Storyblok\Traits;
 
 
-use App\Storyblok\DefaultBlock;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 trait ProcessesBlocks

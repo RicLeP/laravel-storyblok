@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/laravel-storyblok.iml" filepath="$PROJECT_DIR$/.idea/laravel-storyblok.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../laravel-storyblok-docs/.idea/laravel-storyblok-docs.iml" filepath="$PROJECT_DIR$/../laravel-storyblok-docs/.idea/laravel-storyblok-docs.iml" />
     </modules>
   </component>
 </project>

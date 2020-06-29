@@ -31,11 +31,17 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	use ConvertsRichtext;
 	use AutoParagraphs;
 
+	public $_meta;
+
+	protected $_componentPath = [];
 	protected $_uid;
 	protected $component;
 	protected $content;
-	protected $_componentPath = [];
-	public $_meta;
+
+	private $_editable;
+	private $appends;
+	private $excluded;
+	private $fieldtype;
 	private $iteratorIndex = 0;
 
 	/**
@@ -76,12 +82,12 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	private function processStoryblokKeys($block) {
 		$this->_uid = $block['_uid'] ?? null;
 		$this->component = $block['component'] ?? null;
-		$this->fieldtype = $block['fieldtype'] ?? null;
 		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin', 'fieldtype'])));
+		$this->fieldtype = $block['fieldtype'] ?? null;
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function editableBridge()
 	{

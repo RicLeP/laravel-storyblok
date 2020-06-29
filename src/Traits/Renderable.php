@@ -6,6 +6,8 @@ namespace Riclep\Storyblok\Traits;
 trait Renderable
 {
 	protected function views() {
+		$views = [];
+
 		$views[] = config('storyblok.view_path') . 'blocks.uuid.' . $this->_uid;
 		$segments = explode('/', rtrim(app()->make('Page')->slug(), '/'));
 		// creates an array of dot paths for each path segment
@@ -37,7 +39,7 @@ trait Renderable
 			break;
 		}
 
-		return $view;
+		return null;
 	}
 
 	/**

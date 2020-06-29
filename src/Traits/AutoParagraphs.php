@@ -8,7 +8,7 @@ trait AutoParagraphs
 	protected $autoParagraphs = [];
 
 	private function autoParagraphs() {
-		if ($this->autoParagraphs && count($this->autoParagraphs)) {
+		if (!empty($this->autoParagraphs)) {
 			foreach ($this->autoParagraphs as $field) {
 				if ($this->content->has($field)) {
 					$this->content[$field . '_html'] = $this->autoParagraph($this->content[$field]);

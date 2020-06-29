@@ -10,7 +10,7 @@ trait ConvertsRichtext
 	protected $richtext = [];
 
 	public function convertRichtext() {
-		if ($this->richtext && count($this->richtext)) {
+		if (!empty($this->richtext)) {
 
 			$richtextResolver = new Resolver();
 

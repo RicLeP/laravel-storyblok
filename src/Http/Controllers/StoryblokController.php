@@ -22,9 +22,8 @@ class StoryblokController
 
 	/**
 	 * Deletes the cached API responses
-	 * @param Request $request
 	 */
-	public function destroy(Request $request) {
+	public function destroy() {
 		Cache::flush();
 	}
 }

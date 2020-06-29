@@ -12,7 +12,7 @@ trait ConvertsMarkdown
 	protected $markdown = [];
 
 	private function convertMarkdown() {
-		if ($this->markdown && count($this->markdown)) {
+		if (!empty($this->markdown)) {
 			$environment = Environment::createCommonMarkEnvironment();
 			$environment->addExtension(new TableExtension());
 

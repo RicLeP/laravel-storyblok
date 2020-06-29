@@ -9,7 +9,7 @@ class Storyblok
 {
 	use RequestsStories;
 
-	//public $page = null;
+	public $page;
 
 	public function read()
 	{
