@@ -11,6 +11,10 @@ trait ConvertsMarkdown
 {
 	protected $markdown = [];
 
+	/**
+	 * Creates a duplicate to fields in $markdown with an _html suffix
+	 * which contain the transformed markdown content as html
+	 */
 	private function convertMarkdown() {
 		if (!empty($this->markdown)) {
 			$environment = Environment::createCommonMarkEnvironment();

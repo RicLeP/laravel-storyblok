@@ -79,6 +79,12 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		}
 	}
 
+	/**
+	 * Tidies up and moves a few items from the JSON response into
+	 * better places for our requirements
+	 *
+	 * @param $block
+	 */
 	private function processStoryblokKeys($block) {
 		$this->_uid = $block['_uid'] ?? null;
 		$this->component = $block['component'] ?? null;
@@ -87,6 +93,9 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	}
 
 	/**
+	 * Returns the HTML comment needed to link the visual editor to
+	 * the content in the view
+	 *
 	 * @return string
 	 */
 	public function editableBridge()
@@ -95,6 +104,9 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	}
 
 	/**
+	 * Returns a random item from the cotent. Useful when you want to get a random item
+	 * from a collection to similar Blocks such as a random banner.
+	 *
 	 * @return mixed
 	 */
 	public function random()
@@ -103,6 +115,8 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	}
 
 	/**
+	 * Return the content Collection
+	 *
 	 * @return mixed
 	 */
 	public function content()
@@ -111,13 +125,21 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the name of the component
+	 *
+	 * @return string
 	 */
 	public function component()
 	{
 		return $this->component;
 	}
 
+	/**
+	 * Loops over all the components an gets an array of their names in the order
+	 * that they have been nested
+	 *
+	 * @param $componentPath
+	 */
 	public function makeComponentPath($componentPath)
 	{
 		$componentPath[] = $this->component();
@@ -132,27 +154,57 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		});
 	}
 
-	public function filterComponent($componentName) {
+
+	/**
+	 * Checks if the component has particular children
+	 *
+	 * @param $componentName
+	 * @return mixed
+	 */
+	public function hasChildComponent($componentName) {
 		return $this->content->filter(function ($block) use ($componentName) {
 			return $block->component === $componentName;
 		});
 	}
 
+	/**
+	 * Returns the component’s path
+	 *
+	 * @return array
+	 */
 	public function componentPath()
 	{
 		return $this->_componentPath;
 	}
 
+	/**
+	 * Returns a component X generations previous
+	 *
+	 * @param $generation
+	 * @return mixed
+	 */
 	public function getAncestorComponent($generation)
 	{
 		return $this->_componentPath[count($this->_componentPath) - ($generation + 1)];
 	}
 
+	/**
+	 * Checks if the current component is a child of another
+	 *
+	 * @param $parent
+	 * @return bool
+	 */
 	public function isChildOf($parent)
 	{
 		return $this->_componentPath[count($this->_componentPath) - 2] === $parent;
 	}
 
+	/**
+	 * Checks if the component is an ancestor of another
+	 *
+	 * @param $parent
+	 * @return bool
+	 */
 	public function isAncestorOf($parent)
 	{
 		return in_array($parent, $this->_componentPath);
@@ -169,6 +221,8 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	}
 
 	/**
+	 * Returns the UUID of the current component
+	 *
 	 * @return mixed
 	 */
 	public function uuid()
@@ -253,6 +307,9 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		});
 	}
 
+	/**
+	 * Converts date fields to carbon
+	 */
 	protected function carboniseDates() {
 		$properties = get_object_vars($this);
 
@@ -265,6 +322,11 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		}
 	}
 
+	/**
+	 * Do we have content
+	 *
+	 * @return mixed
+	 */
 	public function isEmpty() {
 		return $this->content->isEmpty();
 	}

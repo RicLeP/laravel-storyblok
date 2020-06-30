@@ -10,13 +10,21 @@ use Storyblok\Client;
 
 trait RequestsStories
 {
-	//public $storyblokResponse;
-
+	/**
+	 * Reads the Blocks in the Story
+	 *
+	 * @return RequestsStories
+	 */
 	public function read()
 	{
 		return $this->getBlocks();
 	}
 
+	/**
+	 * Starts reading the root Block of the Story
+	 *
+	 * @return $this
+	 */
 	public function getBlocks() {
 		$this->content = $this->processBlock($this->storyblokResponse['content'], 'root');
 
@@ -55,8 +63,6 @@ trait RequestsStories
 			}
 		}
 
-		// TODO - error handling!
-
 		return $response['story'];
 	}
 
@@ -88,6 +94,13 @@ trait RequestsStories
 		return $this;
 	}
 
+	/**
+	 * Returns a child Story
+	 *
+	 * @param $uuid
+	 * @return array
+	 * @throws \Storyblok\ApiException
+	 */
 	public function childStory($uuid) {
 		return $this->requestStory(resolve('Storyblok\Client'), $uuid, true);
 	}

@@ -187,8 +187,8 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$type1 = $class->content()->layout_intro->filterComponent('text_with_links');
-		$type2 = $class->content()->layout_intro->filterComponent('award');
+		$type1 = $class->content()->layout_intro->hasChildComponent('text_with_links');
+		$type2 = $class->content()->layout_intro->hasChildComponent('award');
 
 		$this->assertEquals($type1->count(), 2); // two sets of text_with_links
 		$this->assertEquals($type2->count(), 1); // 1 award

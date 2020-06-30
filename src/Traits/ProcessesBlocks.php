@@ -8,6 +8,13 @@ use Illuminate\Support\Str;
 
 trait ProcessesBlocks
 {
+	/**
+	 * Starts tge process for working out the block’s type
+	 *
+	 * @param $block
+	 * @param $key
+	 * @return array|bool|mixed
+	 */
 	private function processBlock($block, $key) {
 		if (is_array($block) && !array_key_exists('component', $block)) {
 			$block['component'] = $this->getComponentType($block, $key);
@@ -23,6 +30,14 @@ trait ProcessesBlocks
 	}
 
 
+	/**
+	 * Determines if the block is a UUID so needs to be requested via the API
+	 * or other special types such as richtext
+	 *
+	 * @param $block
+	 * @param $key
+	 * @return bool|mixed
+	 */
 	private function getBlockType($block, $key) {
 		if (is_int($key) && $this->isUuid($block)) {
 			$child = $this->childStory($block);
@@ -44,15 +59,19 @@ trait ProcessesBlocks
 		}
 
 		if (is_array($block)) {
-			return $this->arrayBlock($block);
+			$blockClass = $this->getBlockClass($block);
+
+			// or return the default block
+			return new $blockClass($block);
 		}
 
 		return false;
 	}
 
 	/**
-	 * Works out the component type - this can come from either the component specified in
-	 * the response from Storyblok or, in the case of plugins, the plugin name is used
+	 * Works out the component type - this can come from either the
+	 * component specified in the response from Storyblok or, in
+	 * the case of plugins, the plugin name is used
 	 */
 	private function getComponentType($block, $key) {
 		if (array_key_exists('plugin', $block)) {
@@ -66,13 +85,13 @@ trait ProcessesBlocks
 		return $key;
 	}
 
-	private function arrayBlock($block) {
-		$blockClass = $this->getBlockClass($block);
-
-		// or return the default block
-		return new $blockClass($block);
-	}
-
+	/**
+	 * Determines which class should be used for the current Block or Asset.
+	 * Do we have one matching it’s component name?
+	 *
+	 * @param $block
+	 * @return string
+	 */
 	private function getBlockClass($block) {
 		$component = $block['component'];
 
@@ -99,12 +118,6 @@ trait ProcessesBlocks
 	 * @return  boolean
 	 */
 	private function isUuid( $uuid ) {
-		return !(!is_string($uuid) || (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) !== 1));
-	}
-
-	private function processStoryblokKeys($block) {
-		$this->_uid = $block['_uid'] ?? null;
-		$this->component = $block['component'] ?? null;
-		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin'])));
+		return (is_string($uuid) && (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid)));
 	}
 }

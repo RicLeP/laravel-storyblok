@@ -9,9 +9,13 @@ trait ConvertsRichtext
 {
 	protected $richtext = [];
 
+	/**
+	 * Takes all the fields in $richtext and applies the Storyblok
+	 * richtext transformer to them. Returns a duplicate field
+	 * suffixed with _html
+	 */
 	public function convertRichtext() {
 		if (!empty($this->richtext)) {
-
 			$richtextResolver = new Resolver();
 
 			foreach ($this->richtext as $richtextField) {
