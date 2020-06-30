@@ -66,9 +66,12 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 
 		$this->carboniseDates();
 
-		$this->convertMarkdown();
-		$this->convertRichtext();
-		$this->autoParagraphs();
+		// run the used ‘automatic’ traits
+		foreach (class_uses_recursive($this) as $trait) {
+			if (method_exists($this, $method = 'init' . class_basename($trait))) {
+				$this->{$method}();
+			}
+		}
 
 		if ($this->getMethods()->contains('transform')) {
 			$this->transform();

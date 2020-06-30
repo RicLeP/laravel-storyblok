@@ -11,7 +11,7 @@ trait AutoParagraphs
 	 * Loops over every field in $autoParagraphs and creates a duplicate
 	 * field suffixed with _html containing html paragraphs
 	 */
-	private function autoParagraphs() {
+	private function initAutoParagraphs() {
 		if (!empty($this->autoParagraphs)) {
 			foreach ($this->autoParagraphs as $field) {
 				if ($this->content->has($field)) {

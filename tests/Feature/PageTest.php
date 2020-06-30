@@ -100,6 +100,17 @@ class PageTest extends TestCase
 	}
 
 	/** @test */
+	public function can_add_paragraphs()
+	{
+		$storyblokMock = $this->mockPage('Trait1');
+
+		$storyblokMock->bySlug('use_default');
+		$class = $storyblokMock->read();
+
+		$this->assertEquals('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>', $class->content()->body_html);
+	}
+
+	/** @test */
 	public function can_convert_markdown()
 	{
 		$storyblokMock = $this->mockPage('Trait1');

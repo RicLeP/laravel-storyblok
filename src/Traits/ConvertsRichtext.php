@@ -14,7 +14,7 @@ trait ConvertsRichtext
 	 * richtext transformer to them. Returns a duplicate field
 	 * suffixed with _html
 	 */
-	public function convertRichtext() {
+	public function initConvertsRichtext() {
 		if (!empty($this->richtext)) {
 			$richtextResolver = new Resolver();
 
