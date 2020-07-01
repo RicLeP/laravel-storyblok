@@ -5,11 +5,21 @@ namespace Riclep\Storyblok\Traits;
 
 
 use Illuminate\Support\Str;
-use Riclep\Storyblok\Block;
 
 trait CssClasses
 {
-	private $layoutPrefix = 'layout_';
+	protected $layoutPrefix = 'layout_';
+
+
+	/**
+	 * Returns the CSS class for the current component
+	 *
+	 * @return string
+	 */
+	public function cssClass()
+	{
+		return Str::kebab($this->component());
+	}
 
 	/**
 	 * Returns a string matching the current component’s name
@@ -20,7 +30,7 @@ trait CssClasses
 	 */
 	public function cssClassWithParent()
 	{
-		return $this->component() . '@' . $this->getAncestorComponent(1);
+		return $this->cssClass() . '@' . Str::kebab($this->getAncestorComponent(1));
 	}
 
 	/**
@@ -34,21 +44,10 @@ trait CssClasses
 	public function cssClassWithLayout()
 	{
 		if ($layout = $this->getLayout()) {
-			return $this->component() . '@' . $layout;
+			return $this->cssClass() . '@' . $layout;
 		}
 
-		return $this->component();
-	}
-
-
-	/**
-	 * Returns the CSS class for the current component
-	 *
-	 * @return string
-	 */
-	public function cssClass()
-	{
-		return $this->component();
+		return $this->cssClass();
 	}
 
 	/**
@@ -75,7 +74,7 @@ trait CssClasses
 
 		foreach ($path as $ancestor) {
 			if ($this->layoutCheck($ancestor)) {
-				return $ancestor;
+				return Str::kebab($ancestor);
 			}
 		}
 
@@ -90,7 +89,7 @@ trait CssClasses
 	 * @param $componentName
 	 * @return bool
 	 */
-	private function layoutCheck($componentName) {
+	protected function layoutCheck($componentName) {
 		return Str::startsWith($componentName, $this->layoutPrefix);
 	}
 }
