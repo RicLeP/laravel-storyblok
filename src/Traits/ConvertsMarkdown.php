@@ -3,24 +3,24 @@
 
 namespace Riclep\Storyblok\Traits;
 
-use League\CommonMark\Converter;
-use League\CommonMark\DocParser;
+use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
-use League\CommonMark\Ext\Autolink\AutolinkExtension;
-use League\CommonMark\Ext\Table\TableExtension;
-use League\CommonMark\HtmlRenderer;
+use League\CommonMark\Extension\Table\TableExtension;
 
 trait ConvertsMarkdown
 {
 	protected $markdown = [];
 
-	private function convertMarkdown() {
-		if ($this->markdown && count($this->markdown)) {
+	/**
+	 * Creates a duplicate to fields in $markdown with an _html suffix
+	 * which contain the transformed markdown content as html
+	 */
+	private function initConvertsMarkdown() {
+		if (!empty($this->markdown)) {
 			$environment = Environment::createCommonMarkEnvironment();
 			$environment->addExtension(new TableExtension());
-			$environment->addExtension(new AutolinkExtension());
 
-			$converter = new Converter(new DocParser($environment), new HtmlRenderer($environment));
+			$converter = new CommonMarkConverter([], $environment);
 
 			foreach ($this->markdown as $markdownField) {
 				if ($this->content->has($markdownField)) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Testcomponents\Storyblok\Pages;
+namespace Riclep\Storyblok\Tests\Fixtures\Pages;
 
 use Riclep\Storyblok\Page;
 

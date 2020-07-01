@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Testcomponents\Storyblok\Blocks;
+namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
 use Riclep\Storyblok\Block;
 

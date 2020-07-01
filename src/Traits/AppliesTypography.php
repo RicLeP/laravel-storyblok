@@ -10,6 +10,9 @@ trait AppliesTypography
 {
 	protected $typographySettings = null;
 
+	/**
+	 * Sensible defaults for your type
+	 */
 	private function defaultSettings() {
 		$settings = new TypographySettings();
 		$settings->set_dewidow(true);
@@ -20,10 +23,18 @@ trait AppliesTypography
 		$this->typographySettings = $settings;
 	}
 
+	/**
+	 * Override the default settings with your own
+	 *
+	 * @param TypographySettings $settings
+	 */
 	protected function setTypographySettings(TypographySettings $settings) {
 		$this->typographySettings = $settings;
 	}
 
+	/**
+	 * Applies the typographic fixes to your text
+	 */
 	protected function applyTypography() {
 		if (!$this->typographySettings) {
 			$this->defaultSettings();
