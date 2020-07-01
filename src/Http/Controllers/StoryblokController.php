@@ -9,7 +9,7 @@ use Riclep\Storyblok\StoryblokFacade as StoryBlok;
 class StoryblokController
 {
 	/**
-	 * Loads a story
+	 * Loads a story rendering the content in the matched view.
 	 *
 	 * @param string $slug
 	 * @return \Illuminate\View\View
@@ -22,9 +22,8 @@ class StoryblokController
 
 	/**
 	 * Deletes the cached API responses
-	 * @param Request $request
 	 */
-	public function destroy(Request $request) {
+	public function destroy() {
 		Cache::flush();
 	}
 }

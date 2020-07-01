@@ -5,7 +5,7 @@ namespace Riclep\Storyblok;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Riclep\Storyblok\Skeleton\SkeletonClass
+ * @method static bySlug(string $slug)
  */
 class StoryblokFacade extends Facade
 {

@@ -100,6 +100,17 @@ class PageTest extends TestCase
 	}
 
 	/** @test */
+	public function can_add_paragraphs()
+	{
+		$storyblokMock = $this->mockPage('Trait1');
+
+		$storyblokMock->bySlug('use_default');
+		$class = $storyblokMock->read();
+
+		$this->assertEquals('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>', $class->content()->body_html);
+	}
+
+	/** @test */
 	public function can_convert_markdown()
 	{
 		$storyblokMock = $this->mockPage('Trait1');
@@ -187,8 +198,8 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$type1 = $class->content()->layout_intro->filterComponent('text_with_links');
-		$type2 = $class->content()->layout_intro->filterComponent('award');
+		$type1 = $class->content()->layout_intro->hasChildComponent('text_with_links');
+		$type2 = $class->content()->layout_intro->hasChildComponent('award');
 
 		$this->assertEquals($type1->count(), 2); // two sets of text_with_links
 		$this->assertEquals($type2->count(), 1); // 1 award

@@ -161,6 +161,7 @@ class TestCase extends Orchestra
 				  "schedule": "2020-10-10 05:05:05",
 				  "description": "Description",
 				  "markdown": "test **content** here [link](/galleries/peh). <fake@example.com>.",
+				  "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 				  "table": "Table | Header\n--- | ---"
 				},
 				"position": -20,

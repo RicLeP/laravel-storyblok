@@ -11,8 +11,12 @@ trait ConvertsMarkdown
 {
 	protected $markdown = [];
 
-	private function convertMarkdown() {
-		if ($this->markdown && count($this->markdown)) {
+	/**
+	 * Creates a duplicate to fields in $markdown with an _html suffix
+	 * which contain the transformed markdown content as html
+	 */
+	private function initConvertsMarkdown() {
+		if (!empty($this->markdown)) {
 			$environment = Environment::createCommonMarkEnvironment();
 			$environment->addExtension(new TableExtension());
 

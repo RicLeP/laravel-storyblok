@@ -38,16 +38,9 @@ abstract class Page
 	}
 
 	/**
-	 * Processes the page’s meta content
-	 */
-	public function process() {
-		return $this;
-	}
-
-	/**
 	 * Perform actions on the data after all blocks have been prepared
 	 *
-	 * @return void
+	 * @return Page
 	 */
 	public function postProcess()
 	{
@@ -62,13 +55,21 @@ abstract class Page
 		return $this;
 	}
 
+	/**
+	 * Process the root Block
+	 *
+	 * @return $this
+	 */
 	public function getBlocks() {
 		$this->content = $this->processBlock($this->processedJson['content'], 'root');
 
 		return $this;
 	}
 
+
 	/**
+	 * Returns an array of possible views for the current page
+	 *
 	 * @return array
 	 */
 	protected function views() {
@@ -105,9 +106,12 @@ abstract class Page
 	}
 
 
+	/**
+	 * Returns tne matching view
+	 *
+	 * @return mixed
+	 */
 	public function view() {
-		//dd($this->views());
-
 		foreach ($this->views() as $view) {
 			if (view()->exists($view)) {
 				return $view;
@@ -135,6 +139,11 @@ abstract class Page
 		return view($this->view(), $content);
 	}
 
+	/**
+	 * Returns the Page’s title
+	 *
+	 * @return string
+	 */
 	public function title() {
 		if ($this->seo) {
 			return $this->seo['title'];
@@ -143,6 +152,11 @@ abstract class Page
 		return $this->processedJson['name'];
 	}
 
+	/**
+	 * Returns the Page’s meta description
+	 *
+	 * @return string
+	 */
 	public function metaDescription() {
 		if ($this->seo) {
 			return $this->seo['description'];
@@ -151,10 +165,20 @@ abstract class Page
 		return  config('seo.default-description');
 	}
 
+	/**
+	 * Return the Page’s content Collection
+	 *
+	 * @return mixed
+	 */
 	public function content() {
 		return $this->content;
 	}
 
+	/**
+	 * Get the Page’s content
+	 *
+	 * @return string
+	 */
 	public function slug()
 	{
 		return $this->processedJson['full_slug'];

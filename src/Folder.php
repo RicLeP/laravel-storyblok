@@ -19,6 +19,11 @@ abstract class Folder
 	protected $slug;
 	protected $settings = [];
 
+	/**
+	 * Reads a content of the returned stories, processing each one
+	 *
+	 * @return \Illuminate\Support\Collection
+	 */
 	public function read() {
 		$response = $this->requestStories(resolve('Storyblok\Client'));
 
@@ -33,20 +38,41 @@ abstract class Folder
 		return $stories;
 	}
 
+	/**
+	 * Sets the slug of the folder to request
+	 *
+	 * @param $slug
+	 */
 	public function slug($slug) {
 		$this->slug = $slug;
 	}
 
+	/**
+	 * The order in which we want the items in the response to be returned
+	 *
+	 * @param $sortBy
+	 */
 	public function sort($sortBy) {
 		$this->sortBy = $sortBy;
 	}
 
+	/**
+	 * Define the settings for the API call
+	 *
+	 * @param $settings
+	 */
 	public function settings($settings) {
 		$this->settings = $settings;
 	}
 
-	protected function requestStories(Client $storyblokClient) {
-
+	/**
+	 * Makes the API request
+	 *
+	 * @param Client $storyblokClient
+	 * @return Client
+	 */
+	protected function requestStories(Client $storyblokClient): Client
+	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $storyblokClient->getStories(array_merge([
 				'is_startpage' => $this->startPage,

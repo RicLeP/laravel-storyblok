@@ -5,7 +5,17 @@ namespace Riclep\Storyblok\Traits;
 
 trait Renderable
 {
+	/**
+	 * Returns an array of possible views for rendering this Block’s content with
+	 * It checks the URL of the current request and matches this to the folder
+	 * structure of the views
+	 *
+	 * @return array
+	 * @throws \Illuminate\Contracts\Container\BindingResolutionException
+	 */
 	protected function views() {
+		$views = [];
+
 		$views[] = config('storyblok.view_path') . 'blocks.uuid.' . $this->_uid;
 		$segments = explode('/', rtrim(app()->make('Page')->slug(), '/'));
 		// creates an array of dot paths for each path segment
@@ -27,28 +37,12 @@ trait Renderable
 	}
 
 	/**
-	 * Returns the first matching view
-	 *
-	 * @return bool|mixed
-	 */
-	public function view() {
-		foreach ($this->views() as $view) {
-			$view = view()->exists($view) ? $view : false;
-			break;
-		}
-
-		return $view;
-	}
-
-	/**
 	 * Finds the view used to display this block’s content
 	 * it will always fall back to a default view.
 	 *
 	 */
 	public function render()
 	{
-
-
 		return view()->first(
 			$this->views(),
 			[
