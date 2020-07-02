@@ -145,8 +145,16 @@ abstract class Page
 	 * @return string
 	 */
 	public function title() {
-		if ($this->seo) {
+		if (property_exists($this, 'titleField') && $this->titleField) {
+			return strip_tags($this->content[$this->titleField]);
+		}
+
+		if ($this->seo && $this->seo['title']) {
 			return $this->seo['title'];
+		}
+
+		if (config('seo.default_title')) {
+			return config('seo.default_title');
 		}
 
 		return $this->processedJson['name'];
@@ -158,11 +166,19 @@ abstract class Page
 	 * @return string
 	 */
 	public function metaDescription() {
-		if ($this->seo) {
+		if (property_exists($this, 'descriptionField') && $this->descriptionField) {
+			return strip_tags($this->content[$this->descriptionField]);
+		}
+
+		if ($this->seo && $this->seo['description']) {
 			return $this->seo['description'];
 		}
 
-		return  config('seo.default-description');
+		if (config('seo.default_description')) {
+			return config('seo.default_description');
+		}
+
+		return null;
 	}
 
 	/**

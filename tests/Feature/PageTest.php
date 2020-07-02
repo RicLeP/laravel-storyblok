@@ -26,7 +26,6 @@ class PageTest extends TestCase
 	public function specific_page_class_is_instantiated()
 	{
 		$storyblokMock = $this->mockPage('Specific');
-
 		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
 
@@ -34,12 +33,28 @@ class PageTest extends TestCase
 	}
 
 
-	/** @xxxxxxtest */
+	/** @test */
+	public function can_load_schema()
+	{
+		$storyblokMock = $this->mockPage('Date');
+
+		$storyblokMock->bySlug('use-date');
+		$class = $storyblokMock->read();
+
+		$class->schemaOrg();
+
+		dd($class);
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Pages\Specific', $class);
+	}
+
+
+	/** @test */
 	public function can_use_page_title_from_config_file()
 	{
-		$storyblokMock = $this->mockPage('Specific');
+		$storyblokMock = $this->mockPage('Date');
 
-		$storyblokMock->bySlug('use_default'); // must have no matching class
+		$storyblokMock->bySlug('date-page'); // must have no matching class
 		$class = $storyblokMock->read();
 
 		$this->assertEquals('Default title from config', $class->title());
@@ -57,6 +72,29 @@ class PageTest extends TestCase
 	}
 
 	/** @test */
+	public function can_read_page_title_from_field()
+	{
+		$storyblokMock = $this->mockPage('Specific');
+
+		$storyblokMock->bySlug('specific');
+		$class = $storyblokMock->read();
+
+		$this->assertEquals('Title from field', $class->title());
+	}
+
+
+	/** @test */
+	public function can_use_page_description_from_config_file()
+	{
+		$storyblokMock = $this->mockPage('Date');
+
+		$storyblokMock->bySlug('date-page'); // must have no matching class
+		$class = $storyblokMock->read();
+
+		$this->assertEquals('Default description from config', $class->metaDescription());
+	}
+
+	/** @test */
 	public function can_read_page_description_from_seo()
 	{
 		$storyblokMock = $this->mockPage();
@@ -65,6 +103,17 @@ class PageTest extends TestCase
 		$class = $storyblokMock->read();
 
 		$this->assertEquals('SEO description', $class->metaDescription());
+	}
+
+	/** @test */
+	public function can_read_page_description_from_field()
+	{
+		$storyblokMock = $this->mockPage('Specific');
+
+		$storyblokMock->bySlug('specific');
+		$class = $storyblokMock->read();
+
+		$this->assertEquals('This is html so we can check it properly.', $class->metaDescription());
 	}
 
 	/** @test */
@@ -117,8 +166,6 @@ class PageTest extends TestCase
 
 		$storyblokMock->bySlug('use_default');
 		$class = $storyblokMock->read();
-
-		//dd($class->content()->table_html);
 
 		$this->assertEquals('<p>test <strong>content</strong> here <a href="/galleries/peh">link</a>. <a href="mailto:fake@example.com">fake@example.com</a>.</p>', trim($class->content()->markdown_html));
 
@@ -358,6 +405,7 @@ class PageTest extends TestCase
 		// $path = ['homepage', 'layout_intro', 'text_with_links', 'links', 'text_link', 'url'];
 
 		$this->assertEquals($class->content()->layout_intro[0]->links->cssClassWithLayout(), 'links@layout_intro');
+		$this->assertEquals($class->content()->layout_intro[0]->links->cssClassWithLayout(true), 'links links@layout_intro');
 		$this->assertEquals($class->content()->cssClassWithLayout(), 'homepage'); // no layout
 	}
 }
