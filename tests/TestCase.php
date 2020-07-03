@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
+use ReflectionMethod;
 use Riclep\Storyblok\Storyblok;
 
 class TestCase extends Orchestra
@@ -16,11 +17,11 @@ class TestCase extends Orchestra
 	 */
 	protected function getEnvironmentSetUp($app)
 	{
-		// Setup default database to use sqlite :memory:
 		$app['config']->set('storyblok.component_class_namespace', 'Riclep\Storyblok\Tests\Fixtures\\');
 		$app['config']->set('storyblok.view_path');
 
 		$app['config']->set('seo.default_title', 'Default title from config');
+		$app['config']->set('seo.default_description', 'Default description from config');
 
 		$viewPath = str_replace('..', '', __DIR__ . DIRECTORY_SEPARATOR .'..' . 'Fixtures' . DIRECTORY_SEPARATOR. 'views');
 
@@ -30,12 +31,15 @@ class TestCase extends Orchestra
 			return new Storyblok;
 		});
 
-		app()->get('storyblok')->content = new \StdClass;
+		//app()->get('storyblok')->content = new \StdClass;
 	}
 
 	protected function mockPage($type = 'Default') {
 		$storyblokMock = $this->getMockBuilder(Storyblok::class, ['requestStory'])->setMethods(['requestStory'])->getMock();
 		$storyblokMock->method('requestStory')->willReturn($this->{'mock' . $type . 'Response'}());
+
+		$method = new ReflectionMethod('Riclep\Storyblok\Tests\Fixtures\Pages\Specific', 'schemaOrg');
+		$method->setAccessible(true);
 
 		return $storyblokMock;
 	}
@@ -127,9 +131,15 @@ class TestCase extends Orchestra
 				  "component": "specific",
 				  "image": "//a.storyblok.com/f/44162/1500x500/68b522b06d/1500x500.jpeg",
 				  "title": "My second title",
+				  "use_for_title": "Title from field",
+				  "use_for_description": "<p>This is html so we can check it properly.</p>",
 				  "body": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". Fusce interdum scelerisque aliquet. Nam gravida dapibus tincidunt. Cras tempor sollicitudin lectus id accumsan. Morbi ante nulla, elementum quis imperdiet vel, pretium a magna. Cras posuere nunc a risus eleifend hendrerit. In porta nisl non odio suscipit consectetur. Fusce egestas tellus vel neque pulvinar faucibus. Phasellus dignissim nunc id nibh vehicula congue.",
 				  "schedule": "2020-10-10 05:05:05",
-				  "description": "Description"
+				  "description": "Description",
+				  "schema": {
+				  		"component": "schema",
+					  "title": "The title"
+				  }
 				},
 				"position": -20,
 				"tag_list": [ ],

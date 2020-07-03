@@ -39,11 +39,16 @@ trait CssClasses
 	 * component@layout_ancestor
 	 * By default a layout component is prefixed layout_
 	 *
+	 * @param bool $includeComponent When true the current component is return along with the layout variant
 	 * @return string
 	 */
-	public function cssClassWithLayout()
+	public function cssClassWithLayout($includeComponent = false)
 	{
 		if ($layout = $this->getLayout()) {
+			if ($includeComponent) {
+				return $this->cssClass() . ' ' . $this->cssClass() . '@' . $layout;
+			}
+
 			return $this->cssClass() . '@' . $layout;
 		}
 

@@ -43,14 +43,14 @@ trait ProcessesBlocks
 			$child = $this->childStory($block);
 			$blockClass = $this->getBlockClass($child['content']);
 
-			return new $blockClass($child);
+			return new $blockClass($child, $this);
 		}
 
 		if (!in_array($key, ['id', 'uuid', 'group_id']) && $this->isUuid($block)) {
 			$child = $this->childStory($block);
 			$blockClass = $this->getBlockClass($child['content']);
 
-			return new $blockClass($child);
+			return new $blockClass($child, $this);
 		}
 
 		// Richtext
@@ -62,7 +62,7 @@ trait ProcessesBlocks
 			$blockClass = $this->getBlockClass($block);
 
 			// or return the default block
-			return new $blockClass($block);
+			return new $blockClass($block, $this);
 		}
 
 		return false;

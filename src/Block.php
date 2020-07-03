@@ -43,15 +43,20 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	private $excluded;
 	private $fieldtype;
 	private $iteratorIndex = 0;
+	private $parent;
 
 	/**
 	 * Converts Storyblok’s API response into something usable by us. Each block becomes a class
 	 * with the Storyblok UUID, the component name and any content under it’s own content key
 	 *
 	 * @param $block
+	 * @param $parent
+	 * @throws \ReflectionException
 	 */
-	public function __construct($block)
+	public function __construct($block, $parent)
 	{
+		$this->parent = $parent;
+
 		if (array_key_exists('content', $block)) {
 			// child story so go straight to the contents but store a few useful meta items from the Story
 			$this->processStoryblokKeys($block['content']);
@@ -157,6 +162,28 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 		});
 	}
 
+	/**
+	 * Returns the parent class
+	 *
+	 * @return mixed
+	 */
+	public function parent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Gets the page that this Block is part of
+	 *
+	 * @return Page
+	 */
+	public function page() {
+		if ($this->parent instanceof Page) {
+			return $this->parent;
+		}
+
+		return $this->parent->page();
+	}
 
 	/**
 	 * Checks if the component has particular children
