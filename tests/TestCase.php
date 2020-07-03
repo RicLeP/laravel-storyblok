@@ -38,9 +38,8 @@ class TestCase extends Orchestra
 		$storyblokMock = $this->getMockBuilder(Storyblok::class, ['requestStory'])->setMethods(['requestStory'])->getMock();
 		$storyblokMock->method('requestStory')->willReturn($this->{'mock' . $type . 'Response'}());
 
-
-
-
+		$method = new ReflectionMethod('Riclep\Storyblok\Tests\Fixtures\Pages\Specific', 'schemaOrg');
+		$method->setAccessible(true);
 
 		return $storyblokMock;
 	}
@@ -136,7 +135,11 @@ class TestCase extends Orchestra
 				  "use_for_description": "<p>This is html so we can check it properly.</p>",
 				  "body": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit\". Fusce interdum scelerisque aliquet. Nam gravida dapibus tincidunt. Cras tempor sollicitudin lectus id accumsan. Morbi ante nulla, elementum quis imperdiet vel, pretium a magna. Cras posuere nunc a risus eleifend hendrerit. In porta nisl non odio suscipit consectetur. Fusce egestas tellus vel neque pulvinar faucibus. Phasellus dignissim nunc id nibh vehicula congue.",
 				  "schedule": "2020-10-10 05:05:05",
-				  "description": "Description"
+				  "description": "Description",
+				  "schema": {
+				  		"component": "schema",
+					  "title": "The title"
+				  }
 				},
 				"position": -20,
 				"tag_list": [ ],

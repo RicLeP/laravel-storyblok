@@ -3,18 +3,17 @@
 
 namespace Riclep\Storyblok;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
 abstract class Page
 {
 	use ProcessesBlocks;
 
-	private $processedJson;
-	private $content;
-	private $seo;
 	protected $title;
+
+	private $content;
+	private $processedJson;
+	private $_meta;
 
 	public function __construct($rawStory)
 	{
@@ -30,9 +29,8 @@ abstract class Page
 			$this->processedJson['seo'] = $this->processedJson['content']['seo'];
 			unset($this->processedJson['content']['seo']);
 
-			$this->seo = $this->processedJson['seo'];
+			$this->_meta['seo'] = $this->processedJson['seo'];
 		}
-
 
 		return $this;
 	}
@@ -129,7 +127,7 @@ abstract class Page
 			'title' => $this->title(),
 			'meta_description' => $this->metaDescription(),
 			'story' => $this->content(),
-			'seo' => $this->seo,
+			'seo' => $this->_meta['seo'],
 		];
 
 		if ($additionalContent) {
@@ -149,8 +147,8 @@ abstract class Page
 			return strip_tags($this->content[$this->titleField]);
 		}
 
-		if ($this->seo && $this->seo['title']) {
-			return $this->seo['title'];
+		if ($this->_meta['seo'] && $this->_meta['seo']['title']) {
+			return $this->_meta['seo']['title'];
 		}
 
 		if (config('seo.default_title')) {
@@ -170,8 +168,8 @@ abstract class Page
 			return strip_tags($this->content[$this->descriptionField]);
 		}
 
-		if ($this->seo && $this->seo['description']) {
-			return $this->seo['description'];
+		if ($this->_meta['seo'] && $this->_meta['seo']['description']) {
+			return $this->_meta['seo']['description'];
 		}
 
 		if (config('seo.default_description')) {

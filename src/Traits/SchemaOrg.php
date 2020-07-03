@@ -4,16 +4,30 @@
 namespace Riclep\Storyblok\Traits;
 
 
+use Riclep\Storyblok\Page;
+
 trait SchemaOrg
 {
-	private $schemaOrg = [];
-
+	/**
+	 * Automatically called to add a schema to the Page
+	 */
 	protected function initSchemaOrg() {
-		//$page = resolve('storyblok')->page;
+		if ($this instanceof Page) {
+			$page = $this;
+		} else {
+			$page = $this->page();
+		}
 
-		// set items on the page
-		// $this->schemaOrg();
+		$page->_meta['schema_org'][] = $this->schemaOrg();
+	}
 
-		$this->schemaOrg();
+	public function schemaOrgScript() {
+		$schemaJson = '';
+
+		foreach ($this->_meta['schema_org'] as $schema) {
+			$schemaJson .= $schema->toScript();
+		}
+
+		return $schemaJson;
 	}
 }

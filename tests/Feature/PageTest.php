@@ -2,8 +2,6 @@
 
 namespace Riclep\Storyblok\Tests\Feature;
 
-
-use Riclep\Storyblok\Storyblok;
 use Riclep\Storyblok\Tests\TestCase;
 
 
@@ -36,18 +34,29 @@ class PageTest extends TestCase
 	/** @test */
 	public function can_load_schema()
 	{
-		$storyblokMock = $this->mockPage('Date');
-
-		$storyblokMock->bySlug('use-date');
+		$storyblokMock = $this->mockPage('Specific');
+		$storyblokMock->bySlug('specific');
 		$class = $storyblokMock->read();
 
-		$class->schemaOrg();
+		// we need to repopulate the singleton as the mocks break it
+		app()->singleton('storyblok', function () use ($class) {
+			return $class;
+		});
+		$storyblok = resolve('storyblok');
 
-		dd($class);
-
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Pages\Specific', $class);
+		$this->assertInstanceOf('Spatie\SchemaOrg\LocalBusiness', $storyblok->_meta['schema_org'][0]);
+		$this->assertInstanceOf('Spatie\SchemaOrg\LocalBusiness', $storyblok->_meta['schema_org'][1]);
 	}
 
+	/** @test */
+	public function can_get_parent()
+	{
+		$storyblokMock = $this->mockPage('Complex');
+		$storyblokMock->bySlug('use_default');
+		$class = $storyblokMock->read();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Page', $class->content()->layout_intro[0]->links[2]->url->page());
+	}
 
 	/** @test */
 	public function can_use_page_title_from_config_file()
