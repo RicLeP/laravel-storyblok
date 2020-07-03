@@ -3,17 +3,19 @@
 
 namespace Riclep\Storyblok;
 
+use Exception;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
 abstract class Page
 {
 	use ProcessesBlocks;
 
+	public $_meta;
+
 	protected $title;
 
 	private $content;
 	private $processedJson;
-	private $_meta;
 
 	public function __construct($rawStory)
 	{
@@ -124,10 +126,7 @@ abstract class Page
 	 */
 	public function render($additionalContent = null) {
 		$content = [
-			'title' => $this->title(),
-			'meta_description' => $this->metaDescription(),
-			'story' => $this->content(),
-			'seo' => $this->_meta['seo'],
+			'story' => $this,
 		];
 
 		if ($additionalContent) {
@@ -196,5 +195,23 @@ abstract class Page
 	public function slug()
 	{
 		return $this->processedJson['full_slug'];
+	}
+
+	/**
+	 * Returns content items from the page’s content-type Block
+	 *
+	 * @param $name
+	 * @return bool|string
+	 */
+	public function __get($name) {
+		try {
+			if ($this->content && $this->content->has($name)) {
+				return $this->content->{$name};
+			}
+
+			return false;
+		} catch (Exception $e) {
+			return 'Caught exception: ' .  $e->getMessage();
+		}
 	}
 }
