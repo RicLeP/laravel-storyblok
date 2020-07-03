@@ -1,5 +1,22 @@
 # Changelog
 
+
+## [1.2.0] - 2020-07-03
+### Changed
+- Blocks now have a `parent()` method which returns the parent Block or Page
+- Blocks have a `page()` method returning the Page the block is part of
+- Added Schema.org support with [Spatie’s Schema.org package](https://github.com/spatie/schema-org)
+- Full Page object is now passed to views
+- `title`, `meta_description` and `seo` are no longer passed to the view as the entire Page is
+- Page `seo` property replaced with `_meta` property
+
+
+## [1.1.3] - 2020-07-01
+### Changed
+- Traits on Blocks and pages can automatically initialise. 
+- CSS class names are not kebab case
+
+
 ## [1.1.2] - 2020-06-25
 ### Changed
 - Updated CommonMark to remove deprecated packages.
