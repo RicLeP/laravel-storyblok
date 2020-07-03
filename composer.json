@@ -8,13 +8,13 @@
         "content management",
         "headless cms"
     ],
-    "homepage": "https://bitbucket.org/rlepoidevin/storyblok/src",
+    "homepage": "https://github.com/RicLeP/laravel-storyblok/",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
             "name": "Richard Le Poidevin",
-            "email": "ric@wearebwi.com",
+            "email": "ric@sirric.co.uk",
             "role": "Developer"
         }
     ],
@@ -22,11 +22,12 @@
         "php": "^7.1",
         "ext-json": "*",
         "illuminate/support": "^6.0|^7.0",
-		"imliam/laravel-env-set-command":  "^1.0",
-		"league/commonmark": "^1.5",
-		"mundschenk-at/php-typography": "^6.5",
-		"storyblok/php-client": "^1.3",
-		"storyblok/richtext-resolver": "dev-master"
+        "imliam/laravel-env-set-command": "^1.0",
+        "league/commonmark": "^1.5",
+        "mundschenk-at/php-typography": "^6.5",
+        "spatie/schema-org": "^2.14",
+        "storyblok/php-client": "^1.3",
+        "storyblok/richtext-resolver": "dev-master#3f096cc26a0bb86f8614933c4ddc233dcbdd254d"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",

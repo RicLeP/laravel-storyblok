@@ -3,18 +3,19 @@
 
 namespace Riclep\Storyblok;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Exception;
 use Riclep\Storyblok\Traits\ProcessesBlocks;
 
 abstract class Page
 {
 	use ProcessesBlocks;
 
-	private $processedJson;
-	private $content;
-	private $seo;
+	public $_meta;
+
 	protected $title;
+
+	private $content;
+	private $processedJson;
 
 	public function __construct($rawStory)
 	{
@@ -30,9 +31,8 @@ abstract class Page
 			$this->processedJson['seo'] = $this->processedJson['content']['seo'];
 			unset($this->processedJson['content']['seo']);
 
-			$this->seo = $this->processedJson['seo'];
+			$this->_meta['seo'] = $this->processedJson['seo'];
 		}
-
 
 		return $this;
 	}
@@ -126,10 +126,7 @@ abstract class Page
 	 */
 	public function render($additionalContent = null) {
 		$content = [
-			'title' => $this->title(),
-			'meta_description' => $this->metaDescription(),
-			'story' => $this->content(),
-			'seo' => $this->seo,
+			'story' => $this,
 		];
 
 		if ($additionalContent) {
@@ -145,8 +142,16 @@ abstract class Page
 	 * @return string
 	 */
 	public function title() {
-		if ($this->seo) {
-			return $this->seo['title'];
+		if (property_exists($this, 'titleField') && $this->titleField) {
+			return strip_tags($this->content[$this->titleField]);
+		}
+
+		if ($this->_meta['seo'] && $this->_meta['seo']['title']) {
+			return $this->_meta['seo']['title'];
+		}
+
+		if (config('seo.default_title')) {
+			return config('seo.default_title');
 		}
 
 		return $this->processedJson['name'];
@@ -158,11 +163,19 @@ abstract class Page
 	 * @return string
 	 */
 	public function metaDescription() {
-		if ($this->seo) {
-			return $this->seo['description'];
+		if (property_exists($this, 'descriptionField') && $this->descriptionField) {
+			return strip_tags($this->content[$this->descriptionField]);
 		}
 
-		return  config('seo.default-description');
+		if ($this->_meta['seo'] && $this->_meta['seo']['description']) {
+			return $this->_meta['seo']['description'];
+		}
+
+		if (config('seo.default_description')) {
+			return config('seo.default_description');
+		}
+
+		return null;
 	}
 
 	/**
@@ -182,5 +195,23 @@ abstract class Page
 	public function slug()
 	{
 		return $this->processedJson['full_slug'];
+	}
+
+	/**
+	 * Returns content items from the page’s content-type Block
+	 *
+	 * @param $name
+	 * @return bool|string
+	 */
+	public function __get($name) {
+		try {
+			if ($this->content && $this->content->has($name)) {
+				return $this->content->{$name};
+			}
+
+			return false;
+		} catch (Exception $e) {
+			return 'Caught exception: ' .  $e->getMessage();
+		}
 	}
 }

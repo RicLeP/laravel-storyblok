@@ -2,9 +2,7 @@
 
 namespace Riclep\Storyblok;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Riclep\Storyblok\Http\Controllers\StoryblokController;
 use Storyblok\Client;
 
 class StoryblokServiceProvider extends ServiceProvider
