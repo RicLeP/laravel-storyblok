@@ -69,9 +69,11 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 			$this->preTransform();
 		}
 
-		$this->content->transform(function($item, $key) {
-			return $this->processBlock($item, $key);
-		});
+		if (!$this->dontProcessChildren) {
+			$this->content->transform(function ($item, $key) {
+				return $this->processBlock($item, $key);
+			});
+		}
 
 		$this->carboniseDates();
 
@@ -99,8 +101,8 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	 */
 	private function processStoryblokKeys($block) {
 		$this->_uid = $block['_uid'] ?? null;
-		if (property_exists($this->parent, 'childComponentType')) {
-			$this->component = $this->parent->childComponentType;
+		if (property_exists($this->parent, 'childComponentTypes') && array_key_exists($block['component'], $this->parent->childComponentTypes)) {
+			$this->component = $this->parent->childComponentTypes[$block['component']];
 		} else {
 			$this->component = $block['component'] ?? null;
 		}
