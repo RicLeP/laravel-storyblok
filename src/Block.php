@@ -65,6 +65,10 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 			$this->processStoryblokKeys($block);
 		}
 
+		if ($this->getMethods()->contains('preTransform')) {
+			$this->preTransform();
+		}
+
 		$this->content->transform(function($item, $key) {
 			return $this->processBlock($item, $key);
 		});
@@ -95,7 +99,11 @@ abstract class Block implements \JsonSerializable, \Iterator, \ArrayAccess, \Cou
 	 */
 	private function processStoryblokKeys($block) {
 		$this->_uid = $block['_uid'] ?? null;
-		$this->component = $block['component'] ?? null;
+		if (property_exists($this->parent, 'childComponentType')) {
+			$this->component = $this->parent->childComponentType;
+		} else {
+			$this->component = $block['component'] ?? null;
+		}
 		$this->content = collect(array_diff_key($block, array_flip(['_editable', '_uid', 'component', 'plugin', 'fieldtype'])));
 		$this->fieldtype = $block['fieldtype'] ?? null;
 	}
