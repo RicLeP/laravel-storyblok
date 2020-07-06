@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 trait ProcessesBlocks
 {
 	/**
-	 * Starts tge process for working out the block’s type
+	 * Starts the process for working out the block’s type
 	 *
 	 * @param $block
 	 * @param $key
