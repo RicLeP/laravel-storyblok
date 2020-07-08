@@ -55,7 +55,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Riclep\\Storyblok\\StoryblokServiceProvider"
+				"xStoryblokServiceProvider"
             ],
             "aliases": {
                 "Storyblok": "Riclep\\Storyblok\\StoryblokFacade"

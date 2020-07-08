@@ -5,7 +5,7 @@ namespace Riclep\Storyblok;
 use Illuminate\Support\ServiceProvider;
 use Storyblok\Client;
 
-class StoryblokServiceProvider extends ServiceProvider
+class xStoryblokServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -38,7 +38,7 @@ class StoryblokServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('storyblok', function () {
-            return new Storyblok;
+            return new xStoryblok;
         });
 
 		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');

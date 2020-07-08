@@ -6,7 +6,7 @@ namespace Riclep\Storyblok\Traits;
 
 use Illuminate\Support\Str;
 
-trait ProcessesBlocks
+trait xProcessesBlocks
 {
 	/**
 	 * Starts the process for working out the block’s type

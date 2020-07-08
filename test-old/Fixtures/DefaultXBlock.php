@@ -2,12 +2,12 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures;
 
-use Riclep\Storyblok\Block;
-use Riclep\Storyblok\Traits\CssClasses;
+use Riclep\Storyblok\xBlock;
+use Riclep\Storyblok\Traits\xCssClasses;
 
-class DefaultBlock extends Block
+class DefaultXBlock extends xBlock
 {
-	use CssClasses;
+	use xCssClasses;
 
 	public function getSubtitleAttribute() {
 		return strtoupper($this->content['subtitle']);

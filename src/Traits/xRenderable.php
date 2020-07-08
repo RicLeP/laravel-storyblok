@@ -3,7 +3,7 @@
 
 namespace Riclep\Storyblok\Traits;
 
-trait Renderable
+trait xRenderable
 {
 	/**
 	 * Returns an array of possible views for rendering this Block’s content with

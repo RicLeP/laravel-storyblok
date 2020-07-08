@@ -3,9 +3,9 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
-use Riclep\Storyblok\Block;
+use Riclep\Storyblok\xBlock;
 
-class Children extends Block
+class Children extends xBlock
 {
 	public function byUuid($block) {
 

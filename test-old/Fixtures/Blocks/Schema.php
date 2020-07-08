@@ -3,10 +3,10 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
-use Riclep\Storyblok\Block;
+use Riclep\Storyblok\xBlock;
 use Riclep\Storyblok\Traits\SchemaOrg;
 
-class Schema extends Block
+class Schema extends xBlock
 {
 	use SchemaOrg;
 

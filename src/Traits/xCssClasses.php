@@ -6,7 +6,7 @@ namespace Riclep\Storyblok\Traits;
 
 use Illuminate\Support\Str;
 
-trait CssClasses
+trait xCssClasses
 {
 	protected $layoutPrefix = 'layout_';
 

@@ -4,7 +4,7 @@
 namespace Riclep\Storyblok\Traits;
 
 
-use Riclep\Storyblok\Page;
+use Riclep\Storyblok\xPage;
 
 trait SchemaOrg
 {
@@ -12,7 +12,7 @@ trait SchemaOrg
 	 * Automatically called to add a schema to the Page
 	 */
 	protected function initSchemaOrg() {
-		if ($this instanceof Page) {
+		if ($this instanceof xPage) {
 			$page = $this;
 		} else {
 			$page = $this->page();

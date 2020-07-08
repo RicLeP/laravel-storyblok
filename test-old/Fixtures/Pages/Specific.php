@@ -2,11 +2,11 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures\Pages;
 
-use Riclep\Storyblok\Page;
+use Riclep\Storyblok\xPage;
 use Riclep\Storyblok\Traits\SchemaOrg;
 use Spatie\SchemaOrg\Schema;
 
-class Specific extends Page
+class Specific extends xPage
 {
 	use SchemaOrg;
 

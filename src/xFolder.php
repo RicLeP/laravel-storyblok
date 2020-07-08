@@ -5,12 +5,12 @@ namespace Riclep\Storyblok;
 
 
 use Illuminate\Support\Facades\Cache;
-use Riclep\Storyblok\Traits\ProcessesBlocks;
+use Riclep\Storyblok\Traits\xProcessesBlocks;
 use Storyblok\Client;
 
-abstract class Folder
+abstract class xFolder
 {
-	use ProcessesBlocks;
+	use xProcessesBlocks;
 
 	protected $startPage = false;
 	protected $currentPage = 1;

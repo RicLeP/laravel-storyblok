@@ -3,11 +3,11 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
-use Riclep\Storyblok\Block;
+use Riclep\Storyblok\xBlock;
 use Riclep\Storyblok\Traits\AppliesTypography;
 use Riclep\Storyblok\Traits\ConvertsMarkdown;
 
-class Trait1 extends Block
+class Trait1 extends xBlock
 {
 	use AppliesTypography;
 

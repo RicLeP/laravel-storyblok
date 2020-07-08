@@ -3,9 +3,9 @@
 
 namespace Riclep\Storyblok\Tests\Fixtures\Blocks;
 
-use Riclep\Storyblok\Block;
+use Riclep\Storyblok\xBlock;
 
-class Date extends Block
+class Date extends xBlock
 {
 	protected $dates = ['schedule'];
 }

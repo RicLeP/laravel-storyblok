@@ -4,7 +4,7 @@
 namespace Riclep\Storyblok;
 
 
-class Asset extends Block
+class xAsset extends xBlock
 {
 	/**
 	 * Checks a file has been uploaded. Storyblok will return

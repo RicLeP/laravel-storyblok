@@ -2,10 +2,10 @@
 
 namespace Riclep\Storyblok\Tests\Feature;
 
-use Riclep\Storyblok\Tests\TestCase;
+use Riclep\Storyblok\Tests\xTestCase;
 
 
-class PageTest extends TestCase
+class PageXTest extends xTestCase
 {
 	/** @test */
 	public function default_page_class_is_instantiated_when_specific_match_is_not_found()
@@ -16,7 +16,7 @@ class PageTest extends TestCase
 
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\DefaultPage', $class);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\DefaultXPage', $class);
 	}
 
 
@@ -55,7 +55,7 @@ class PageTest extends TestCase
 		$storyblokMock->bySlug('use_default');
 		$class = $storyblokMock->read();
 
-		$this->assertInstanceOf('Riclep\Storyblok\Page', $class->content()->layout_intro[0]->links[2]->url->page());
+		$this->assertInstanceOf('Riclep\Storyblok\xPage', $class->content()->layout_intro[0]->links[2]->url->page());
 	}
 
 	/** @test */

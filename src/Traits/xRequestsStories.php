@@ -8,12 +8,12 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Storyblok\Client;
 
-trait RequestsStories
+trait xRequestsStories
 {
 	/**
 	 * Reads the Blocks in the Story
 	 *
-	 * @return RequestsStories
+	 * @return xRequestsStories
 	 */
 	public function read()
 	{
