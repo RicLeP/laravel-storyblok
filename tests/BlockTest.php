@@ -110,6 +110,15 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_read_text_accessor_field()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals('TEXT', $block->text_uppercase);
+	}
+
+	/** @test */
 	public function can_read_richtext_field()
 	{
 		$page = $this->makePage();

@@ -15,6 +15,8 @@ class Block
 	private $_fields;
 	private $_meta;
 
+	// TODO cast fields as types / classes
+
 	public function __construct($content)
 	{
 		$this->preprocess($content);
@@ -33,16 +35,16 @@ class Block
 		return $this->_fields->has($key);
 	}
 
-	public function __get($name) {
-		/*$accessor = 'get' . Str::studly($name) . 'Attribute';
+	public function __get($key) {
+		$accessor = 'get' . Str::studly($key) . 'Attribute';
 
-		if ($this->getMethods()->contains($accessor)) {
+		if (method_exists($this, $accessor)) {
 			return $this->$accessor();
-		}*/
+		}
 
 		try {
-			if ($this->has($name)) {
-				return $this->_fields[$name];
+			if ($this->has($key)) {
+				return $this->_fields[$key];
 			}
 
 			return false;
