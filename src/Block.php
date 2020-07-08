@@ -9,6 +9,7 @@ use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Blocks;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
+use Riclep\Storyblok\Fields\Table;
 
 class Block
 {
@@ -86,6 +87,11 @@ class Block
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
 			// todo - get specific field class
 			return new Asset($field);
+		}
+
+		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
+			// todo - get specific field class
+			return new Table($field);;
 		}
 
 		if (array_key_exists(0, $field) && is_array($field[0]) && array_key_exists('component', $field[0])) {

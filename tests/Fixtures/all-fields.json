@@ -164,7 +164,45 @@
 					"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"f5bc110c-4679-4306-bd74-e3f0f1168194\", \"id\": \"14994141\"}--\u003e"
 				}
 			],
-			"blocks_empty": []
+			"blocks_empty": [],
+			"table": {
+				"tbody": [
+					{
+						"_uid": "e9932c19-7678-42fd-b8c5-abf19818f15a",
+						"body": [
+							{
+								"_uid": "fcd723d9-f0a6-4d85-99b4-96943427d7aa",
+								"value": "value",
+								"component": "_table_col",
+								"_editable": "\u003c!--#storyblok#{\"name\": \"_table_col\", \"space\": \"52681\", \"uid\": \"fcd723d9-f0a6-4d85-99b4-96943427d7aa\", \"id\": \"14994141\"}--\u003e"
+							},
+							{
+								"_uid": "1b2bf83e-adbf-42cb-bcc3-f175de0f9240",
+								"value": "value 2",
+								"component": "_table_col",
+								"_editable": "\u003c!--#storyblok#{\"name\": \"_table_col\", \"space\": \"52681\", \"uid\": \"1b2bf83e-adbf-42cb-bcc3-f175de0f9240\", \"id\": \"14994141\"}--\u003e"
+							}
+						],
+						"component": "_table_row",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_row\", \"space\": \"52681\", \"uid\": \"e9932c19-7678-42fd-b8c5-abf19818f15a\", \"id\": \"14994141\"}--\u003e"
+					}
+				],
+				"thead": [
+					{
+						"_uid": "739f8259-2d18-47a3-a92f-cf652106b50b",
+						"value": "title",
+						"component": "_table_head",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_head\", \"space\": \"52681\", \"uid\": \"739f8259-2d18-47a3-a92f-cf652106b50b\", \"id\": \"14994141\"}--\u003e"
+					},
+					{
+						"_uid": "f301e2ee-600e-4f2a-95b2-8df8f37b3f00",
+						"value": "title 2",
+						"component": "_table_head",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_head\", \"space\": \"52681\", \"uid\": \"f301e2ee-600e-4f2a-95b2-8df8f37b3f00\", \"id\": \"14994141\"}--\u003e"
+					}
+				],
+				"fieldtype": "table"
+			}
 		}
 	}
 }
