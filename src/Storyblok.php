@@ -8,6 +8,6 @@ class Storyblok
 {
 	public function read() {
 		$request = new RequestStory();
-		return $request->get();
+		//return $request->get();
 	}
 }

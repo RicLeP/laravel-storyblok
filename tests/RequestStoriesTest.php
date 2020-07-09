@@ -8,7 +8,7 @@ use Riclep\Storyblok\RequestStory;
 
 class RequestStoriesTest extends TestCase
 {
-	/** @test */
+	/** @tttest */
 	public function can_request_stories()
 	{
 		$requester = new RequestStory();
