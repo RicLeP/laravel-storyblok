@@ -5,7 +5,7 @@ namespace Riclep\Storyblok;
 use Illuminate\Support\ServiceProvider;
 use Storyblok\Client;
 
-class xStoryblokServiceProvider extends ServiceProvider
+class StoryblokServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -15,7 +15,7 @@ class xStoryblokServiceProvider extends ServiceProvider
         /*
          * Optional methods to load your package assets
          */
-        $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
+       /* $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
 
         if ($this->app->runningInConsole()) {
 			$this->publishes([
@@ -25,7 +25,7 @@ class xStoryblokServiceProvider extends ServiceProvider
 				__DIR__.'/../stubs/DefaultFolder.stub' => app_path('Storyblok') . '/DefaultFolder.php',
 				__DIR__.'/../stubs/DefaultAsset.stub' => app_path('Storyblok') . '/DefaultAsset.php',
 			], 'storyblok');
-        }
+        }*/
     }
 
     /**
@@ -41,6 +41,7 @@ class xStoryblokServiceProvider extends ServiceProvider
             return new xStoryblok;
         });*/
 
+		////////////TODO should this be a middleware
 		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');
 		if (!empty($storyblokRequest)) {
 			$pre_token = $storyblokRequest['space_id'] . ':' . config('storyblok.api_preview_key') . ':' . $storyblokRequest['timestamp'];
@@ -51,7 +52,7 @@ class xStoryblokServiceProvider extends ServiceProvider
 			}
 		}
 
-        // register the Storyblok client, checkking if we are in edit more of the dev requests draft content
+        // register the Storyblok client, checking if we are in edit more of the dev requests draft content
 		if (config('storyblok.draft')) {
 			$client = new Client(config('storyblok.api_preview_key'));
 		} else {

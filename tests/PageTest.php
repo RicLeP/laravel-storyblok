@@ -2,7 +2,6 @@
 
 namespace Riclep\Storyblok\Tests;
 
-use Riclep\Storyblok\Page;
 
 class PageTest extends TestCase
 {

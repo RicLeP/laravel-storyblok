@@ -71,6 +71,10 @@
 			"multi_options_single": [
 				"option-2"
 			],
+			"multi_options_stories": [
+				"dfc9b1ec-3141-4775-980c-e9285c350601",
+				"cb1bb01a-e414-49ed-85d0-03f63f35171f"
+			],
 			"single_option": "option-3",
 			"hero": {
 				"id": 1223942,

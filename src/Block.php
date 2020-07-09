@@ -9,6 +9,7 @@ use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
+use Storyblok\Client;
 
 class Block
 {
@@ -121,7 +122,7 @@ class Block
 		}
 
 		// complex fields
-		if (is_array($field)) {
+		if (is_array($field) && !empty($field)) {
 			return $this->arrayFieldTypes($field);
 		}
 
@@ -148,19 +149,30 @@ class Block
 			return new Table($field);
 		}
 
-		// this field holds blocks!
-		if (array_key_exists(0, $field) && is_array($field[0]) && array_key_exists('component', $field[0])) {
-			return collect($field)->transform(function ($block) {
-				$class = $this->getBlockClass($block);
+		if (Str::isUuid($field[0])) {
 
-				return new $class($block, $this);
-			});
+dd($response);
+			return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
 		}
 
-		if (array_key_exists(0, $field) && is_array($field[0]) && array_key_exists('filename', $field[0])) {
-			return new MultiAsset($field);
+		// had child items
+		if (is_array($field[0])) {
+			// this field holds blocks!
+			if (array_key_exists('component', $field[0])) {
+				return collect($field)->transform(function ($block) {
+					$class = $this->getBlockClass($block);
+
+					return new $class($block, $this);
+				});
+			}
+
+			// multi assets
+			if (array_key_exists('filename', $field[0])) {
+				return new MultiAsset($field);
+			}
 		}
 
+		// just return the array
 		return $field;
 	}
 
@@ -188,5 +200,4 @@ class Block
 
 		return false;
 	}
-
 }
