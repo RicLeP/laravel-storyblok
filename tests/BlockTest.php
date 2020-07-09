@@ -2,8 +2,7 @@
 
 namespace Riclep\Storyblok\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
-use Riclep\Storyblok\Page;
+
 
 class BlockTest extends TestCase
 {
@@ -101,12 +100,12 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
-	public function can_identify_blocks_field()
+	public function can_identify_create_blocks()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
 
-		$this->assertInstanceOf('Riclep\Storyblok\Fields\Blocks', $block->blocks);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $block->blocks[0]);
 	}
 
 	/** @test */
@@ -135,4 +134,74 @@ class BlockTest extends TestCase
 
 		$this->assertEquals('<p><b>textarea</b></p><p>richtext</p>', $block->richtext);
 	}
+
+	/** @test */
+	public function can_cast_field_types()
+	{
+		$page = $this->makePage('custom-page.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage', $block->image);
+		$this->assertInstanceOf('Riclep\Storyblok\Fields\DateTime', $block->datetime);
+	}
+
+	/** @test */
+	public function can_get_parent()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Page', $block->parent());
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $block->blocks[0]->parent());
+	}
+
+	/** @test */
+	public function can_get_page()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Page', $block->blocks[0]->page());
+
+	}
+
+	/** @test */
+	public function can_get_component_path()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals(['page', 'all-fields', 'person'], $block->blocks[0]->_componentPath);
+	}
+
+	/** @test */
+	public function can_get_ancestor_component()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals('all-fields', $block->blocks[0]->ancestorComponentName(1));
+		$this->assertEquals('page', $block->blocks[0]->ancestorComponentName(2));
+	}
+
+	/** @test */
+	public function can_check_is_child_of_component()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertTrue($block->blocks[0]->isChildOf('all-fields'));
+		$this->assertFalse($block->blocks[0]->isChildOf('page'));
+	}
+
+	/** @test */
+	public function can_check_is_ancestor_of_component()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertTrue($block->blocks[0]->isAncestorOf('page'));
+		$this->assertFalse($block->blocks[0]->isAncestorOf('cats'));
+	}
+
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class Page
 {
+	public $_componentPath = ['page'];
 	protected $_meta = [];
 
 	private $block;
@@ -80,7 +81,8 @@ class Page
 
 	private function getBlock($content) {
 		$class = $this->getBlockClass($content);
-		return new $class($content);
+
+		return new $class($content, $this);
 	}
 
 	// TODO methods for accessing meta data

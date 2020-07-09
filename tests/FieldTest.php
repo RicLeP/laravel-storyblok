@@ -146,4 +146,13 @@ class FieldTest extends TestCase
 		$field = new StoryLink($this->getFieldContents('link_story'));
 		$this->assertEquals('key-people/primary-contact', (string) $field);
 	}
+
+	/** @test */
+	public function can_use_custom_field_class()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\Hero', $block->hero);
+	}
 }

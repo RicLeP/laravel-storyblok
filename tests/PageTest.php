@@ -13,7 +13,7 @@ class PageTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Page', $page);
 	}
 
-	/** @xxtest */
+	/** @xxxtest */
 	public function can_get_bespoke_page_class()
 	{
 		// TODO
@@ -77,7 +77,7 @@ class PageTest extends TestCase
 	}
 
 	/** @test */
-	public function can_get_bespoke_content_block_class()
+	public function can_get_bespoke_page_content_block_class()
 	{
 		$page = $this->makePage('custom-page.json');
 

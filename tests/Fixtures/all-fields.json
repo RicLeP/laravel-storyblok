@@ -72,6 +72,16 @@
 				"option-2"
 			],
 			"single_option": "option-3",
+			"hero": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
 			"asset": {
 				"id": 1223942,
 				"alt": null,
@@ -157,11 +167,47 @@
 			"file_old": "//a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
 			"blocks": [
 				{
-					"Name": "",
+					"Name": "name",
 					"_uid": "f5bc110c-4679-4306-bd74-e3f0f1168194",
-					"Position": "",
+					"Position": "surname",
 					"component": "Person",
 					"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"f5bc110c-4679-4306-bd74-e3f0f1168194\", \"id\": \"14994141\"}--\u003e"
+				},
+				{
+					"_uid": "4d2e5b2b-269f-4d54-96a0-34a4fc9843b7",
+					"asset": {
+						"id": 1232246,
+						"alt": null,
+						"name": "",
+						"focus": null,
+						"title": null,
+						"filename": "https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg",
+						"copyright": null,
+						"fieldtype": "asset"
+					},
+					"component": "asset",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"asset\", \"space\": \"52681\", \"uid\": \"4d2e5b2b-269f-4d54-96a0-34a4fc9843b7\", \"id\": \"14994141\"}--\u003e"
+				},
+				{
+					"_uid": "13bc5dc7-5c9d-489a-9dfa-31cc50ac55b5",
+					"blocks": [
+						{
+							"Name": "name",
+							"_uid": "b8d40e6a-34b7-457e-b5c3-a2148e9fe1d3",
+							"Position": "surname",
+							"component": "Person",
+							"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"b8d40e6a-34b7-457e-b5c3-a2148e9fe1d3\", \"id\": \"14994141\"}--\u003e"
+						},
+						{
+							"_uid": "41c3563c-27ba-472b-8ebb-f351c085a00e",
+							"body": "body",
+							"headline": "headline",
+							"component": "teaser",
+							"_editable": "\u003c!--#storyblok#{\"name\": \"teaser\", \"space\": \"52681\", \"uid\": \"41c3563c-27ba-472b-8ebb-f351c085a00e\", \"id\": \"14994141\"}--\u003e"
+						}
+					],
+					"component": "blocks",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"blocks\", \"space\": \"52681\", \"uid\": \"13bc5dc7-5c9d-489a-9dfa-31cc50ac55b5\", \"id\": \"14994141\"}--\u003e"
 				}
 			],
 			"blocks_empty": [],
