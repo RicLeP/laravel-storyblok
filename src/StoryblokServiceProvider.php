@@ -41,7 +41,7 @@ class StoryblokServiceProvider extends ServiceProvider
             return new xStoryblok;
         });*/
 
-		////////////TODO should this be a middleware
+		////////////TODO should this be a middleware?
 		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');
 		if (!empty($storyblokRequest)) {
 			$pre_token = $storyblokRequest['space_id'] . ':' . config('storyblok.api_preview_key') . ':' . $storyblokRequest['timestamp'];
