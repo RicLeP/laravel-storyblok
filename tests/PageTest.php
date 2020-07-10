@@ -90,4 +90,20 @@ class PageTest extends TestCase
 
 		$this->assertEquals('text', $page->text);
 	}
+
+	/** @test */
+	public function can_add_schema_org()
+	{
+		$page = $this->makePage('custom-page.json');
+
+		$this->assertInstanceOf('Spatie\SchemaOrg\LocalBusiness', $page->meta()['schema_org'][0]);
+	}
+
+	/** @test */
+	public function can_read_schema_org()
+	{
+		$page = $this->makePage('custom-page.json');
+
+		$this->assertEquals('<script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"LocalBusiness","name":"On the page","email":"ric@sirric.co.uk","contactPoint":{"@type":"ContactPoint","areaServed":"Worldwide"}}</script><script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"Person","givenName":"In the Person block","email":"ric@sirric.co.uk"}</script>', $page->schemaOrgScript());
+	}
 }

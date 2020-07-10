@@ -5,12 +5,17 @@ namespace Riclep\Storyblok;
 
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
+use Riclep\Storyblok\Traits\HasChildClasses;
+use Riclep\Storyblok\Traits\HasMeta;
+use Riclep\Storyblok\Traits\SchemaOrg;
 
 class Page
 {
+	use HasChildClasses;
+	use HasMeta;
+	use SchemaOrg;
+
 	public $_componentPath = ['page'];
-	protected $_meta = [];
 
 	private $block;
 	private $story;
@@ -20,8 +25,17 @@ class Page
 
 		$this->preprocess();
 
-		$this->block = $this->getBlock($this->story['content']);
+		$this->block = $this->createBlock($this->story['content']);
+
+		// run automatic traits
+		foreach (class_uses_recursive($this) as $trait) {
+			if (method_exists($this, $method = 'init' . class_basename($trait))) {
+				$this->{$method}();
+			}
+		}
 	}
+
+
 
 	public function publishedAt() {
 		return Carbon::parse($this->story['first_published_at']);
@@ -69,21 +83,9 @@ class Page
 		$this->story;
 	}
 
-	private function getBlockClass($content) {
-		$component = $content['component'];
-
-		if (class_exists(config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component))) {
-			return config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component);
-		}
-
-		return config('storyblok.component_class_namespace') . 'Block';
-	}
-
-	private function getBlock($content) {
-		$class = $this->getBlockClass($content);
+	private function createBlock($content) {
+		$class = $this->getChildClassName('Block', $content['component']);
 
 		return new $class($content, $this);
 	}
-
-	// TODO methods for accessing meta data
 }

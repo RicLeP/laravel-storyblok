@@ -2,6 +2,7 @@
 
 namespace Riclep\Storyblok\Tests;
 
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Riclep\Storyblok\Page;
 
@@ -29,7 +30,13 @@ class TestCase extends Orchestra
 	protected function makePage($file = null) {
 		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/' . ($file ?: 'all-fields.json')), true);
 
-		return new Page($story['story']);
+		if ($file) {
+			$class = config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($story['story']['content']['component']);
+		} else {
+			$class = 'Page';
+		}
+
+		return new $class($story['story']);
 	}
 
 }

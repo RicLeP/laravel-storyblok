@@ -9,14 +9,19 @@ use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
-use Storyblok\Client;
+use Riclep\Storyblok\Traits\CssClasses;
+use Riclep\Storyblok\Traits\HasChildClasses;
+use Riclep\Storyblok\Traits\HasMeta;
 
 class Block
 {
+	use CssClasses;
+	use HasChildClasses;
+	use HasMeta;
+
 	public $_autoResolveRelations = false;
 	public $_componentPath = [];
 	private $_fields;
-	private $_meta;
 	private $_parent;
 
 	public function __construct($content, $parent)
@@ -27,18 +32,17 @@ class Block
 		$this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
 
 		$this->processFields();
+
+		// run automatic traits
+		foreach (class_uses_recursive($this) as $trait) {
+			if (method_exists($this, $method = 'init' . class_basename($trait))) {
+				$this->{$method}();
+			}
+		}
 	}
 
 	public function content() {
 		return $this->_fields;
-	}
-
-	public function meta() {
-		return $this->_meta;
-	}
-
-	public function addMeta($fields) {
-		$this->_meta = array_merge($this->_meta, $fields);
 	}
 
 	public function has($key) {
@@ -90,6 +94,10 @@ class Block
 		return in_array($parent, $this->parent()->_componentPath);
 	}
 
+	public function component() {
+		return $this->_meta['component'];
+	}
+
 	public function __get($key) {
 		$accessor = 'get' . Str::studly($key) . 'Attribute';
 
@@ -121,7 +129,7 @@ class Block
 		}
 
 		// auto-match Field classes
-		if ($class = $this->getFieldClass($key)) {
+		if ($class = $this->getChildClassName('Field', $key)) {
 			return new $class($field);
 		}
 
@@ -161,10 +169,11 @@ class Block
 					$request = new RequestStory();
 					$response = $request->get($relation);
 
-					$class = $this->getBlockClass($response['content']);
+					$class = $this->getChildClassName('Block', $response['content']['component']);
 					$relationClass = new $class($response['content'], $this);
 
 					$relationClass->addMeta([
+						'name' => $relation['name'],
 						'published_at' => $response['published_at'],
 						'full_slug' => $response['full_slug'],
 					]);
@@ -179,10 +188,11 @@ class Block
 			// resolved relationships - entire story is returned, we just want the content and a few meta items
 			if (array_key_exists('content', $field[0])) {
 				return collect($field)->transform(function ($relation) {
-					$class = $this->getBlockClass($relation['content']);
+					$class = $this->getChildClassName('Block', $relation['content']['component']);
 					$relationClass = new $class($relation['content'], $this);
 
 					$relationClass->addMeta([
+						'name' => $relation['name'],
 						'published_at' => $relation['published_at'],
 						'full_slug' => $relation['full_slug'],
 					]);
@@ -194,7 +204,7 @@ class Block
 			// this field holds blocks!
 			if (array_key_exists('component', $field[0])) {
 				return collect($field)->transform(function ($block) {
-					$class = $this->getBlockClass($block);
+					$class = $this->getChildClassName('Block', $block['component']);
 
 					return new $class($block, $this);
 				});
@@ -215,23 +225,5 @@ class Block
 
 		// remove non-content keys
 		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
-	}
-
-	private function getBlockClass($content) {
-		$component = $content['component'];
-
-		if (class_exists(config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component))) {
-			return config('storyblok.component_class_namespace') . 'Blocks\\' . Str::studly($component);
-		}
-
-		return config('storyblok.component_class_namespace') . 'Block';
-	}
-
-	private function getFieldClass($key) {
-		if (class_exists(config('storyblok.component_class_namespace') . 'Fields\\' . Str::studly($key))) {
-			return config('storyblok.component_class_namespace') . 'Fields\\' . Str::studly($key);
-		}
-
-		return false;
 	}
 }
