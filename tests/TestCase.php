@@ -27,7 +27,9 @@ class TestCase extends Orchestra
 	}
 
 	protected function makePage($file = null) {
-		return new Page(file_get_contents(__DIR__ . '/Fixtures/' . ($file ?: 'all-fields.json')));
+		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/' . ($file ?: 'all-fields.json')), true);
+
+		return new Page($story['story']);
 	}
 
 }

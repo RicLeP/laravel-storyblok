@@ -200,8 +200,6 @@ class BlockTest extends TestCase
 		$page = $this->makePage();
 		$block = $page->block();
 
-		dd('dd');
-
 		$this->assertTrue($block->blocks[0]->isAncestorOf('page'));
 		$this->assertFalse($block->blocks[0]->isAncestorOf('cats'));
 	}

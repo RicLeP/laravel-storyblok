@@ -13,6 +13,7 @@ use Storyblok\Client;
 
 class Block
 {
+	public $_autoResolveRelations = false;
 	public $_componentPath = [];
 	private $_fields;
 	private $_meta;
@@ -26,7 +27,6 @@ class Block
 		$this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
 
 		$this->processFields();
-
 	}
 
 	public function content() {
@@ -35,6 +35,10 @@ class Block
 
 	public function meta() {
 		return $this->_meta;
+	}
+
+	public function addMeta($fields) {
+		$this->_meta = array_merge($this->_meta, $fields);
 	}
 
 	public function has($key) {
@@ -130,6 +134,8 @@ class Block
 		return $field;
 	}
 
+	// TODO process old asset fields
+	// TODO option to convert all text fields to a class - single or multiline?
 	private function arrayFieldTypes($field) {
 		if (array_key_exists('linktype', $field)) {
 			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
@@ -150,13 +156,41 @@ class Block
 		}
 
 		if (Str::isUuid($field[0])) {
+			if ($this->_autoResolveRelations) {
+				return collect($field)->transform(function ($relation) {
+					$request = new RequestStory();
+					$response = $request->get($relation);
 
-//dd($response);
-			return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+					$class = $this->getBlockClass($response['content']);
+					$relationClass = new $class($response['content'], $this);
+
+					$relationClass->addMeta([
+						'published_at' => $response['published_at'],
+						'full_slug' => $response['full_slug'],
+					]);
+
+					return $relationClass;
+				});
+			}
 		}
 
 		// had child items
 		if (is_array($field[0])) {
+			// resolved relationships - entire story is returned, we just want the content and a few meta items
+			if (array_key_exists('content', $field[0])) {
+				return collect($field)->transform(function ($relation) {
+					$class = $this->getBlockClass($relation['content']);
+					$relationClass = new $class($relation['content'], $this);
+
+					$relationClass->addMeta([
+						'published_at' => $relation['published_at'],
+						'full_slug' => $relation['full_slug'],
+					]);
+
+					return $relationClass;
+				});
+			}
+
 			// this field holds blocks!
 			if (array_key_exists('component', $field[0])) {
 				return collect($field)->transform(function ($block) {

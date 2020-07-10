@@ -37,9 +37,9 @@ class StoryblokServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/storyblok.php', 'storyblok');
 
         // Register the main class to use with the facade
-      /*  $this->app->singleton('storyblok', function () {
-            return new xStoryblok;
-        });*/
+		$this->app->singleton('storyblok', function () {
+			return new Storyblok;
+		});
 
 		////////////TODO should this be a middleware?
 		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');

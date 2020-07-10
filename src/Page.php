@@ -16,7 +16,7 @@ class Page
 	private $story;
 
 	public function __construct($story) {
-		$this->story = json_decode($story, true)['story'];
+		$this->story = $story;
 
 		$this->preprocess();
 
