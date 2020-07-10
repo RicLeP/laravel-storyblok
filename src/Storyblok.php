@@ -1,41 +1,38 @@
 <?php
 
+
 namespace Riclep\Storyblok;
 
+
 use Illuminate\Support\Str;
-use \Riclep\Storyblok\Traits\RequestsStories;
 
 class Storyblok
 {
-	use RequestsStories;
+	// TODO resolve relations keys - at page level - array of items to pass to client
+	// auto - we do it ourself with an extra API call
 
-	public $page;
 
-	/**
-	 * Read, process and return the current Page
-	 *
-	 * @return mixed
-	 */
-	public function read()
-	{
-		$pageClass = $this->getPageClass($this->storyblokResponse['content']['component']);
-		$this->page = new $pageClass($this->storyblokResponse);
+	public function read($slug, $resolveRelations = null) {
+		$storyblokRequest = new RequestStory();
 
-		return $this->page->preprocess()->getBlocks()->postProcess();
+		if ($resolveRelations) {
+			$storyblokRequest->resolveRelations($resolveRelations);
+		}
+		
+		$response = $storyblokRequest->get($slug);
+
+		$class = $this->getPageClass($response);
+
+		return new $class($response);
 	}
 
-	/**
-	 * Determine which Class to use for the current page
-	 *
-	 * @param $component
-	 * @return string
-	 */
-	private function getPageClass($component)
-	{
+	private function getPageClass($story) {
+		$component = $story['content']['component'];
+
 		if (class_exists(config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component))) {
 			return config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component);
 		}
 
-		return config('storyblok.component_class_namespace') . 'DefaultPage';
+		return config('storyblok.component_class_namespace') . 'Page';
 	}
 }
