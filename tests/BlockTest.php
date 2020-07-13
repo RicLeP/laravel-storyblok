@@ -13,7 +13,7 @@ class BlockTest extends TestCase
 		$block = $page->block();
 
 		$this->assertTrue($block->content()->has('text'));
-		$this->assertFalse(array_key_exists('_editable', $block->content()));
+		$this->assertFalse($block->content()->has('_editable'));
 	}
 
 	/** @test */

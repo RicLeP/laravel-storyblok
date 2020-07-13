@@ -12,13 +12,16 @@ trait SchemaOrg
 	 * Automatically called to add a schema to the Page
 	 */
 	protected function initSchemaOrg() {
-		if ($this instanceof Page) {
-			$page = $this;
-		} else {
-			$page = $this->page();
+		if (method_exists($this, 'schemaOrg')) {
+			if ($this instanceof Page) {
+				$page = $this;
+			} else {
+				$page = $this->page();
+			}
+
+			$this->add($page);
 		}
 
-		$this->add($page);
 	}
 
 	public function schemaOrgScript() {

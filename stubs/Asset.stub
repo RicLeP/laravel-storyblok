@@ -3,7 +3,7 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Asset;
+use Riclep\Storyblok\Fields\Asset;
 
 class Asset extends Asset
 {

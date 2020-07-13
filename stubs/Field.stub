@@ -3,7 +3,7 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Field;
+use Riclep\Storyblok\Fields\Field;
 
 class Field extends Field
 {

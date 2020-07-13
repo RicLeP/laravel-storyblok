@@ -4,7 +4,7 @@ namespace Riclep\Storyblok\Tests;
 
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Riclep\Storyblok\Page;
+
 
 class TestCase extends Orchestra
 {
@@ -33,7 +33,7 @@ class TestCase extends Orchestra
 		if ($file) {
 			$class = config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($story['story']['content']['component']);
 		} else {
-			$class = 'Page';
+			$class = config('storyblok.component_class_namespace') . 'Page';
 		}
 
 		return new $class($story['story']);
