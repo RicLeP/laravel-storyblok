@@ -18,6 +18,7 @@ class MultiAsset extends Field implements \ArrayAccess
 	public function init() {
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
+				// TODO return specific type of asset class
 				if (Str::endsWith($file['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
 					return new Image($file);
 				}
