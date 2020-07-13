@@ -35,7 +35,7 @@ trait AppliesTypography
 	/**
 	 * Applies the typographic fixes to your text
 	 */
-	protected function applyTypography() {
+	protected function initAppliesTypography() {
 		if (!$this->typographySettings) {
 			$this->defaultSettings();
 		}
@@ -43,7 +43,9 @@ trait AppliesTypography
 		$typography = new PHP_Typography();
 
 		foreach ($this->applyTypography as $field) {
-			$this->content[$field] = $typography->process($this->content[$field], $this->typographySettings);
+			if ($this->has($field)) {
+				$this->content()[$field] = $typography->process($this->content()[$field], $this->typographySettings);
+			}
 		}
 	}
 }

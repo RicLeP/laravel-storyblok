@@ -18,16 +18,20 @@ trait SchemaOrg
 			$page = $this->page();
 		}
 
-		$page->_meta['schema_org'][] = $this->schemaOrg();
+		$this->add($page);
 	}
 
 	public function schemaOrgScript() {
 		$schemaJson = '';
 
-		foreach ($this->_meta['schema_org'] as $schema) {
+		foreach ($this->meta()['schema_org'] as $schema) {
 			$schemaJson .= $schema->toScript();
 		}
 
 		return $schemaJson;
+	}
+
+	private function add($page) {
+		$page->replaceMeta('schema_org', array_merge([$this->schemaOrg()], $this->meta()['schema_org'] ?? []));
 	}
 }

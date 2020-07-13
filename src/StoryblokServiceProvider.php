@@ -15,7 +15,7 @@ class StoryblokServiceProvider extends ServiceProvider
         /*
          * Optional methods to load your package assets
          */
-        $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
+       /* $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
 
         if ($this->app->runningInConsole()) {
 			$this->publishes([
@@ -26,7 +26,7 @@ class StoryblokServiceProvider extends ServiceProvider
 				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
 				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
 			], 'storyblok');
-        }
+        }*/
     }
 
     /**
@@ -38,10 +38,11 @@ class StoryblokServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/storyblok.php', 'storyblok');
 
         // Register the main class to use with the facade
-        $this->app->singleton('storyblok', function () {
-            return new Storyblok;
-        });
+		$this->app->singleton('storyblok', function () {
+			return new Storyblok;
+		});
 
+		////////////TODO should this be a middleware?
 		$storyblokRequest = $this->app['request']->query->get('_storyblok_tk');
 		if (!empty($storyblokRequest)) {
 			$pre_token = $storyblokRequest['space_id'] . ':' . config('storyblok.api_preview_key') . ':' . $storyblokRequest['timestamp'];

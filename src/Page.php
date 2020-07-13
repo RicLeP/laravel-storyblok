@@ -4,214 +4,94 @@
 namespace Riclep\Storyblok;
 
 use Exception;
-use Riclep\Storyblok\Traits\ProcessesBlocks;
+use Carbon\Carbon;
+use Riclep\Storyblok\Traits\HasChildClasses;
+use Riclep\Storyblok\Traits\HasMeta;
+use Riclep\Storyblok\Traits\SchemaOrg;
 
-abstract class Page
+class Page
 {
-	use ProcessesBlocks;
+	use HasChildClasses;
+	use HasMeta;
+	use SchemaOrg;
 
-	public $_meta;
+	public $_componentPath = ['page'];
 
-	protected $title;
+	private $block;
+	private $story;
 
-	private $content;
-	private $processedJson;
+	public function __construct($story) {
+		$this->story = $story;
 
-	public function __construct($rawStory)
-	{
-		$this->processedJson = $rawStory;
-	}
+		$this->preprocess();
 
-	/**
-	 * Performs any actions on the Storyblok content before it is parsed into Block classes
-	 * Move SEO plugin out of content to the root of the page’s response
-	 */
-	public function preprocess() {
-		if (array_key_exists('seo', $this->processedJson['content'])) {
-			$this->processedJson['seo'] = $this->processedJson['content']['seo'];
-			unset($this->processedJson['content']['seo']);
+		$this->block = $this->createBlock($this->story['content']);
 
-			$this->_meta['seo'] = $this->processedJson['seo'];
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Perform actions on the data after all blocks have been prepared
-	 *
-	 * @return Page
-	 */
-	public function postProcess()
-	{
-		$this->content()->makeComponentPath([]);
-
+		// run automatic traits
 		foreach (class_uses_recursive($this) as $trait) {
 			if (method_exists($this, $method = 'init' . class_basename($trait))) {
 				$this->{$method}();
 			}
 		}
-
-		return $this;
 	}
 
-	/**
-	 * Process the root Block
-	 *
-	 * @return $this
-	 */
-	public function getBlocks() {
-		$this->content = $this->processBlock($this->processedJson['content'], 'root');
-
-		return $this;
+	public function render() {
+		return view()->first($this->views(), $this);
 	}
 
-
-	/**
-	 * Returns an array of possible views for the current page
-	 *
-	 * @return array
-	 */
-	protected function views() {
-		$views = [];
-
-		//$viewFile = strtolower(subStr((new \ReflectionClass($this))->getShortName(), 0, -4));
-
-		$segments = explode('/', rtrim($this->slug(), '/'));
-
-		// match full path first
-		$views[] = config('storyblok.view_path') . 'pages.' . implode('.', $segments);
-
-		// creates an array of dot paths for each path segment
-		// site.com/this/that/them becomes:
-		// this.that.them
-		// this.that
-		// this
-		while (count($segments) >= 1) {
-			if (!in_array($path = config('storyblok.view_path') . 'pages.' . implode('.', $segments), $views)) {
-				$views[] = config('storyblok.view_path') . 'pages.' . implode('.', $segments) . '.' . $this->content()->component();
-				$views[] = $path;
-			}
-
-			array_pop($segments);
-		}
-
-		if (!in_array($path = config('storyblok.view_path') . 'pages.' . $this->content()->component(), $views)) {
-			$views[] = config('storyblok.view_path') . 'pages.' . $this->content()->component();
-		}
-
-		$views[] = config('storyblok.view_path') . 'pages.default';
-
-		return $views;
+	public function views() {
+		return array_reverse($this->block()->_componentPath);
 	}
 
-
-	/**
-	 * Returns tne matching view
-	 *
-	 * @return mixed
-	 */
-	public function view() {
-		foreach ($this->views() as $view) {
-			if (view()->exists($view)) {
-				return $view;
-			}
-		}
+	public function publishedAt() {
+		return Carbon::parse($this->story['first_published_at']);
 	}
 
-	/**
-	 * Reads the story
-	 *
-	 * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-	 */
-	public function render($additionalContent = null) {
-		$content = [
-			'story' => $this,
-		];
-
-		if ($additionalContent) {
-			$content = array_merge($content, $additionalContent);
-		}
-
-		return view($this->view(), $content);
+	public function updatedAt() {
+		return Carbon::parse($this->story['published_at']);
 	}
 
-	/**
-	 * Returns the Page’s title
-	 *
-	 * @return string
-	 */
-	public function title() {
-		if (property_exists($this, 'titleField') && $this->titleField) {
-			return strip_tags($this->content[$this->titleField]);
-		}
-
-		if ($this->_meta['seo'] && $this->_meta['seo']['title']) {
-			return $this->_meta['seo']['title'];
-		}
-
-		if (config('seo.default_title')) {
-			return config('seo.default_title');
-		}
-
-		return $this->processedJson['name'];
+	public function slug() {
+		return $this->story['full_slug'];
 	}
 
-	/**
-	 * Returns the Page’s meta description
-	 *
-	 * @return string
-	 */
-	public function metaDescription() {
-		if (property_exists($this, 'descriptionField') && $this->descriptionField) {
-			return strip_tags($this->content[$this->descriptionField]);
+	public function tags($alphabetical = false) {
+		if ($alphabetical) {
+			sort($this->story['tag_list']);
 		}
 
-		if ($this->_meta['seo'] && $this->_meta['seo']['description']) {
-			return $this->_meta['seo']['description'];
-		}
-
-		if (config('seo.default_description')) {
-			return config('seo.default_description');
-		}
-
-		return null;
+		return $this->story['tag_list'];
 	}
 
-	/**
-	 * Return the Page’s content Collection
-	 *
-	 * @return mixed
-	 */
-	public function content() {
-		return $this->content;
+	public function hasTag($tag) {
+		return in_array($tag, $this->tags());
 	}
 
-	/**
-	 * Get the Page’s content
-	 *
-	 * @return string
-	 */
-	public function slug()
-	{
-		return $this->processedJson['full_slug'];
+	public function block() {
+		return $this->block;
 	}
 
-	/**
-	 * Returns content items from the page’s content-type Block
-	 *
-	 * @param $name
-	 * @return bool|string
-	 */
 	public function __get($name) {
 		try {
-			if ($this->content && $this->content->has($name)) {
-				return $this->content->{$name};
+			if ($this->block && $this->block->has($name)) {
+				return $this->block->{$name};
 			}
 
 			return false;
 		} catch (Exception $e) {
 			return 'Caught exception: ' .  $e->getMessage();
 		}
+	}
+
+
+	private function preprocess() {
+		// TODO extract SEO plugin
+		$this->story;
+	}
+
+	private function createBlock($content) {
+		$class = $this->getChildClassName('Block', $content['component']);
+
+		return new $class($content, $this);
 	}
 }

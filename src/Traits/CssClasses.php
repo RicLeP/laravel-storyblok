@@ -30,7 +30,7 @@ trait CssClasses
 	 */
 	public function cssClassWithParent()
 	{
-		return $this->cssClass() . '@' . Str::kebab($this->getAncestorComponent(1));
+		return $this->cssClass() . '@' . Str::kebab($this->ancestorComponentName(1));
 	}
 
 	/**
@@ -73,7 +73,7 @@ trait CssClasses
 	 */
 	public function getLayout()
 	{
-		$path = $this->componentPath();
+		$path = $this->_componentPath;
 		array_pop($path);
 		$path = array_reverse($path);
 
