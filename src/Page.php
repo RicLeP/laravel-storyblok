@@ -35,7 +35,13 @@ class Page
 		}
 	}
 
+	public function render() {
+		return view()->first($this->views(), $this);
+	}
 
+	public function views() {
+		return array_reverse($this->block()->_componentPath);
+	}
 
 	public function publishedAt() {
 		return Carbon::parse($this->story['first_published_at']);

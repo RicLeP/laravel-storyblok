@@ -50,7 +50,36 @@
 						{
 							"Name": "name",
 							"_uid": "f5bc110c-4679-4306-bd74-e3f0f1168193",
-							"Position": "surname",
+							"Surname": "surname",
+							"Text": "This is some text to test typography is applied 10x10 let's check",
+							"Html": {
+								"_uid": "58a6749d-41b6-4a40-b1a9-f524cec019fe",
+								"type": "doc",
+								"content": [
+									{
+										"_uid": "581b6908-39bf-42ce-9456-5653dffd3b16",
+										"type": "paragraph",
+										"content": [
+											{
+												"_uid": "8ca81d57-e03a-4011-a6e8-4c8773499897",
+												"text": "This is some text to test typography is applied 10x10 let's check",
+												"type": "text"
+											}
+										]
+									},
+									{
+										"_uid": "52206b2a-cb32-42b8-bbff-b2482cbd32ba",
+										"type": "paragraph",
+										"content": [
+											{
+												"_uid": "12ab6239-b199-4720-a4a1-d882cf6f1283",
+												"text": "Another \"paragraph\". 3x4 CAPITALS.",
+												"type": "text"
+											}
+										]
+									}
+								]
+							},
 							"component": "Person",
 							"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"f5bc110c-4679-4306-bd74-e3f0f1168193\", \"id\": \"14994141\"}--\u003e"
 						}

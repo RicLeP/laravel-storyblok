@@ -106,4 +106,12 @@ class PageTest extends TestCase
 
 		$this->assertEquals('<script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"LocalBusiness","name":"On the page","email":"ric@sirric.co.uk","contactPoint":{"@type":"ContactPoint","areaServed":"Worldwide"}}</script><script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"Person","givenName":"In the Person block","email":"ric@sirric.co.uk"}</script>', $page->schemaOrgScript());
 	}
+
+	/** @test */
+	public function can_get_page_view()
+	{
+		$page = $this->makePage('custom-page.json');
+
+		$this->assertEquals(['custom', 'page'], $page->views());
+	}
 }

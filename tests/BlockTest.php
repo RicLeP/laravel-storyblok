@@ -257,9 +257,18 @@ class BlockTest extends TestCase
 		$page = $this->makePage('ep16.json');
 
 		$page->block()->features[0]->body[3]->section_1[0]->views();
-		
-		$this->assertEquals(['layout_2-sections.text--titled', 'feature.text--titled', 'episode.text--titled', 'page.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
 
+		$this->assertEquals(['layout_2-sections.text--titled', 'feature.text--titled', 'episode.text--titled', 'page.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
+	}
+
+	/** @test */
+	public function can_apply_typography()
+	{
+		$page = $this->makePage('custom-page.json');
+
+		$this->assertEquals('This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check', $page->blocks[0]->columns[0]->Text);
+
+		$this->assertEquals('<p>This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check</p><p>Another <span class="push-double"></span>​<span class="pull-double">“</span>paragraph”. <span class="numbers">3</span>×<span class="numbers">4</span>&nbsp;<span class="caps">CAPITALS</span>.</p>', $page->blocks[0]->columns[0]->Html);
 	}
 
 }
