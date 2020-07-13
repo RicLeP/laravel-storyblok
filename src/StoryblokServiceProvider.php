@@ -20,10 +20,11 @@ class StoryblokServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
 			$this->publishes([
 				__DIR__.'/../config/storyblok.php' => config_path('storyblok.php'),
-				__DIR__.'/../stubs/DefaultPage.stub' => app_path('Storyblok') . '/DefaultPage.php',
-				__DIR__.'/../stubs/DefaultBlock.stub' => app_path('Storyblok') . '/DefaultBlock.php',
-				__DIR__.'/../stubs/DefaultFolder.stub' => app_path('Storyblok') . '/DefaultFolder.php',
-				__DIR__.'/../stubs/DefaultAsset.stub' => app_path('Storyblok') . '/DefaultAsset.php',
+				__DIR__ . '/../stubs/Page.stub' => app_path('Storyblok') . '/Page.php',
+				__DIR__ . '/../stubs/Block.stub' => app_path('Storyblok') . '/Block.php',
+				__DIR__ . '/../stubs/Field.stub' => app_path('Storyblok') . '/Field.php',
+				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
+				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
 			], 'storyblok');
         }
     }
@@ -51,7 +52,7 @@ class StoryblokServiceProvider extends ServiceProvider
 			}
 		}
 
-        // register the Storyblok client, checkking if we are in edit more of the dev requests draft content
+        // register the Storyblok client, checking if we are in edit more of the dev requests draft content
 		if (config('storyblok.draft')) {
 			$client = new Client(config('storyblok.api_preview_key'));
 		} else {
