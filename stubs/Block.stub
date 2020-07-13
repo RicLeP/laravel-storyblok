@@ -3,9 +3,9 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Block;
+use Riclep\Storyblok\Block as BaseBlock;
 
-class Block extends Block
+class Block extends BaseBlock
 {
 
 }

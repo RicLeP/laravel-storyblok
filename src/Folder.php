@@ -5,14 +5,17 @@ namespace Riclep\Storyblok;
 
 
 use Illuminate\Support\Facades\Cache;
+use Riclep\Storyblok\Traits\HasChildClasses;
 use Storyblok\Client;
 
 abstract class Folder
 {
+	use HasChildClasses;
+
 	protected $startPage = false;
-	protected $currentPage = 1;
+	protected $currentPage = 0;
 	protected $perPage = 10;
-	protected $sortBy = 'published_at:asc';
+	protected $sortBy = 'content.date:desc';
 	protected $slug;
 	protected $settings = [];
 
@@ -24,13 +27,14 @@ abstract class Folder
 	public function read() {
 		$response = $this->get();
 
-		$stories = collect($response->responseBody['stories']);
+		$stories = collect($response);
 
 		$stories->transform(function ($story) {
-			$blockClass = $this->getBlockClass($story['content']);
+			$blockClass = $this->getChildClassName('Page', $story['content']['component']);
 
 			return new $blockClass($story);
 		});
+
 
 		return $stories;
 	}
@@ -66,21 +70,27 @@ abstract class Folder
 	protected function get()
 	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
-			return $this->makeRequest();
+			$response = $this->makeRequest();
 		} else {
-			return $this->makeRequest();
+			$response = Cache::remember('folder-' . $this->slug, config('storyblok.cache_duration') * 60, function () {
+				return $this->makeRequest();
+			});
 		}
+
+		return $response['stories'];
 	}
 
 	private function makeRequest() {
 		$storyblokClient = resolve('Storyblok\Client');
 
-		return $storyblokClient->getStories(array_merge([
+		$storyblokClient =  $storyblokClient->getStories(array_merge([
 			'is_startpage' => $this->startPage,
 			'sort_by' => $this->sortBy,
 			'starts_with' => $this->slug,
 			'page' => $this->currentPage,
 			'per_page' => $this->perPage,
 		], $this->settings));
+
+		return $storyblokClient->getBody();
 	}
 }

@@ -3,9 +3,9 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Page;
+use Riclep\Storyblok\Page as BasePage;
 
-class Page extends Page
+class Page extends BasePage
 {
 
 }

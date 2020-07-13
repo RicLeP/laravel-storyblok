@@ -3,9 +3,9 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Folder;
+use Riclep\Storyblok\Folder as BaseFolder;
 
-class Folder extends Folder
+class Folder extends BaseFolder
 {
 
 }

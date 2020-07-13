@@ -3,9 +3,9 @@
 
 namespace App\Storyblok;
 
-use Riclep\Storyblok\Fields\Asset;
+use Riclep\Storyblok\Fields\Asset as BaseAsset;
 
-class Asset extends Asset
+class Asset extends BaseAsset
 {
 
 }
