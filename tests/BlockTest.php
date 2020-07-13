@@ -251,4 +251,15 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Spatie\SchemaOrg\Person', $page->meta()['schema_org'][1]);
 	}
 
+	/** @test */
+	public function can_get_views()
+	{
+		$page = $this->makePage('ep16.json');
+
+		$page->block()->features[0]->body[3]->section_1[0]->views();
+		
+		$this->assertEquals(['layout_2-sections.text--titled', 'feature.text--titled', 'episode.text--titled', 'page.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
+
+	}
+
 }

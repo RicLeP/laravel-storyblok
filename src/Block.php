@@ -61,6 +61,21 @@ class Block
 		return $this->parent()->page();
 	}
 
+	public function render() {
+		return view()->first($this->views(), $this->content());
+	}
+
+	public function views() {
+		$compontentPath = $this->_componentPath;
+		array_pop($compontentPath);
+
+		return array_map([$this, 'viewNames'], array_reverse($compontentPath));
+	}
+
+	protected function viewNames($view) {
+		return $view . '.' . $this->component();
+	}
+
 	/**
 	 * Returns a component X generations previous
 	 *
