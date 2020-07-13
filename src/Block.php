@@ -6,6 +6,7 @@ namespace Riclep\Storyblok;
 use Exception;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Fields\Asset;
+use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
@@ -171,6 +172,10 @@ class Block
 		}
 
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
+			if (Str::endsWith($field['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+				return new Image($field);
+			}
+
 			return new Asset($field);
 		}
 

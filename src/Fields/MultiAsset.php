@@ -4,6 +4,7 @@
 namespace Riclep\Storyblok\Fields;
 
 
+use Illuminate\Support\Str;
 use Riclep\Storyblok\Field;
 
 class MultiAsset extends Field implements \ArrayAccess
@@ -17,6 +18,10 @@ class MultiAsset extends Field implements \ArrayAccess
 	public function init() {
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
+				if (Str::endsWith($file['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+					return new Image($file);
+				}
+
 				return new Asset($file);
 			});
 		}

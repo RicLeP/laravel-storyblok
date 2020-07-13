@@ -7,6 +7,7 @@ use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\AssetLink;
 use Riclep\Storyblok\Fields\DateTime;
 use Riclep\Storyblok\Fields\EmailLink;
+use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\Markdown;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
@@ -74,7 +75,7 @@ class FieldTest extends TestCase
 	/** @test */
 	public function can_get_image_asset_as_url()
 	{
-		$field = new Asset($this->getFieldContents('asset_image'));
+		$field = new Image($this->getFieldContents('asset_image'));
 		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
 	}
 
@@ -116,7 +117,8 @@ class FieldTest extends TestCase
 	public function can_make_assets_from_multi_asset()
 	{
 		$field = new MultiAsset($this->getFieldContents('multi_assets'));
-		$this->assertInstanceOf('Riclep\Storyblok\Fields\Asset', $field[0]);
+		$this->assertInstanceOf('Riclep\Storyblok\Fields\Image', $field[0]);
+		$this->assertInstanceOf('Riclep\Storyblok\Fields\Asset', $field[1]);
 	}
 
 	/** @test */

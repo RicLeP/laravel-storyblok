@@ -92,6 +92,16 @@
 				"name": "",
 				"focus": null,
 				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"image": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
 				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
 				"copyright": null,
 				"fieldtype": "asset"
@@ -132,7 +142,25 @@
 					"name": "",
 					"focus": null,
 					"title": null,
-					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf",
+					"copyright": null
+				},
+				{
+					"id": 1223942,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.png",
+					"copyright": null
+				},
+				{
+					"id": 1223942,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.gif",
 					"copyright": null
 				}
 			],

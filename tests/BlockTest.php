@@ -91,6 +91,15 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_identify_image_field()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Fields\Image', $block->image);
+	}
+
+	/** @test */
 	public function can_identify_table_field()
 	{
 		$page = $this->makePage();
