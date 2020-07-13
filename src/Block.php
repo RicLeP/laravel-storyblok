@@ -70,11 +70,11 @@ class Block
 		$compontentPath = $this->_componentPath;
 		array_pop($compontentPath);
 
-		return array_map([$this, 'viewNames'], array_reverse($compontentPath));
-	}
+		$views = array_map(function($path) {
+			return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
+		}, $compontentPath);
 
-	protected function viewNames($view) {
-		return $view . '.' . $this->component();
+		return array_reverse($views);
 	}
 
 	/**

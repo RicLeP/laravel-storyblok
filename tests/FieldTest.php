@@ -69,7 +69,7 @@ class FieldTest extends TestCase
 	public function can_get_asset_as_url()
 	{
 		$field = new Asset($this->getFieldContents('asset'));
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
 	}
 
 	/** @test */
@@ -83,7 +83,7 @@ class FieldTest extends TestCase
 	public function can_get_asset_url_with_accessor()
 	{
 		$field = new AssetWithAccessor($this->getFieldContents('asset'));
-		$this->assertEquals('gpj.sllec-doolb/4736f15f79/007x007/18625/f/moc.kolbyrots.a//:sptth', $field->filename_backwards);
+		$this->assertEquals('fdp.sllec-doolb/4736f15f79/007x007/18625/f/moc.kolbyrots.a//:sptth', $field->filename_backwards);
 	}
 
 	/** @test */

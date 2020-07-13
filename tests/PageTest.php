@@ -112,6 +112,6 @@ class PageTest extends TestCase
 	{
 		$page = $this->makePage('custom-page.json');
 
-		$this->assertEquals(['custom', 'page'], $page->views());
+		$this->assertEquals(['pages.custom', 'pages.page'], $page->views());
 	}
 }

@@ -267,7 +267,7 @@ class BlockTest extends TestCase
 
 		$page->block()->features[0]->body[3]->section_1[0]->views();
 
-		$this->assertEquals(['layout_2-sections.text--titled', 'feature.text--titled', 'episode.text--titled', 'page.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
+		$this->assertEquals(['blocks.layout_2-sections.text--titled', 'blocks.feature.text--titled', 'blocks.episode.text--titled', 'blocks.page.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
 	}
 
 	/** @test */
