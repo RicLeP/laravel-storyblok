@@ -6,9 +6,11 @@ namespace Riclep\Storyblok\Fields;
 
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Field;
+use Riclep\Storyblok\Traits\HasChildClasses;
 
 class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 {
+	use HasChildClasses;
 
 	private $iteratorIndex = 0;
 
@@ -22,10 +24,18 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
 				if (Str::endsWith($file['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
-					return new Image($file);
+					if ($class = $this->getChildClassName('Field', $this->block()->component() . 'Image')) {
+						return new $class($file, $this->block());
+					}
+
+					return new Image($file, $this->block());
 				}
 
-				return new Asset($file);
+				if ($class = $this->getChildClassName('Field', $this->block()->component() . 'Asset')) {
+					return new $class($file, $this->block());
+				}
+
+				return new Asset($file, $this->block());
 			});
 		}
 	}
