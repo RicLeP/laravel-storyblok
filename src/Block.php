@@ -141,7 +141,7 @@ class Block
 	private function getFieldType($field, $key) {
 		// does the block assign any $casts?
 		if (property_exists($this, 'casts') && array_key_exists($key, $this->casts)) {
-			return new $this->casts[$key]($field);
+			return new $this->casts[$key]($field, $this);
 		}
 
 		// auto-match Field classes
