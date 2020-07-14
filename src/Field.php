@@ -9,10 +9,12 @@ use Illuminate\Support\Str;
 abstract class Field
 {
 	protected $content;
+	protected $block;
 
-	public function __construct($content)
+	public function __construct($content, $block)
 	{
 		$this->content = $content;
+		$this->block = $block;
 
 		if (method_exists($this, 'init')) {
 			$this->init();
@@ -21,6 +23,10 @@ abstract class Field
 
 	public function content() {
 		return $this->content;
+	}
+
+	public function block() {
+		return $this->block;
 	}
 
 	public function has($key) {

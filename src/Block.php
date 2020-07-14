@@ -146,7 +146,7 @@ class Block
 
 		// auto-match Field classes
 		if ($class = $this->getChildClassName('Field', $key)) {
-			return new $class($field);
+			return new $class($field, $this);
 		}
 
 		// complex fields
@@ -164,23 +164,23 @@ class Block
 		if (array_key_exists('linktype', $field)) {
 			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
 
-			return new $class($field);
+			return new $class($field, $this);
 		}
 
 		if (array_key_exists('type', $field) && $field['type'] === 'doc') {
-			return new RichText($field);
+			return new RichText($field, $this);
 		}
 
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
 			if (Str::endsWith($field['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
-				return new Image($field);
+				return new Image($field, $this);
 			}
 
-			return new Asset($field);
+			return new Asset($field, $this);
 		}
 
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
-			return new Table($field);
+			return new Table($field, $this);
 		}
 
 		if (Str::isUuid($field[0])) {
@@ -232,7 +232,7 @@ class Block
 
 			// multi assets
 			if (array_key_exists('filename', $field[0])) {
-				return new MultiAsset($field);
+				return new MultiAsset($field, $this);
 			}
 		}
 
