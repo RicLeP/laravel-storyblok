@@ -14,7 +14,7 @@ use Riclep\Storyblok\Traits\CssClasses;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
 
-class Block
+class Block implements \IteratorAggregate
 {
 	use CssClasses;
 	use HasChildClasses;
@@ -144,6 +144,11 @@ class Block
 			return new $this->casts[$key]($field, $this);
 		}
 
+		// find fields specific to this block - BlockNameFieldName
+		if ($class = $this->getChildClassName('Field', $this->component() . '_' . $key)) {
+			return new $class($field, $this);
+		}
+
 		// auto-match Field classes
 		if ($class = $this->getChildClassName('Field', $key)) {
 			return new $class($field, $this);
@@ -245,5 +250,9 @@ class Block
 
 		// remove non-content keys
 		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
+	}
+
+	public function getIterator() {
+		return $this->_fields;
 	}
 }
