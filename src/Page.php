@@ -35,8 +35,8 @@ class Page
 		}
 	}
 
-	public function render() {
-		return view()->first($this->views(), ['story' => $this]);
+	public function render($additionalContent = []) {
+		return view()->first($this->views(), array_merge(['story' => $this], $additionalContent));
 	}
 
 	public function views() {
@@ -90,7 +90,13 @@ class Page
 
 	private function preprocess() {
 		// TODO extract SEO plugin
-		$this->story;
+		//$this->story;
+
+		$this->addMeta([
+			'name' => $this->story['name'],
+			'tags' => $this->story['tag_list'],
+			'slug' => $this->story['full_slug'],
+		]);
 	}
 
 	private function createBlock($content) {
