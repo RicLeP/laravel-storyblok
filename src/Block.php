@@ -114,6 +114,10 @@ class Block implements \IteratorAggregate
 		return $this->_meta['component'];
 	}
 
+	public function editLink() {
+		return $this->_meta['_editable'];
+	}
+
 	public function __get($key) {
 		$accessor = 'get' . Str::studly($key) . 'Attribute';
 
