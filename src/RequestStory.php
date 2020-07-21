@@ -15,7 +15,13 @@ class RequestStory
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest($slugOrUuid);
 		} else {
-			$response = Cache::remember($slugOrUuid, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
+			$cache = Cache::getFacadeRoot();
+
+			if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+				$cache = $cache->tags('storyblok');
+			}
+
+			$response = $cache->remember($slugOrUuid, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
 				return $this->makeRequest($slugOrUuid);
 			});
 		}

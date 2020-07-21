@@ -15,7 +15,9 @@ class StoryblokServiceProvider extends ServiceProvider
         /*
          * Optional methods to load your package assets
          */
-       /* $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
+       $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
+
+		$this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-storyblok');
 
         if ($this->app->runningInConsole()) {
 			$this->publishes([
@@ -25,7 +27,7 @@ class StoryblokServiceProvider extends ServiceProvider
 				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
 				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
 			], 'storyblok');
-        }*/
+        }
     }
 
     /**
