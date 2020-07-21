@@ -4,18 +4,26 @@
 namespace Riclep\Storyblok;
 
 
-use Illuminate\Support\Str;
 use Riclep\Storyblok\Traits\HasChildClasses;
 
 class Storyblok
 {
 	use HasChildClasses;
 
+
+	/**
+	 * Reads the requested story from the API
+	 *
+	 * @param $slug
+	 * @param null $resolveRelations
+	 * @return mixed
+	 * @throws \Storyblok\ApiException
+	 */
 	public function read($slug, $resolveRelations = null) {
 		$storyblokRequest = new RequestStory();
 
 		if ($resolveRelations) {
-			$storyblokRequest->resolveRelations($resolveRelations);
+			$storyblokRequest->prepareRelations($resolveRelations);
 		}
 
 		$response = $storyblokRequest->get($slug);

@@ -13,6 +13,11 @@ class Asset extends Field
 		return $this->content['filename'];
 	}
 
+	/**
+	 * Checks a file was uploaded
+	 *
+	 * @return bool
+	 */
 	public function hasFile() {
 		return (bool) $this->content['filename'];
 	}

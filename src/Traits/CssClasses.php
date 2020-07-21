@@ -8,6 +8,9 @@ use Illuminate\Support\Str;
 
 trait CssClasses
 {
+	/**
+	 * @var string a prefixed used to identify ‘layout’ components
+	 */
 	protected $layoutPrefix = 'layout_';
 
 

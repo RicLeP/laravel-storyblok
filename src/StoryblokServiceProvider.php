@@ -12,9 +12,6 @@ class StoryblokServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
        $this->loadRoutesFrom(__DIR__.'/routes/routes.php');
 
 		$this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-storyblok');
@@ -61,6 +58,7 @@ class StoryblokServiceProvider extends ServiceProvider
 			$client = new Client(config('storyblok.api_public_key'));
 		}
 
+		// if we’re in Storyblok’s edit mode let’s save that in the config for easy access
 		$client->editMode(config('storyblok.draft'));
 
 		$this->app->instance('Storyblok\Client', $client);

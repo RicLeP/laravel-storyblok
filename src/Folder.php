@@ -12,11 +12,39 @@ abstract class Folder
 {
 	use HasChildClasses;
 
+	/**
+	 * @var bool should we request the start / index page
+	 */
 	protected $startPage = false;
+
+
+	/**
+	 * @var int Current pagination page
+	 */
 	protected $currentPage = 0;
+
+
+	/**
+	 * @var int number of items to return
+	 */
 	protected $perPage = 10;
+
+
+	/**
+	 * @var string order to sort the returned stories
+	 */
 	protected $sortBy = 'content.date:desc';
+
+
+	/**
+	 * @var string the slug to start te request from
+	 */
 	protected $slug;
+
+
+	/**
+	 * @var array additional settings for the request
+	 */
 	protected $settings = [];
 
 	/**
@@ -34,7 +62,6 @@ abstract class Folder
 
 			return new $blockClass($story);
 		});
-
 
 		return $stories;
 	}
@@ -67,11 +94,18 @@ abstract class Folder
 	}
 
 
+	/**
+	 * Caches the response and returns just the bit we want
+	 *
+	 * @return array
+	 */
 	protected function get()
 	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest();
 		} else {
+			// TODO tagging cache
+
 			$response = Cache::remember('folder-' . $this->slug, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
 			});
@@ -80,6 +114,11 @@ abstract class Folder
 		return $response['stories'];
 	}
 
+	/**
+	 * Makes the actual request
+	 *
+	 * @return array|\Storyblok\stdClass
+	 */
 	private function makeRequest() {
 		$storyblokClient = resolve('Storyblok\Client');
 

@@ -4,7 +4,9 @@
 namespace Riclep\Storyblok;
 
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\MultiAsset;
@@ -20,11 +22,34 @@ class Block implements \IteratorAggregate
 	use HasChildClasses;
 	use HasMeta;
 
+	/**
+	 * @var bool resolve UUID relations automatically
+	 */
 	public $_autoResolveRelations = false;
+
+
+	/**
+	 * @var array the path of nested components
+	 */
 	public $_componentPath = [];
+
+
+	/**
+	 * @var Collection all the fields for the Block
+	 */
 	private $_fields;
+
+
+	/**
+	 * @var Page|Block reference to the parent Block or Page
+	 */
 	private $_parent;
 
+	/**
+	 * Takes the Block’s content and a reference to the parent
+	 * @param $content
+	 * @param $parent
+	 */
 	public function __construct($content, $parent)
 	{
 		$this->_parent = $parent;
@@ -34,7 +59,7 @@ class Block implements \IteratorAggregate
 
 		$this->processFields();
 
-		// run automatic traits
+		// run automatic traits - methods matching initTraitClassName()
 		foreach (class_uses_recursive($this) as $trait) {
 			if (method_exists($this, $method = 'init' . class_basename($trait))) {
 				$this->{$method}();
@@ -42,18 +67,39 @@ class Block implements \IteratorAggregate
 		}
 	}
 
+	/**
+	 * Returns the containing every field of content
+	 *
+	 * @return Collection
+	 */
 	public function content() {
 		return $this->_fields;
 	}
 
+	/**
+	 * Checks if the fields contain the specified key
+	 *
+	 * @param $key
+	 * @return bool
+	 */
 	public function has($key) {
 		return $this->_fields->has($key);
 	}
 
+	/**
+	 * Returns the parent Block
+	 *
+	 * @return Block
+	 */
 	public function parent() {
 		return $this->_parent;
 	}
 
+	/**
+	 * Returns the page this Block belongs to
+	 *
+	 * @return Block
+	 */
 	public function page() {
 		if ($this->parent() instanceof Page) {
 			return $this->parent();
@@ -62,10 +108,30 @@ class Block implements \IteratorAggregate
 		return $this->parent()->page();
 	}
 
+	/**
+	 * Returns the first matching view, passing it the fields
+	 *
+	 * @return View
+	 */
 	public function render() {
 		return view()->first($this->views(), $this->content());
 	}
 
+	/**
+	 * Returns an array of possible views for the current Block based on
+	 * it’s $componentPath match the component prefixed by each of it’s
+	 * ancestors in turn, starting with the closest, for example:
+	 *
+	 * $componentPath = ['page', 'parent', 'child', 'this_block'];
+	 *
+	 * Becomes a list of possible views like so:
+	 * ['child.this_block', 'parent.this_block', 'page.this_block'];
+	 *
+	 * Override this method with your custom implementation for
+	 * ultimate control
+	 *
+	 * @return array
+	 */
 	public function views() {
 		$compontentPath = $this->_componentPath;
 		array_pop($compontentPath);
@@ -80,7 +146,7 @@ class Block implements \IteratorAggregate
 	/**
 	 * Returns a component X generations previous
 	 *
-	 * @param $generation
+	 * @param $generation int
 	 * @return mixed
 	 */
 	public function ancestorComponentName($generation)
@@ -91,7 +157,7 @@ class Block implements \IteratorAggregate
 	/**
 	 * Checks if the current component is a child of another
 	 *
-	 * @param $parent
+	 * @param $parent string
 	 * @return bool
 	 */
 	public function isChildOf($parent)
@@ -102,7 +168,7 @@ class Block implements \IteratorAggregate
 	/**
 	 * Checks if the component is an ancestor of another
 	 *
-	 * @param $parent
+	 * @param $parent string
 	 * @return bool
 	 */
 	public function isAncestorOf($parent)
@@ -110,15 +176,36 @@ class Block implements \IteratorAggregate
 		return in_array($parent, $this->parent()->_componentPath);
 	}
 
+	/**
+	 * Returns the current Block’s component name from Storyblok
+	 *
+	 * @return string
+	 */
 	public function component() {
 		return $this->_meta['component'];
 	}
 
+
+	/**
+	 * Returns the HTML comment required for making this Block clickable in
+	 * Storyblok’s visual editor. Don’t forget to set comments to true in
+	 * your Vue.js app configuration.
+	 *
+	 * @return string
+	 */
 	public function editLink() {
 		return $this->_meta['_editable'] ??= '';
 	}
 
 
+	/**
+	 * Magic accessor to pull content from the _fields collection. Works just like
+	 * Laravel’s model accessors. Matches public methods with the follow naming
+	 * convention getSomeFieldAttribute() - called via $block->some_field
+	 *
+	 * @param $key
+	 * @return bool|string
+	 */
 	public function __get($key) {
 		$accessor = 'get' . Str::studly($key) . 'Attribute';
 
@@ -137,19 +224,32 @@ class Block implements \IteratorAggregate
 		}
 	}
 
+	/**
+	 * Loops over every field to get te ball rolling
+	 */
 	private function processFields() {
 		$this->_fields->transform(function ($field, $key) {
 			return $this->getFieldType($field, $key);
 		});
 	}
 
+	/**
+	 * Converts fields into Field Classes based on various properties of their content
+	 *
+	 * @param $field
+	 * @param $key
+	 * @return array|Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+	 */
 	private function getFieldType($field, $key) {
-		// does the block assign any $casts?
+		// TODO process old asset fields
+		// TODO option to convert all text fields to a class - single or multiline?
+
+		// does the Block assign any $casts? This is key (field) => value (class)
 		if (property_exists($this, 'casts') && array_key_exists($key, $this->casts)) {
 			return new $this->casts[$key]($field, $this);
 		}
 
-		// find fields specific to this block - BlockNameFieldName
+		// find Fields specific to this Block matching: BlockNameFieldName
 		if ($class = $this->getChildClassName('Field', $this->component() . '_' . $key)) {
 			return new $class($field, $this);
 		}
@@ -168,19 +268,27 @@ class Block implements \IteratorAggregate
 		return $field;
 	}
 
-	// TODO process old asset fields
-	// TODO option to convert all text fields to a class - single or multiline?
+
+	/**
+	 * When the field is an array we need to do more processing
+	 *
+	 * @param $field
+	 * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+	 */
 	private function arrayFieldTypes($field) {
+		// match link fields
 		if (array_key_exists('linktype', $field)) {
 			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
 
 			return new $class($field, $this);
 		}
 
+		// match rich-text fields
 		if (array_key_exists('type', $field) && $field['type'] === 'doc') {
 			return new RichText($field, $this);
 		}
 
+		// match asset fields - detecting raster images
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
 			if (Str::endsWith($field['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
 				return new Image($field, $this);
@@ -189,10 +297,12 @@ class Block implements \IteratorAggregate
 			return new Asset($field, $this);
 		}
 
+		// match table fields
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
 			return new Table($field, $this);
 		}
 
+		// it’s an array of relations - request them if we’re auto resolving
 		if (Str::isUuid($field[0])) {
 			if ($this->_autoResolveRelations) {
 				return collect($field)->transform(function ($relation) {
@@ -213,7 +323,7 @@ class Block implements \IteratorAggregate
 			}
 		}
 
-		// had child items
+		// has child items - single option, multi option and Blocks fields
 		if (is_array($field[0])) {
 			// resolved relationships - entire story is returned, we just want the content and a few meta items
 			if (array_key_exists('content', $field[0])) {
@@ -250,6 +360,12 @@ class Block implements \IteratorAggregate
 		return $field;
 	}
 
+	/**
+	 * Storyblok returns fields and other meta content at the same level so
+	 * let’s do a little tidying up first
+	 *
+	 * @param $content
+	 */
 	private function preprocess($content) {
 		$this->_fields = collect(array_diff_key($content, array_flip(['_editable', '_uid', 'component'])));
 
@@ -257,6 +373,12 @@ class Block implements \IteratorAggregate
 		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
 	}
 
+	/**
+	 * Let’s up loop over the fields in Blade without needing to
+	 * delve deep into the content collection
+	 *
+	 * @return \Traversable
+	 */
 	public function getIterator() {
 		return $this->_fields;
 	}

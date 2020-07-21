@@ -14,6 +14,9 @@ class DateTime extends Field
 		return $this->content->toDatetimeString();
 	}
 
+	/**
+	 * Converts the field to a carbon object
+	 */
 	protected function init() {
 		$this->content = Carbon::parse($this->content);
 	}

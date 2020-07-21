@@ -8,6 +8,9 @@ use PHP_Typography\Settings as TypographySettings;
 
 trait AppliesTypography
 {
+	/**
+	 * @var null settings for PHP_Typography
+	 */
 	protected $typographySettings = null;
 
 	/**

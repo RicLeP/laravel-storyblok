@@ -1,3 +1,5 @@
+
+
 @if (config('storyblok.edit_mode'))
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script type="text/javascript" src="//app.storyblok.com/f/storyblok-latest.js"></script>

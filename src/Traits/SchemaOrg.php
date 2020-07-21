@@ -24,6 +24,11 @@ trait SchemaOrg
 
 	}
 
+	/**
+	 * Returns the JavaScript JSON-LD string
+	 *
+	 * @return string
+	 */
 	public function schemaOrgScript() {
 		$schemaJson = '';
 
@@ -34,6 +39,11 @@ trait SchemaOrg
 		return $schemaJson;
 	}
 
+	/**
+	 * Adds the schema to the meta of the current page
+	 *
+	 * @param $page
+	 */
 	private function add($page) {
 		$page->replaceMeta('schema_org', array_merge([$this->schemaOrg()], $this->meta()['schema_org'] ?? []));
 	}

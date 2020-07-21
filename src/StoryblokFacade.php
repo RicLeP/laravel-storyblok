@@ -4,9 +4,6 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\Facades\Facade;
 
-/**
- * @method static bySlug(string $slug)
- */
 class StoryblokFacade extends Facade
 {
     /**
