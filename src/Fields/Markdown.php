@@ -11,6 +11,11 @@ use Riclep\Storyblok\Field;
 
 class Markdown extends Field
 {
+	/**
+	 * Converts the markdown to HTML when printed
+	 *
+	 * @return string
+	 */
 	public function __toString()
 	{
 		$environment = Environment::createCommonMarkEnvironment();

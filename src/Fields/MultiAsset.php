@@ -12,6 +12,9 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 {
 	use HasChildClasses;
 
+	/**
+	 * @var int used for iterating over the array of assets
+	 */
 	private $iteratorIndex = 0;
 
 	public function __toString()
@@ -20,6 +23,9 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 		return '';
 	}
 
+	/**
+	 * Attempts to determine the types of assets that have been linked
+	 */
 	public function init() {
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
@@ -40,6 +46,11 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 		}
 	}
 
+	/**
+	 * Checks if files are uploaded
+	 *
+	 * @return bool
+	 */
 	public function hasFiles() {
 		return (bool) $this->content();
 	}

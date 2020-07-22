@@ -9,6 +9,7 @@ class PageTest extends TestCase
 	public function can_get_default_page_class()
 	{
 		$page = $this->makePage();
+
 		$this->assertInstanceOf('Riclep\Storyblok\Page', $page);
 	}
 

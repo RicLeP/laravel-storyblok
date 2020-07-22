@@ -8,9 +8,23 @@ use Illuminate\Support\Str;
 
 abstract class Field
 {
+	/**
+	 * @var array|string the cotent of the field
+	 */
 	protected $content;
+
+	/**
+	 * @var Block reference to the parent block
+	 */
 	protected $block;
 
+	/**
+	 * Creates the new field taking it’s content and a reference
+	 * to the parent Block
+	 *
+	 * @param $content
+	 * @param $block
+	 */
 	public function __construct($content, $block)
 	{
 		$this->content = $content;

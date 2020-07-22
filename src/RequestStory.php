@@ -9,8 +9,19 @@ use Illuminate\Support\Str;
 
 class RequestStory
 {
+	/**
+	 * @var array An array of relations to resolve matching: component_name.field_name
+	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
+	 */
 	private $resolveRelations;
 
+	/**
+	 * Caches the response if needed
+	 *
+	 * @param $slugOrUuid
+	 * @return mixed
+	 * @throws \Storyblok\ApiException
+	 */
 	public function get($slugOrUuid) {
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest($slugOrUuid);
@@ -29,10 +40,22 @@ class RequestStory
 		return $response['story'];
 	}
 
-	public function resolveRelations($resolveRelations) {
+	/**
+	 * Prepares the relations so the format is correct for the API call
+	 *
+	 * @param $resolveRelations
+	 */
+	public function prepareRelations($resolveRelations) {
 		$this->resolveRelations = implode(',', $resolveRelations);
 	}
 
+	/**
+	 * Makes the API request
+	 *
+	 * @param $slugOrUuid
+	 * @return array|\Storyblok\stdClass
+	 * @throws \Storyblok\ApiException
+	 */
 	private function makeRequest($slugOrUuid) {
 		$storyblokClient = resolve('Storyblok\Client');
 

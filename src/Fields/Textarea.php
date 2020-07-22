@@ -8,6 +8,11 @@ use Riclep\Storyblok\Field;
 
 class Textarea extends Field
 {
+	/**
+	 * Wraps the content in paragraphs when printed
+	 *
+	 * @return string
+	 */
 	public function __toString()
 	{
 		return $this->autoParagraph($this->content);
