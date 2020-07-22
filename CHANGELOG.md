@@ -1,6 +1,10 @@
 # Changelog
 
 
+## [2.0.0] - 2020-07-22
+Version 2.0.0 is a complete rewrite of the package but upgrading should be relatively simple as the data structure remains similar. The largest change is the introduction Field classes. Now every field is converted to a Field type class (Asset, Link, Markdown, RichText etc.)
+
+
 ## [1.2.0] - 2020-07-03
 ### Changed
 - Blocks now have a `parent()` method which returns the parent Block or Page
