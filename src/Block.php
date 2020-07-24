@@ -193,7 +193,7 @@ class Block implements \IteratorAggregate
 	 *
 	 * @return string
 	 */
-	public function editLink() {
+	public function editorLink() {
 		return $this->_meta['_editable'] ??= '';
 	}
 
