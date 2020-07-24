@@ -114,7 +114,7 @@ class Block implements \IteratorAggregate
 	 * @return View
 	 */
 	public function render() {
-		return view()->first($this->views(), $this->content());
+		return view()->first($this->views(), ['block' => $this]);
 	}
 
 	/**
@@ -313,7 +313,7 @@ class Block implements \IteratorAggregate
 					$relationClass = new $class($response['content'], $this);
 
 					$relationClass->addMeta([
-						'name' => $relation['name'],
+						'name' => $response['name'],
 						'published_at' => $response['published_at'],
 						'full_slug' => $response['full_slug'],
 					]);
