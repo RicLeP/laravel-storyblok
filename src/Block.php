@@ -140,7 +140,11 @@ class Block implements \IteratorAggregate
 			return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
 		}, $compontentPath);
 
-		return array_reverse($views);
+		$views = array_reverse($views);
+
+		$views[] = config('storyblok.view_path') . 'blocks.' . $this->component();
+
+		return $views;
 	}
 
 	/**
