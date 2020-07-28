@@ -1,41 +1,35 @@
 <?php
 
+
 namespace Riclep\Storyblok;
 
-use Illuminate\Support\Str;
-use \Riclep\Storyblok\Traits\RequestsStories;
+
+use Riclep\Storyblok\Traits\HasChildClasses;
 
 class Storyblok
 {
-	use RequestsStories;
+	use HasChildClasses;
 
-	public $page;
 
 	/**
-	 * Read, process and return the current Page
+	 * Reads the requested story from the API
 	 *
+	 * @param $slug
+	 * @param null $resolveRelations
 	 * @return mixed
+	 * @throws \Storyblok\ApiException
 	 */
-	public function read()
-	{
-		$pageClass = $this->getPageClass($this->storyblokResponse['content']['component']);
-		$this->page = new $pageClass($this->storyblokResponse);
+	public function read($slug, $resolveRelations = null) {
+		$storyblokRequest = new RequestStory();
 
-		return $this->page->preprocess()->getBlocks()->postProcess();
-	}
-
-	/**
-	 * Determine which Class to use for the current page
-	 *
-	 * @param $component
-	 * @return string
-	 */
-	private function getPageClass($component)
-	{
-		if (class_exists(config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component))) {
-			return config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($component);
+		if ($resolveRelations) {
+			$storyblokRequest->prepareRelations($resolveRelations);
 		}
 
-		return config('storyblok.component_class_namespace') . 'DefaultPage';
+		$response = $storyblokRequest->get($slug);
+
+		$class = $this->getChildClassName('Page', $response['content']['component']);
+
+		return new $class($response);
 	}
 }

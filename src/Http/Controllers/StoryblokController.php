@@ -2,7 +2,6 @@
 
 namespace Riclep\Storyblok\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Riclep\Storyblok\StoryblokFacade as StoryBlok;
 
@@ -17,13 +16,17 @@ class StoryblokController
 	 */
 	public function show($slug = 'home')
 	{
-		return Storyblok::bySlug($slug)->read()->render();
+		return Storyblok::read($slug)->render();
 	}
 
 	/**
 	 * Deletes the cached API responses
 	 */
 	public function destroy() {
-		Cache::flush();
+		if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+			Cache::tags('storyblok')->flush();
+		} else {
+			Cache::flush();
+		}
 	}
 }

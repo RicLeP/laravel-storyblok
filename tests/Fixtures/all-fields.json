@@ -1,0 +1,286 @@
+{
+	"story": {
+		"name": "all-fields",
+		"created_at": "2020-07-06T10:18:55.175Z",
+		"published_at": "2020-08-06T10:24:21.135Z",
+		"alternates": [],
+		"id": 14994141,
+		"uuid": "5bd0a07a-4806-458e-bc7a-88b8372683d8",
+		"slug": "all-fields",
+		"full_slug": "all-fields",
+		"default_full_slug": null,
+		"sort_by_date": null,
+		"position": -262695,
+		"tag_list":[
+			"tag2",
+			"tag1"
+		],
+		"is_startpage": false,
+		"parent_id": 0,
+		"meta_data": null,
+		"group_id": "bf2c9f6b-80c3-4118-ba30-da6da37da433",
+		"first_published_at": "2020-07-06T10:24:21.135Z",
+		"release_id": null,
+		"lang": "default",
+		"path": null,
+		"translated_slugs": [],
+		"content": {
+			"_uid": "835f25ba-7c20-423c-b375-2690df006382",
+			"component": "all-fields",
+			"_editable": "\u003c!--#storyblok#{\"name\": \"all-fields\", \"space\": \"52681\", \"uid\": \"835f25ba-7c20-423c-b375-2690df006382\", \"id\": \"14994141\"}--\u003e",
+
+			"text": "text",
+			"textarea": "textarea\n\ntextarea",
+			"richtext": {
+				"type": "doc",
+				"content": [
+					{
+						"type": "paragraph",
+						"content": [
+							{
+								"text": "textarea",
+								"type": "text",
+								"marks": [
+									{
+										"type": "bold"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "paragraph",
+						"content": [
+							{
+								"text": "richtext",
+								"type": "text"
+							}
+						]
+					}
+				]
+			},
+			"markdown": "**markdown**\nmarkdown",
+			"number": "1234",
+			"datetime": "2020-07-01 20:57",
+			"boolean": true,
+			"boolean_false": false,
+			"multi_options": [
+				"option-1",
+				"option-2"
+			],
+			"multi_options_single": [
+				"option-2"
+			],
+			"multi_options_stories": [
+				"dfc9b1ec-3141-4775-980c-e9285c350601",
+				"cb1bb01a-e414-49ed-85d0-03f63f35171f"
+			],
+			"single_option": "option-3",
+			"hero": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"asset": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"image": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"asset_empty": {
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"asset_image": {
+				"id": null,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			},
+			"multi_assets": [
+				{
+					"id": 1232246,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg",
+					"copyright": null
+				},
+				{
+					"id": 1223942,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf",
+					"copyright": null
+				},
+				{
+					"id": 1223942,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.png",
+					"copyright": null
+				},
+				{
+					"id": 1223942,
+					"alt": null,
+					"name": "",
+					"focus": null,
+					"title": null,
+					"filename": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.gif",
+					"copyright": null
+				}
+			],
+			"multi_assets_empty": "",
+			"link_story": {
+				"id": "8a6eee6b-025e-484e-9219-8ad6596a74fa",
+				"url": "",
+				"linktype": "story",
+				"fieldtype": "multilink",
+				"cached_url": "key-people/primary-contact"
+			},
+			"link_url": {
+				"id": "",
+				"url": "https://sirric.co.uk",
+				"linktype": "url",
+				"fieldtype": "multilink",
+				"cached_url": "https://sirric.co.uk"
+			},
+			"link_email": {
+				"id": "",
+				"url": "",
+				"email": "ric@sirric.co.uk",
+				"linktype": "email",
+				"fieldtype": "multilink",
+				"cached_url": ""
+			},
+			"link_asset": {
+				"id": "",
+				"url": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+				"linktype": "asset",
+				"fieldtype": "multilink",
+				"cached_url": "https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg"
+			},
+			"group_text": "group text",
+			"image_old": "//a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+			"file_old": "//a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg",
+			"blocks": [
+				{
+					"Name": "name",
+					"_uid": "f5bc110c-4679-4306-bd74-e3f0f1168194",
+					"Position": "surname",
+					"component": "Person",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"f5bc110c-4679-4306-bd74-e3f0f1168194\", \"id\": \"14994141\"}--\u003e"
+				},
+				{
+					"_uid": "4d2e5b2b-269f-4d54-96a0-34a4fc9843b7",
+					"asset": {
+						"id": 1232246,
+						"alt": null,
+						"name": "",
+						"focus": null,
+						"title": null,
+						"filename": "https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg",
+						"copyright": null,
+						"fieldtype": "asset"
+					},
+					"component": "asset",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"asset\", \"space\": \"52681\", \"uid\": \"4d2e5b2b-269f-4d54-96a0-34a4fc9843b7\", \"id\": \"14994141\"}--\u003e"
+				},
+				{
+					"_uid": "13bc5dc7-5c9d-489a-9dfa-31cc50ac55b5",
+					"blocks": [
+						{
+							"Name": "name",
+							"_uid": "b8d40e6a-34b7-457e-b5c3-a2148e9fe1d3",
+							"Position": "surname",
+							"component": "Person",
+							"_editable": "\u003c!--#storyblok#{\"name\": \"Person\", \"space\": \"52681\", \"uid\": \"b8d40e6a-34b7-457e-b5c3-a2148e9fe1d3\", \"id\": \"14994141\"}--\u003e"
+						},
+						{
+							"_uid": "41c3563c-27ba-472b-8ebb-f351c085a00e",
+							"body": "body",
+							"headline": "headline",
+							"component": "teaser",
+							"_editable": "\u003c!--#storyblok#{\"name\": \"teaser\", \"space\": \"52681\", \"uid\": \"41c3563c-27ba-472b-8ebb-f351c085a00e\", \"id\": \"14994141\"}--\u003e"
+						}
+					],
+					"component": "blocks",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"blocks\", \"space\": \"52681\", \"uid\": \"13bc5dc7-5c9d-489a-9dfa-31cc50ac55b5\", \"id\": \"14994141\"}--\u003e"
+				}
+			],
+			"blocks_empty": [],
+			"table": {
+				"tbody": [
+					{
+						"_uid": "e9932c19-7678-42fd-b8c5-abf19818f15a",
+						"body": [
+							{
+								"_uid": "fcd723d9-f0a6-4d85-99b4-96943427d7aa",
+								"value": "value",
+								"component": "_table_col",
+								"_editable": "\u003c!--#storyblok#{\"name\": \"_table_col\", \"space\": \"52681\", \"uid\": \"fcd723d9-f0a6-4d85-99b4-96943427d7aa\", \"id\": \"14994141\"}--\u003e"
+							},
+							{
+								"_uid": "1b2bf83e-adbf-42cb-bcc3-f175de0f9240",
+								"value": "value 2",
+								"component": "_table_col",
+								"_editable": "\u003c!--#storyblok#{\"name\": \"_table_col\", \"space\": \"52681\", \"uid\": \"1b2bf83e-adbf-42cb-bcc3-f175de0f9240\", \"id\": \"14994141\"}--\u003e"
+							}
+						],
+						"component": "_table_row",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_row\", \"space\": \"52681\", \"uid\": \"e9932c19-7678-42fd-b8c5-abf19818f15a\", \"id\": \"14994141\"}--\u003e"
+					}
+				],
+				"thead": [
+					{
+						"_uid": "739f8259-2d18-47a3-a92f-cf652106b50b",
+						"value": "title",
+						"component": "_table_head",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_head\", \"space\": \"52681\", \"uid\": \"739f8259-2d18-47a3-a92f-cf652106b50b\", \"id\": \"14994141\"}--\u003e"
+					},
+					{
+						"_uid": "f301e2ee-600e-4f2a-95b2-8df8f37b3f00",
+						"value": "title 2",
+						"component": "_table_head",
+						"_editable": "\u003c!--#storyblok#{\"name\": \"_table_head\", \"space\": \"52681\", \"uid\": \"f301e2ee-600e-4f2a-95b2-8df8f37b3f00\", \"id\": \"14994141\"}--\u003e"
+					}
+				],
+				"fieldtype": "table"
+			}
+		}
+	}
+}

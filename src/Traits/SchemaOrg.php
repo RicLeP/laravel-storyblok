@@ -12,22 +12,39 @@ trait SchemaOrg
 	 * Automatically called to add a schema to the Page
 	 */
 	protected function initSchemaOrg() {
-		if ($this instanceof Page) {
-			$page = $this;
-		} else {
-			$page = $this->page();
+		if (method_exists($this, 'schemaOrg')) {
+			if ($this instanceof Page) {
+				$page = $this;
+			} else {
+				$page = $this->page();
+			}
+
+			$this->add($page);
 		}
 
-		$page->_meta['schema_org'][] = $this->schemaOrg();
 	}
 
+	/**
+	 * Returns the JavaScript JSON-LD string
+	 *
+	 * @return string
+	 */
 	public function schemaOrgScript() {
 		$schemaJson = '';
 
-		foreach ($this->_meta['schema_org'] as $schema) {
+		foreach ($this->meta()['schema_org'] as $schema) {
 			$schemaJson .= $schema->toScript();
 		}
 
 		return $schemaJson;
+	}
+
+	/**
+	 * Adds the schema to the meta of the current page
+	 *
+	 * @param $page
+	 */
+	private function add($page) {
+		$page->replaceMeta('schema_org', array_merge([$this->schemaOrg()], $this->meta()['schema_org'] ?? []));
 	}
 }

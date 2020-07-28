@@ -5,18 +5,46 @@ namespace Riclep\Storyblok;
 
 
 use Illuminate\Support\Facades\Cache;
-use Riclep\Storyblok\Traits\ProcessesBlocks;
+use Riclep\Storyblok\Traits\HasChildClasses;
 use Storyblok\Client;
 
 abstract class Folder
 {
-	use ProcessesBlocks;
+	use HasChildClasses;
 
+	/**
+	 * @var bool should we request the start / index page
+	 */
 	protected $startPage = false;
-	protected $currentPage = 1;
+
+
+	/**
+	 * @var int Current pagination page
+	 */
+	protected $currentPage = 0;
+
+
+	/**
+	 * @var int number of items to return
+	 */
 	protected $perPage = 10;
-	protected $sortBy = 'published_at:asc';
+
+
+	/**
+	 * @var string order to sort the returned stories
+	 */
+	protected $sortBy = 'content.date:desc';
+
+
+	/**
+	 * @var string the slug to start te request from
+	 */
 	protected $slug;
+
+
+	/**
+	 * @var array additional settings for the request
+	 */
 	protected $settings = [];
 
 	/**
@@ -25,12 +53,12 @@ abstract class Folder
 	 * @return \Illuminate\Support\Collection
 	 */
 	public function read() {
-		$response = $this->requestStories(resolve('Storyblok\Client'));
+		$response = $this->get();
 
-		$stories = collect($response->responseBody['stories']);
+		$stories = collect($response);
 
 		$stories->transform(function ($story) {
-			$blockClass = $this->getBlockClass($story['content']);
+			$blockClass = $this->getChildClassName('Page', $story['content']['component']);
 
 			return new $blockClass($story);
 		});
@@ -65,34 +93,43 @@ abstract class Folder
 		$this->settings = $settings;
 	}
 
+
 	/**
-	 * Makes the API request
+	 * Caches the response and returns just the bit we want
 	 *
-	 * @param Client $storyblokClient
-	 * @return Client
+	 * @return array
 	 */
-	protected function requestStories(Client $storyblokClient): Client
+	protected function get()
 	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
-			$response = $storyblokClient->getStories(array_merge([
-				'is_startpage' => $this->startPage,
-				'sort_by' => $this->sortBy,
-				'starts_with' => $this->slug,
-				'page' => $this->currentPage,
-				'per_page' => $this->perPage,
-			], $this->settings));
+			$response = $this->makeRequest();
 		} else {
-			$response = Cache::remember('folder-' . $this->slug, config('config.cache_duration') * 60, function () use ($storyblokClient) {
-				return $storyblokClient->getStories(array_merge([
-					'is_startpage' => $this->startPage,
-					'sort_by' => $this->sortBy,
-					'starts_with' => $this->slug,
-					'page' => $this->currentPage,
-					'per_page' => $this->perPage,
-				], $this->settings));
+			// TODO tagging cache
+
+			$response = Cache::remember('folder-' . $this->slug, config('storyblok.cache_duration') * 60, function () {
+				return $this->makeRequest();
 			});
 		}
 
-		return $response;
+		return $response['stories'];
+	}
+
+	/**
+	 * Makes the actual request
+	 *
+	 * @return array|\Storyblok\stdClass
+	 */
+	private function makeRequest() {
+		$storyblokClient = resolve('Storyblok\Client');
+
+		$storyblokClient =  $storyblokClient->getStories(array_merge([
+			'is_startpage' => $this->startPage,
+			'sort_by' => $this->sortBy,
+			'starts_with' => $this->slug,
+			'page' => $this->currentPage,
+			'per_page' => $this->perPage,
+		], $this->settings));
+
+		return $storyblokClient->getBody();
 	}
 }
