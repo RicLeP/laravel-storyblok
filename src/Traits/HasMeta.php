@@ -14,20 +14,29 @@ trait HasMeta
 	/**
 	 * Returns the meta items
 	 *
+	 * @param null $key the key to return
+	 * @param null $default a default if the $key is missing
 	 * @return array
 	 */
-	public function meta() {
-		// TODO return single key - with default
+	public function meta($key = null, $default = null) {
+		if ($key) {
+			if (array_key_exists($key, $this->_meta)) {
+				return $this->_meta[$key];
+			} else {
+				return $default;
+			}
+		}
+
 		return $this->_meta;
 	}
 
 	/**
-	 * Adds a meta item
+	 * Adds items to the meta content keeping any that already exist
 	 *
 	 * @param $fields
 	 */
 	public function addMeta($fields) {
-		$this->_meta = array_merge($this->_meta, $fields);
+		$this->_meta = array_merge($fields, $this->_meta);
 	}
 
 	/**
