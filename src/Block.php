@@ -272,6 +272,23 @@ class Block implements \IteratorAggregate
 			return new $class($field, $this);
 		}
 
+		// single item relations
+		if (Str::isUuid($field) && in_array($key, $this->_resolveRelations)) {
+			$request = new RequestStory();
+			$response = $request->get($field);
+
+			$class = $this->getChildClassName('Block', $response['content']['component']);
+			$relationClass = new $class($response['content'], $this);
+
+			$relationClass->addMeta([
+				'name' => $response['name'],
+				'published_at' => $response['published_at'],
+				'full_slug' => $response['full_slug'],
+			]);
+
+			return $relationClass;
+		}
+
 		// complex fields
 		if (is_array($field) && !empty($field)) {
 			return $this->arrayFieldTypes($field, $key);
