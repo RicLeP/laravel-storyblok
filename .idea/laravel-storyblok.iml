@@ -99,5 +99,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="laravel-storyblok-docs" />
     <orderEntry type="module" module-name="laravel-storyblok-docs" />
+    <orderEntry type="module" module-name="laravel-storyblok-docs" />
   </component>
 </module>

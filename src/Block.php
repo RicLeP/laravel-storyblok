@@ -27,6 +27,11 @@ class Block implements \IteratorAggregate
 	 */
 	public $_autoResolveRelations = false;
 
+	/**
+	 * @var array list of field names containing relations to resolve
+	 */
+	public $_resolveRelations = [];
+
 
 	/**
 	 * @var array the path of nested components
@@ -221,8 +226,6 @@ class Block implements \IteratorAggregate
 			if ($this->has($key)) {
 				return $this->_fields[$key];
 			}
-
-			return false;
 		} catch (Exception $e) {
 			return 'Caught exception: ' .  $e->getMessage();
 		}
@@ -265,7 +268,7 @@ class Block implements \IteratorAggregate
 
 		// complex fields
 		if (is_array($field) && !empty($field)) {
-			return $this->arrayFieldTypes($field);
+			return $this->arrayFieldTypes($field, $key);
 		}
 
 		// strings or anything else - do nothing
@@ -279,7 +282,7 @@ class Block implements \IteratorAggregate
 	 * @param $field
 	 * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
 	 */
-	private function arrayFieldTypes($field) {
+	private function arrayFieldTypes($field, $key) {
 		// match link fields
 		if (array_key_exists('linktype', $field)) {
 			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
@@ -308,7 +311,7 @@ class Block implements \IteratorAggregate
 
 		// it’s an array of relations - request them if we’re auto resolving
 		if (Str::isUuid($field[0])) {
-			if ($this->_autoResolveRelations) {
+			if ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations)) {
 				return collect($field)->transform(function ($relation) {
 					$request = new RequestStory();
 					$response = $request->get($relation);
