@@ -5,6 +5,7 @@ namespace Riclep\Storyblok;
 
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
@@ -137,24 +138,25 @@ class Page
 	}
 
 	/**
-	 * Magic getter to return fields from te contentType block for this page
+	 * Magic getter to return fields from the contentType block for this page
 	 * without having to reach into the page.
 	 *
 	 * @param $name
 	 * @return bool|string
 	 */
 	public function __get($name) {
-		try {
-			if ($this->block && $this->block->has($name)) {
-				return $this->block->{$name};
-			}
+		// check for accessor on the root block
+		$accessor = 'get' . Str::studly($name) . 'Attribute';
 
-			return false;
-		} catch (Exception $e) {
-			return 'Caught exception: ' .  $e->getMessage();
+		if (method_exists($this->block(), $accessor)) {
+			return $this->block()->$accessor();
+		}
+
+		// check for attribute on the root block
+		if ($this->block()->has($name)) {
+			return $this->block()->{$name};
 		}
 	}
-
 
 	/**
 	 * Does a bit of housekeeping before processing the data
