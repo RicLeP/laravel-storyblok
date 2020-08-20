@@ -3,7 +3,6 @@
 
 namespace Riclep\Storyblok;
 
-use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
