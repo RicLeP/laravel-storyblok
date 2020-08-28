@@ -412,7 +412,7 @@ class Block implements \IteratorAggregate
 	 */
 	public function liveField($field) {
 		if (config('storyblok.edit_mode')) {
-			return '{{' . 'liveContent.uuid_' . str_replace('-', '_', $this->uuid()) . '.' . $field . '}}';
+			return '{{ Object.keys(liveFields).length ? liveFields.uuid_' . str_replace('-', '_', $this->uuid()) . '.' . $field . ' : null }}';
 		}
 
 		return $this->{$field};
@@ -428,8 +428,6 @@ class Block implements \IteratorAggregate
 				$item->each(function ($item) {
 					$item->flatten();
 				});
-
-
 			} elseif ($item instanceof Field) {
 				$this->page()->liveContent['uuid_' . str_replace('-', '_', $this->uuid())][$key] = (string) $item;
 			} else {
