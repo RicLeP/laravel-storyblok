@@ -203,13 +203,11 @@ class Block implements \IteratorAggregate
 	 * @return string
 	 */
 	public function editorLink() {
-		if (array_key_exists('_editable' && $this->_meta)) {
+		if (array_key_exists('_editable', $this->_meta)) {
 			return $this->_meta['_editable'];
 		}
 
 		return '';
-
-		//return $this->_meta['_editable'] ??= '';
 	}
 
 
