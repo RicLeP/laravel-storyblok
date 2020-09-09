@@ -18,6 +18,12 @@
             "role": "Developer"
         }
     ],
+	"repositories":[
+		{
+			"type": "vcs",
+			"url": "git@github.com:RicLeP/php-client.git"
+		}
+	],
     "require": {
         "php": "^7.1",
         "ext-json": "*",
