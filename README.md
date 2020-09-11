@@ -40,11 +40,11 @@ The tests are mostly up-to-date and cover the majority of the code. A few areas 
 
 ### Changelog
 
-TODO
+[See it here](CHANGELOG.md)
 
 ## Contributing
 
-TODO
+Please feel free to help expand and improve this project. Currently it supports most of the basic usage for block, fields and content. It would be great to add more advanced features and transformations or simply fix bugs.
 
 ### Security
 
