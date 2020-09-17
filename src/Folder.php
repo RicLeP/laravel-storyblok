@@ -32,7 +32,7 @@ abstract class Folder
 		$stories->transform(function ($story) {
 			$blockClass = $this->getBlockClass($story['content']);
 
-			return new $blockClass($story);
+			return new $blockClass($story, null);
 		});
 
 		return $stories;
