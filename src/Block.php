@@ -410,7 +410,7 @@ class Block implements \IteratorAggregate
 	 */
 	public function liveField($field) {
 		if (config('storyblok.edit_mode')) {
-			return '{{ Object.keys(liveFields).length ? liveFields.uuid_' . str_replace('-', '_', $this->uuid()) . '.' . $field . ' : null }}';
+			return '{{ Object.keys(laravelStoryblokLive).length ? laravelStoryblokLive.uuid_' . str_replace('-', '_', $this->uuid()) . '.' . $field . ' : null }}';
 		}
 
 		return $this->{$field};

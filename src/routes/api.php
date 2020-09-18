@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use Riclep\Storyblok\Http\Controllers\LiveContentController;
+use Riclep\Storyblok\Http\Controllers\StoryblokController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,5 @@ use Riclep\Storyblok\Http\Controllers\LiveContentController;
 |
 */
 
-Route::post('/live-content', LiveContentController::class . '@index')->as('storyblok-live-content');
+Route::post('/api/laravel-storyblok/clear-storyblok-cache', StoryblokController::class . '@destroy');
+Route::post('/api/laravel-storyblok/live-content', LiveContentController::class . '@index');
