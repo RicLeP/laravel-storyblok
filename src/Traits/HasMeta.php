@@ -48,4 +48,12 @@ trait HasMeta
 	public function replaceMeta($key, $value) {
 		$this->_meta[$key] = $value;
 	}
+
+	/**
+	 * Returns the UUID of the Block
+	 * @return string
+	 */
+	public function uuid() {
+		return $this->meta('_uid');
+	}
 }
