@@ -209,8 +209,6 @@ class Block implements \IteratorAggregate
 		}
 
 		return '';
-
-		//return $this->_meta['_editable'] ??= '';
 	}
 
 

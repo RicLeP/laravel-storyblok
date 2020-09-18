@@ -18,20 +18,26 @@
             "role": "Developer"
         }
     ],
+	"repositories":[
+		{
+			"type": "vcs",
+			"url": "git@github.com:RicLeP/php-client.git"
+		}
+	],
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "illuminate/support": "^6.0|^7.0",
+        "illuminate/support": "^6.0|^7.0|^8.0",
         "imliam/laravel-env-set-command": "^1.0",
         "league/commonmark": "^1.5",
         "mundschenk-at/php-typography": "^6.5",
         "spatie/schema-org": "^2.14",
-        "storyblok/php-client": "^1.3",
+        "storyblok/php-client": "^1.4",
         "storyblok/richtext-resolver": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",
-        "orchestra/testbench": "4.0.*",
+        "orchestra/testbench": "6.0.*",
         "phpunit/phpunit": "^8.0"
     },
     "autoload": {
