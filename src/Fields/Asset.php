@@ -10,7 +10,11 @@ class Asset extends Field
 {
 	public function __toString()
 	{
-		return $this->content['filename'];
+		if ($this->content['filename']) {
+			return $this->content['filename'];
+		}
+
+		return '';
 	}
 
 	/**

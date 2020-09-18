@@ -32,6 +32,11 @@ class Page
 	private $story;
 
 	/**
+	 * @var array holds all the fields indexed by UUID for the JS live bridge
+	 */
+	public $liveContent = [];
+
+	/**
 	 * Page constructor.
 	 * @param $story
 	 */
@@ -73,6 +78,15 @@ class Page
 		}, $this->block()->_componentPath);
 
 		return array_reverse($views);
+	}
+
+	/**
+	 * Returns the story for this Page
+	 *
+	 * @return array
+	 */
+	public function story() {
+		return $this->story;
 	}
 
 	/**
