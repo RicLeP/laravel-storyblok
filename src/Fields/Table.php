@@ -10,9 +10,16 @@ use Riclep\Storyblok\Field;
 class Table extends Field
 {
 	/**
+	 * @var string a class to apply to the <table> tag
+	 */
+	protected $cssClass;
+
+	/**
 	 * @var array|int the column numbers to convert to headers
 	 */
 	protected $headerColumns;
+
+
 
 	public function __toString()
 	{
@@ -20,7 +27,7 @@ class Table extends Field
 	}
 
 	private function toHtml($table) {
-		$html = '<table><thead><tr>';
+		$html = '<table ' . ($this->cssClass ? 'class="' . $this->cssClass . '"' : null) . '><thead><tr>';
 
 		foreach ($table['thead'] as $header) {
 			$html .= '<th>' . $header['value'] . '</th>';
