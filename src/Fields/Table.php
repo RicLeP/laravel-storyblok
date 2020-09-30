@@ -13,7 +13,7 @@ class Table extends Field
 		return $this->toHtml($this->content);
 	}
 
-	private function toHtml($table) {
+	protected function toHtml($table) {
 		$html = '<table><thead><tr>';
 
 		foreach ($table['thead'] as $header) {
