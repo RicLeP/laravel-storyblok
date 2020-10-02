@@ -20,13 +20,12 @@ class Table extends Field
 	protected $headerColumns;
 
 
-
 	public function __toString()
 	{
 		return $this->toHtml($this->content);
 	}
 
-	private function toHtml($table) {
+	protected function toHtml($table) {
 		$html = '<table ' . ($this->cssClass ? 'class="' . $this->cssClass . '"' : null) . '><thead><tr>';
 
 		foreach ($table['thead'] as $header) {
