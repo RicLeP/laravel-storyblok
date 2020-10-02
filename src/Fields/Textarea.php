@@ -25,7 +25,11 @@ class Textarea extends Field
 	 * @return string
 	 */
 	private function autoParagraph($text) {
-		$paragraphs = explode("\n", $text);
-		return '<p>' . implode('</p><p>', array_filter($paragraphs)) . '</p>';
+		if ($text) {
+			$paragraphs = explode("\n", $text);
+			return '<p>' . implode('</p><p>', array_filter($paragraphs)) . '</p>';
+		}
+
+		return '';
 	}
 }

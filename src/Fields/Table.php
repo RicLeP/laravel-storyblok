@@ -19,6 +19,7 @@ class Table extends Field
 	 */
 	protected $headerColumns;
 
+
 	public function __toString()
 	{
 		return $this->toHtml($this->content);
