@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok;
 
 use Illuminate\Support\ServiceProvider;
+use Riclep\Storyblok\Console\BlockMakeCommand;
 use Storyblok\Client;
 
 class StoryblokServiceProvider extends ServiceProvider
@@ -24,6 +25,10 @@ class StoryblokServiceProvider extends ServiceProvider
 				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
 				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
 			], 'storyblok');
+
+			$this->commands([
+				BlockMakeCommand::class,
+			]);
         }
     }
 

@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Riclep\Storyblok\Block as BaseBlock;
+
+class DummyClass extends BaseBlock
+{
+    //
+}
