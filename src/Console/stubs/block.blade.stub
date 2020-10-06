@@ -1,7 +1,8 @@
 <?php
-// dd($contents);
+/** @var \App\Storyblok\Blocks\DummyClass $content */
+// dd($content);
 ?>
 
-<div class="DummyClass">
+<div class="DummyCssClass">
 
 </div>
