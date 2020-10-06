@@ -40,8 +40,6 @@ class BlockMakeCommand extends GeneratorCommand
 		}
 	}
 
-
-
 	protected function doOtherOperations()
 	{
 		$class = $this->qualifyClass($this->getNameInput());
