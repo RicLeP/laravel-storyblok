@@ -97,7 +97,7 @@ return [
     | Sets the namespace for the Page and Block classes
     |
     */
-	'component_class_namespace' => 'App\Storyblok\\',
+	'component_class_namespace' => ['App\Storyblok\\'],
 
 	/*
     |--------------------------------------------------------------------------

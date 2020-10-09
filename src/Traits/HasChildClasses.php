@@ -4,6 +4,7 @@
 namespace Riclep\Storyblok\Traits;
 
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait HasChildClasses
@@ -17,12 +18,16 @@ trait HasChildClasses
 	 * @return string
 	 */
 	private function getChildClassName($type, $name) {
-		if (class_exists(config('storyblok.component_class_namespace') . Str::pluralStudly($type) . '\\' . Str::studly($name))) {
-			return config('storyblok.component_class_namespace') . Str::pluralStudly($type) . '\\' . Str::studly($name);
+		foreach (Arr::wrap(config('storyblok.component_class_namespace')) as $namespace) {
+			if (class_exists($namespace . Str::pluralStudly($type) . '\\' . Str::studly($name))) {
+				return $namespace . Str::pluralStudly($type) . '\\' . Str::studly($name);
+			}
+
+			if (class_exists($namespace . Str::studly($type))) {
+				return $namespace . Str::studly($type);
+			}
 		}
 
-		if (class_exists(config('storyblok.component_class_namespace') . Str::studly($type))) {
-			return config('storyblok.component_class_namespace') . Str::studly($type);
-		}
+		return null;
 	}
 }
