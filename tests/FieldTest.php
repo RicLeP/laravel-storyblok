@@ -14,7 +14,7 @@ use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\StoryLink;
 use Riclep\Storyblok\Fields\Textarea;
 use Riclep\Storyblok\Fields\UrlLink;
-use Riclep\Storyblok\Tests\Fixtures\AssetWithAccessor;
+use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 
 class FieldTest extends TestCase
 {
@@ -76,7 +76,85 @@ class FieldTest extends TestCase
 	public function can_get_image_asset_as_url()
 	{
 		$field = new Image($this->getFieldContents('asset_image'), null);
+
 		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+	}
+
+	/** @test */
+	public function can_get_image_asset_dimensions()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+
+		$this->assertEquals($field->meta('width'), 700);
+		$this->assertEquals($field->meta('height'), 600);
+	}
+
+	/** @test */
+	public function can_get_original_image_url()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+
+		$field->resize(234, 432);
+
+		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+	}
+
+	/** @test */
+	public function can_resize_image()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field->resize(234, 432);
+
+		$this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+
+		$field2 = new Image($this->getFieldContents('hero'), null);
+		$field2->resize(800, 200, true);
+
+		$this->assertEquals('//img2.storyblok.com/800x200/smart/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
+	}
+
+	/** @test */
+	public function can_set_image_format()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field->format('png');
+
+		$this->assertEquals('//img2.storyblok.com/filters:format(png)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+
+		$field2 = new Image($this->getFieldContents('hero'), null);
+		$field2->format('jpg', 50);
+
+		$this->assertEquals('//img2.storyblok.com/filters:format(jpg):quality(50)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
+	}
+
+	/** @test */
+	public function can_fit_image()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field->fitIn(400, 400, 'ff0000');
+
+		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:fill(ff0000)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+
+		$field2 = new Image($this->getFieldContents('hero'), null);
+		$field2->fitIn(400, 400, 'transparent');
+
+		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:format(png):fill(transparent)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
+
+		$field3 = new Image($this->getFieldContents('hero'), null);
+		$field3->fitIn(400, 400, 'transparent')->format('webp');
+
+		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:format(webp):fill(transparent)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field3);
+	}
+
+	/** @test */
+	public function transparent_filled_images_are_pgn()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+
+		$field->fitIn('transparent');
+
+
+		dd('############################');
 	}
 
 	/** @test */
