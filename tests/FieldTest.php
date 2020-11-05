@@ -85,16 +85,14 @@ class FieldTest extends TestCase
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
-		$this->assertEquals($field->meta('width'), 700);
-		$this->assertEquals($field->meta('height'), 600);
+		$this->assertEquals($field->meta('width'), 960);
+		$this->assertEquals($field->meta('height'), 1280);
 	}
 
 	/** @test */
 	public function can_get_original_image_url()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-
-		$field->resize(234, 432);
 
 		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 	}
@@ -103,26 +101,31 @@ class FieldTest extends TestCase
 	public function can_resize_image()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-		$field->resize(234, 432);
+		$field = $field->transform()->resize(234, 432);
 
 		$this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2->resize(800, 200, true);
+		$field2 = $field2->transform()->resize(800, 200, 'smart');
 
 		$this->assertEquals('//img2.storyblok.com/800x200/smart/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
+
+		$field2 = new Image($this->getFieldContents('image'), null);
+		$field2 = $field2->transform()->resize(800, 200, 'focal-point');
+
+		$this->assertEquals('//img2.storyblok.com/800x200/filters:focal(350x426:351x427)/f/96945/1600x793/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg', (string) $field2);
 	}
 
 	/** @test */
 	public function can_set_image_format()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-		$field->format('png');
+		$field = $field->transform()->format('png');
 
 		$this->assertEquals('//img2.storyblok.com/filters:format(png)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2->format('jpg', 50);
+		$field2 = $field2->transform()->format('jpg', 50);
 
 		$this->assertEquals('//img2.storyblok.com/filters:format(jpg):quality(50)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
 	}
@@ -131,30 +134,53 @@ class FieldTest extends TestCase
 	public function can_fit_image()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-		$field->fitIn(400, 400, 'ff0000');
+		$field = $field->transform()->fitIn(400, 400, 'ff0000');
 
 		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:fill(ff0000)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2->fitIn(400, 400, 'transparent');
+		$field2 = $field2->transform()->fitIn(400, 400, 'transparent');
 
 		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:format(png):fill(transparent)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
 
 		$field3 = new Image($this->getFieldContents('hero'), null);
-		$field3->fitIn(400, 400, 'transparent')->format('webp');
+		$field3 = $field3->transform()->fitIn(400, 400, 'transparent')->format('webp');
 
 		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:format(webp):fill(transparent)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field3);
 	}
 
 	/** @test */
-	public function transparent_filled_images_are_pgn()
+	public function can_get_image_dimensions()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
-		$field->fitIn('transparent');
+		$this->assertEquals(960, $field->width());
+		$this->assertEquals(1280, $field->height());
+
+		$field1 = $field->transform()->format('png');
+
+		$this->assertEquals(960, $field1->width());
+		$this->assertEquals(1280, $field1->height());
+
+		$field2 = $field->transform()->resize(100, 200);
+
+		$this->assertEquals(100, $field2->width());
+		$this->assertEquals(200, $field2->height());
+	}
+
+	/** @test */
+	public function transparent_filled_images_have_correct_format()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field = $field->transform()->fitIn('transparent');
+
+		$this->assertEquals('png', $field->getTransformations()['format']);
 
 
-		dd('############################');
+		$field2 = new Image($this->getFieldContents('hero'), null);
+		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
+
+		$this->assertEquals('webp', $field2->getTransformations()['format']);
 	}
 
 	/** @test */
