@@ -10,7 +10,7 @@ class ImageTransformation
 {
 	private $filename;
 	private $focus;
-	private $transformations = [];
+	protected $transformations = [];
 	private $image;
 
 	public function __construct(Image $image)
@@ -26,6 +26,14 @@ class ImageTransformation
 
 	public function height() {
 		return $this->transformations['height'] ?? $this->image->height();
+	}
+
+	public function type() {
+		if (array_key_exists('format', $this->transformations)) {
+			return 'image/' . $this->transformations['format'];
+		} else {
+			return $this->image->type();
+		}
 	}
 
 	public function resize($width = 0, $height = 0, $focus = false)

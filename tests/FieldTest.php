@@ -15,6 +15,7 @@ use Riclep\Storyblok\Fields\StoryLink;
 use Riclep\Storyblok\Fields\Textarea;
 use Riclep\Storyblok\Fields\UrlLink;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
+use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
 
 class FieldTest extends TestCase
 {
@@ -150,17 +151,19 @@ class FieldTest extends TestCase
 	}
 
 	/** @test */
-	public function can_get_image_dimensions()
+	public function can_get_image_details()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
 		$this->assertEquals(960, $field->width());
 		$this->assertEquals(1280, $field->height());
+		$this->assertEquals('image/jpeg', $field->type());
 
 		$field1 = $field->transform()->format('png');
 
 		$this->assertEquals(960, $field1->width());
 		$this->assertEquals(1280, $field1->height());
+		$this->assertEquals('image/png', $field1->type());
 
 		$field2 = $field->transform()->resize(100, 200);
 
@@ -181,6 +184,15 @@ class FieldTest extends TestCase
 		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
 
 		$this->assertEquals('webp', $field2->getTransformations()['format']);
+	}
+
+
+	/** @test */
+	public function can_get_create_picture_elements()
+	{
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertEquals('<picture><source srcset="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)"><source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)"><img src="#############DEFAULT!!!" alt="MDN!!"></picture>', $field->picture());
 	}
 
 	/** @test */
