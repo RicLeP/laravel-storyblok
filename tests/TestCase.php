@@ -4,10 +4,18 @@ namespace Riclep\Storyblok\Tests;
 
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Riclep\Storyblok\StoryblokServiceProvider;
 
 
 class TestCase extends Orchestra
 {
+
+
+	protected function getPackageProviders($app)
+	{
+		return [StoryblokServiceProvider::class];
+	}
+
 	/**
 	 * Define environment setup.
 	 *

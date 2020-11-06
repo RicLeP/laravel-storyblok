@@ -192,7 +192,35 @@ class FieldTest extends TestCase
 	{
 		$field = new HeroImage($this->getFieldContents('hero'), null);
 
-		$this->assertEquals('<picture><source srcset="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)"><source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)"><img src="#############DEFAULT!!!" alt="MDN!!"></picture>', $field->picture());
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)">
+<source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
+
+<img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+</picture>
+PICTURE
+, str_replace("\t", '', $field->picture('Some alt text with "')));
+
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
+
+<img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+</picture>
+PICTURE
+, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile')));
+
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
+
+<img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;"  class="laravel storyblok" >
+</picture>
+PICTURE
+, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok'])));
+
+
 	}
 
 	/** @test */

@@ -54,14 +54,20 @@ class Image extends Asset
 	}
 
 	//TODO default, alt text (use field, or pass in string)
-	public function picture() {
-		$html = '<picture>';
-
-		foreach ($this->transformations as $transformation) {
-			$html .= '<source srcset="' . $transformation['src'] . '" type="' . $transformation['src']->type() . '" media="' . $transformation['media'] . '">';
+	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element') {
+		if ($default) {
+			$defaultSrc = (string) $this->transformations[$default]['src'];
+		} else {
+			$defaultSrc = $this->filename;
 		}
 
-		return $html .= '</picture>';
+		return view($view, [
+			'alt' => $alt,
+			'attributes' => $attributes,
+			'default' => $default,
+			'defaultSrc' => $defaultSrc,
+			'transformations' => $this->transformations,
+		])->render();
 	}
 
 	protected function getOriginalFilenameAttribute() {
