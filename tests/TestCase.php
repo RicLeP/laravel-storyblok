@@ -4,6 +4,7 @@ namespace Riclep\Storyblok\Tests;
 
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Orchestra;
+use ReflectionClass;
 use Riclep\Storyblok\StoryblokServiceProvider;
 
 
@@ -47,4 +48,10 @@ class TestCase extends Orchestra
 		return new $class($story['story']);
 	}
 
+	public static function callMethod($obj, $name, array $args) {
+		$class = new ReflectionClass($obj);
+		$method = $class->getMethod($name);
+		$method->setAccessible(true);
+		return $method->invokeArgs($obj, $args);
+	}
 }

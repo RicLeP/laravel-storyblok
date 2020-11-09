@@ -3,7 +3,6 @@
 
 namespace Riclep\Storyblok;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -218,7 +217,7 @@ class Block implements \IteratorAggregate
 	 * convention getSomeFieldAttribute() - called via $block->some_field
 	 *
 	 * @param $key
-	 * @return bool|string
+	 * @return null|string
 	 */
 	public function __get($key) {
 		$accessor = 'get' . Str::studly($key) . 'Attribute';
@@ -227,13 +226,11 @@ class Block implements \IteratorAggregate
 			return $this->$accessor();
 		}
 
-		try {
-			if ($this->has($key)) {
-				return $this->_fields[$key];
-			}
-		} catch (Exception $e) {
-			return 'Caught exception: ' .  $e->getMessage();
+		if ($this->has($key)) {
+			return $this->_fields[$key];
 		}
+
+		return null;
 	}
 
 	/**
@@ -251,6 +248,7 @@ class Block implements \IteratorAggregate
 	 * @param $field
 	 * @param $key
 	 * @return array|Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+	 * @throws \Storyblok\ApiException
 	 */
 	private function getFieldType($field, $key) {
 		// TODO process old asset fields
@@ -272,20 +270,8 @@ class Block implements \IteratorAggregate
 		}
 
 		// single item relations
-		if (Str::isUuid($field) && in_array($key, $this->_resolveRelations)) {
-			$request = new RequestStory();
-			$response = $request->get($field);
-
-			$class = $this->getChildClassName('Block', $response['content']['component']);
-			$relationClass = new $class($response['content'], $this);
-
-			$relationClass->addMeta([
-				'name' => $response['name'],
-				'published_at' => $response['published_at'],
-				'full_slug' => $response['full_slug'],
-			]);
-
-			return $relationClass;
+		if (Str::isUuid($field) && ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations))) {
+			return $this->getRelation(new RequestStory(), $field);
 		}
 
 		// complex fields
@@ -331,23 +317,11 @@ class Block implements \IteratorAggregate
 			return new Table($field, $this);
 		}
 
-		// it’s an array of relations - request them if we’re auto resolving
+		// it’s an array of relations - request them if we’re auto or manual resolving
 		if (Str::isUuid($field[0])) {
 			if ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations)) {
 				return collect($field)->transform(function ($relation) {
-					$request = new RequestStory();
-					$response = $request->get($relation);
-
-					$class = $this->getChildClassName('Block', $response['content']['component']);
-					$relationClass = new $class($response['content'], $this);
-
-					$relationClass->addMeta([
-						'name' => $response['name'],
-						'published_at' => $response['published_at'],
-						'full_slug' => $response['full_slug'],
-					]);
-
-					return $relationClass;
+					return $this->getRelation(new RequestStory(), $relation);
 				});
 			}
 		}
@@ -442,5 +416,20 @@ class Block implements \IteratorAggregate
 	 */
 	public function getIterator() {
 		return $this->_fields;
+	}
+
+	protected function getRelation(RequestStory $request, $relation) {
+		$response = $request->get($relation);
+
+		$class = $this->getChildClassName('Block', $response['content']['component']);
+		$relationClass = new $class($response['content'], $this);
+
+		$relationClass->addMeta([
+			'name' => $response['name'],
+			'published_at' => $response['published_at'],
+			'full_slug' => $response['full_slug'],
+		]);
+
+		return $relationClass;
 	}
 }

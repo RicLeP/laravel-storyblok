@@ -9,8 +9,6 @@ use Riclep\Storyblok\Support\ImageTransformation;
 
 class Image extends Asset
 {
-	// TODO add array of breakpoints to auto generate files and picture tag?
-
 	protected $transformations = [];
 
 	public function __construct($content, $block)
@@ -29,10 +27,10 @@ class Image extends Asset
 			if (array_key_exists($name, $this->transformations) ) {
 				return $this->transformations[$name];
 			}
-			return false; /////todo return a default image or transform?
-		} else {
-			return new ImageTransformation($this);
+			return false;
 		}
+
+		return new ImageTransformation($this);
 	}
 
 	public function width() {
@@ -56,16 +54,16 @@ class Image extends Asset
 	//TODO default, alt text (use field, or pass in string)
 	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element') {
 		if ($default) {
-			$defaultSrc = (string) $this->transformations[$default]['src'];
+			$imgSrc = (string) $this->transformations[$default]['src'];
 		} else {
-			$defaultSrc = $this->filename;
+			$imgSrc = $this->filename;
 		}
 
 		return view($view, [
 			'alt' => $alt,
 			'attributes' => $attributes,
 			'default' => $default,
-			'defaultSrc' => $defaultSrc,
+			'imgSrc' => $imgSrc,
 			'transformations' => $this->transformations,
 		])->render();
 	}

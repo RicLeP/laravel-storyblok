@@ -5,5 +5,5 @@
 		@endif
 	@endforeach
 
-	<img src="{{ $defaultSrc }}" alt="{{ $alt }}" @if (array_key_exists('class', $attributes)) class="{{ $attributes['class'] }}" @endif>
+	<img src="{{ $imgSrc }}" alt="{{ $alt }}" @foreach ($attributes as $attribute => $value) {{$attribute}}="{{$value}}" @endforeach>
 </picture>

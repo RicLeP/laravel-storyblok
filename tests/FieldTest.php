@@ -215,10 +215,10 @@ PICTURE
 <picture>
 <source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
 
-<img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;"  class="laravel storyblok" >
+<img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;"  class="laravel storyblok"  id="some-id" >
 </picture>
 PICTURE
-, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok'])));
+, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
 
 
 	}

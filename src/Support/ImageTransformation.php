@@ -31,9 +31,9 @@ class ImageTransformation
 	public function type() {
 		if (array_key_exists('format', $this->transformations)) {
 			return 'image/' . $this->transformations['format'];
-		} else {
-			return $this->image->type();
 		}
+
+		return $this->image->type();
 	}
 
 	public function resize($width = 0, $height = 0, $focus = false)
