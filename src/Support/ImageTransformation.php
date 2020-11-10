@@ -36,7 +36,7 @@ class ImageTransformation
 		return $this->image->type();
 	}
 
-	public function resize($width = 0, $height = 0, $focus = false)
+	public function resize($width = 0, $height = 0, $focus = null)
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'width' => $width,
@@ -88,13 +88,13 @@ class ImageTransformation
 	 * Transforms the image using the Storyblok image service
 	 * See: https://www.storyblok.com/docs/image-service
 	 *
-	 * @param $param
+	 * @param $options
 	 * @return string
 	 */
-	public function createUrl($param): string
+	public function createUrl($options): string
 	{
 		$resource = str_replace(['https:', '//a.storyblok.com'], '', $this->filename);
-		return '//img2.storyblok.com' . $param . $resource;
+		return '//img2.storyblok.com' . $options . $resource;
 	}
 
 	public function getTransformations() {

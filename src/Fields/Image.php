@@ -51,7 +51,6 @@ class Image extends Asset
 		return 'image/' . $extension;
 	}
 
-	//TODO default, alt text (use field, or pass in string)
 	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element') {
 		if ($default) {
 			$imgSrc = (string) $this->transformations[$default]['src'];
