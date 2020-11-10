@@ -46,8 +46,6 @@ class BlockMakeCommand extends GeneratorCommand
 		$path = $this->getPath($class);
 		$content = file_get_contents($path);
 
-		$components = $this->getComponentFields(Str::kebab($this->getNameInput()));
-
 		$content = str_replace('DummyPhpDoc', $this->getComponentFields(Str::kebab($this->getNameInput())), $content);
 
 		file_put_contents($path, $content);

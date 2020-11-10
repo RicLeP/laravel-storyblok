@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok\Tests;
 
 
+use Riclep\Storyblok\RequestStory;
 
 class BlockTest extends TestCase
 {
@@ -25,6 +26,15 @@ class BlockTest extends TestCase
 		$this->assertTrue(array_key_exists('_uid', $block->meta()));
 		$this->assertTrue(array_key_exists('component', $block->meta()));
 		$this->assertTrue(array_key_exists('_editable', $block->meta()));
+	}
+
+	/** @test */
+	public function can_get_uuid_from_meta()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals('835f25ba-7c20-423c-b375-2690df006382', $block->uuid());
 	}
 
 	/** @test */
@@ -109,7 +119,16 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
-	public function can_identify_create_blocks()
+	public function can_identify_custom_blocks_using_block_field_name()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\PersonName', $block->blocks[0]->Name);
+	}
+
+	/** @test */
+	public function can_identify_custom_blocks_using_block_name()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -142,6 +161,42 @@ class BlockTest extends TestCase
 		$block = $page->block();
 
 		$this->assertEquals('<p><b>textarea</b></p><p>richtext</p>', $block->richtext);
+	}
+
+	/** @test */
+	public function can_load_relations()
+	{
+		$page = $this->makePage('relation.json');
+		$block = $page->block();
+
+		$blockMock = $this->createStub(RequestStory::class);
+		$blockMock->method('get')->willReturn('');
+
+		$relation = $this::callMethod($block, 'getRelation', [
+			$blockMock,
+			'all-fields'
+		]);
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\AllFields', $relation);
+	}
+
+	/** @test */
+	public function can_load_single_relation()
+	{
+		$page = $this->makePage('relation.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Custom', $block->single_option_story);
+	}
+
+	/** @test */
+	public function can_load_multiple_relations()
+	{
+		$page = $this->makePage('relation.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Custom', $block->multi_options_stories[0]);
+		$this->assertInstanceOf('Riclep\Storyblok\Block', $block->multi_options_stories[1]);
 	}
 
 	/** @test */
@@ -250,7 +305,13 @@ class BlockTest extends TestCase
 		$this->assertEquals('person@layout_columns', $block->blocks[0]->columns[0]->cssClassWithLayout());
 	}
 
+	/** @test */
+	public function nonexisting_field_returns_null_from_magic_getter()
+	{
+		$page = $this->makePage('custom-page.json');
 
+		$this->assertNull($page->block()->not_here);
+	}
 
 	/** @test */
 	public function can_add_schema_org()
@@ -265,9 +326,25 @@ class BlockTest extends TestCase
 	{
 		$page = $this->makePage('ep16.json');
 
-		$page->block()->features[0]->body[3]->section_1[0]->views();
-
 		$this->assertEquals(['blocks.layout_2-sections.text--titled', 'blocks.feature.text--titled', 'blocks.episode.text--titled', 'blocks.page.text--titled', 'blocks.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
+	}
+
+	/** @test */
+	public function can_get_editorlink_in_edit_mode()
+	{
+		app()['config']->set('storyblok.edit_mode', true);
+		$page = $this->makePage('ep16.json');
+
+		$this->assertEquals('<!--#storyblok#{"name": "episode", "space": "87028", "uid": "f3a8d113-1d84-4bd5-acf4-09409e3852da", "id": "14005712"}-->', $page->block()->editorLink());
+	}
+
+	/** @test */
+	public function editorlink_is_empty_when_not_in_edit_mode()
+	{
+		app()['config']->set('storyblok.edit_mode', false);
+		$page = $this->makePage('ep16.json');
+
+		$this->assertEquals('', $page->block()->editorLink());
 	}
 
 	/** @test */

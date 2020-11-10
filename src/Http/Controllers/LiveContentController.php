@@ -2,7 +2,7 @@
 
 namespace Riclep\Storyblok\Http\Controllers;
 
-use Riclep\Storyblok\NullPage;
+use Riclep\Storyblok\Support\NullPage;
 use Illuminate\Http\Request;
 use Riclep\Storyblok\Block;
 

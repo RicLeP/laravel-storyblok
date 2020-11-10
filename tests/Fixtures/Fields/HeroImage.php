@@ -4,9 +4,21 @@
 namespace Riclep\Storyblok\Tests\Fixtures\Fields;
 
 
-use Riclep\Storyblok\Fields\Asset;
+use Riclep\Storyblok\Fields\Image;
 
-class HeroImage extends Asset
+class HeroImage extends Image
 {
 
+	protected function transformations() {
+		$this->transformations = [
+			'mobile' => [
+				'src' => $this->transform()->resize(100, 120)->format('webp'),
+				'media' => '(min-width: 600px)',
+			],
+			'desktop' => [
+				'src' => $this->transform()->resize(500, 400),
+				'media' => '(min-width: 1200px)',
+			],
+		];
+	}
 }
