@@ -5,9 +5,12 @@ namespace Riclep\Storyblok;
 
 use Exception;
 use Illuminate\Support\Str;
+use Riclep\Storyblok\Traits\HasMeta;
 
 abstract class Field
 {
+	use HasMeta;
+
 	/**
 	 * @var array|string the cotent of the field
 	 */

@@ -22,9 +22,9 @@ trait HasMeta
 		if ($key) {
 			if (array_key_exists($key, $this->_meta)) {
 				return $this->_meta[$key];
-			} else {
-				return $default;
 			}
+
+			return $default;
 		}
 
 		return $this->_meta;

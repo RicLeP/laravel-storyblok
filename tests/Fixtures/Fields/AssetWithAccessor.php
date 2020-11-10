@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Riclep\Storyblok\Tests\Fixtures;
+namespace Riclep\Storyblok\Tests\Fixtures\Fields;
 
 
 use Riclep\Storyblok\Fields\Asset;
