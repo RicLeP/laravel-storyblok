@@ -31,18 +31,20 @@ class Block implements \IteratorAggregate
 	 */
 	public $_resolveRelations = [];
 
-
 	/**
 	 * @var array the path of nested components
 	 */
 	public $_componentPath = [];
 
+	/**
+	 * @var array the path of nested components
+	 */
+	protected $_casts = [];
 
 	/**
 	 * @var Collection all the fields for the Block
 	 */
 	private $_fields;
-
 
 	/**
 	 * @var Page|Block reference to the parent Block or Page
@@ -254,9 +256,9 @@ class Block implements \IteratorAggregate
 		// TODO process old asset fields
 		// TODO option to convert all text fields to a class - single or multiline?
 
-		// does the Block assign any $casts? This is key (field) => value (class)
-		if (property_exists($this, 'casts') && array_key_exists($key, $this->casts)) {
-			return new $this->casts[$key]($field, $this);
+		// does the Block assign any $_casts? This is key (field) => value (class)
+		if (property_exists($this, '_casts') && array_key_exists($key, $this->_casts)) {
+			return new $this->_casts[$key]($field, $this);
 		}
 
 		// find Fields specific to this Block matching: BlockNameFieldName

@@ -101,6 +101,32 @@ class ImageTransformation
 		return $this->transformations;
 	}
 
+	private function hasFilters() {
+		return array_key_exists('format', $this->transformations) || array_key_exists('quality', $this->transformations) || array_key_exists('fill', $this->transformations) || (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point');
+	}
+
+	private function applyFilters() {
+		$filters = '/filters';
+
+		if (array_key_exists('format', $this->transformations)) {
+			$filters .= ':format(' . $this->transformations['format'] . ')';
+		}
+
+		if (array_key_exists('quality', $this->transformations)) {
+			$filters .= ':quality(' . $this->transformations['quality'] . ')';
+		}
+
+		if (array_key_exists('fill', $this->transformations)) {
+			$filters .= ':fill(' . $this->transformations['fill'] . ')';
+		}
+
+		if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->focus) {
+			$filters .= ':focal(' . $this->focus . ')';
+		}
+
+		return $filters;
+	}
+
 	public function __toString()
 	{
 		$transforms = '';
@@ -118,24 +144,8 @@ class ImageTransformation
 		}
 
 		// filters
-		if (array_key_exists('format', $this->transformations) || array_key_exists('quality', $this->transformations) || array_key_exists('fill', $this->transformations) || (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point')) {
-			$transforms .= '/filters';
-
-			if (array_key_exists('format', $this->transformations)) {
-				$transforms .= ':format(' . $this->transformations['format'] . ')';
-			}
-
-			if (array_key_exists('quality', $this->transformations)) {
-				$transforms .= ':quality(' . $this->transformations['quality'] . ')';
-			}
-
-			if (array_key_exists('fill', $this->transformations)) {
-				$transforms .= ':fill(' . $this->transformations['fill'] . ')';
-			}
-
-			if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->focus) {
-				$transforms .= ':focal(' . $this->focus . ')';
-			}
+		if ($this->hasFilters()) {
+			$transforms .= $this->applyFilters();
 		}
 
 		return $this->createUrl($transforms);

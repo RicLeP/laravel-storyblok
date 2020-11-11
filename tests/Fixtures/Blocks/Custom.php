@@ -10,7 +10,7 @@ use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
 
 class Custom extends Block
 {
-	protected $casts = [
+	protected $_casts = [
 		'datetime' => DateTime::class,
 		'image' => HeroImage::class,
 	];
