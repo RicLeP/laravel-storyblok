@@ -6,6 +6,9 @@ namespace Riclep\Storyblok\Fields;
 
 use Riclep\Storyblok\Field;
 
+/**
+ * @property false|string filename
+ */
 class Asset extends Field
 {
 	public function __toString()
