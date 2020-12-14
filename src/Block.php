@@ -281,6 +281,11 @@ class Block implements \IteratorAggregate
 			return $this->arrayFieldTypes($field, $key);
 		}
 
+		// legacy image fields
+		if (is_string($field) && Str::endsWith($field, ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+			return new Image($field, $this);
+		}
+
 		// strings or anything else - do nothing
 		return $field;
 	}

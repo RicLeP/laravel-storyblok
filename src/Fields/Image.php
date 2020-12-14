@@ -13,7 +13,13 @@ class Image extends Asset
 
 	public function __construct($content, $block)
 	{
-		parent::__construct($content, $block);
+
+		if (is_string($content)) {
+			$this->upgradeOldFields($content);
+			parent::__construct($this->content, $block);
+		} else {
+			parent::__construct($content, $block);
+		}
 
 		$this->extractMetaDetails();
 
@@ -81,5 +87,17 @@ class Image extends Asset
 			'width' => $dimensions[0]['width'],
 			'extension' => $dimensions[0]['extension'],
 		]);
+	}
+
+	private function upgradeOldFields($content) {
+		$this->content = [
+			'filename' => $content,
+			'alt' => null,
+			'copyright' => null,
+			'fieltype' => 'asset',
+			'focus' => null,
+			'name' => '',
+			'title' => null,
+		];
 	}
 }
