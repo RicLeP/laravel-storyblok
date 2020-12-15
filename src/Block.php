@@ -324,45 +324,47 @@ class Block implements \IteratorAggregate
 			return new Table($field, $this);
 		}
 
-		// it’s an array of relations - request them if we’re auto or manual resolving
-		if (Str::isUuid($field[0])) {
-			if ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations)) {
-				return collect($field)->transform(function ($relation) {
-					return $this->getRelation(new RequestStory(), $relation);
-				});
-			}
-		}
-
-		// has child items - single option, multi option and Blocks fields
-		if (is_array($field[0])) {
-			// resolved relationships - entire story is returned, we just want the content and a few meta items
-			if (array_key_exists('content', $field[0])) {
-				return collect($field)->transform(function ($relation) {
-					$class = $this->getChildClassName('Block', $relation['content']['component']);
-					$relationClass = new $class($relation['content'], $this);
-
-					$relationClass->addMeta([
-						'name' => $relation['name'],
-						'published_at' => $relation['published_at'],
-						'full_slug' => $relation['full_slug'],
-					]);
-
-					return $relationClass;
-				});
+		if (array_key_exists(0, $field)) {
+			// it’s an array of relations - request them if we’re auto or manual resolving
+			if (Str::isUuid($field[0])) {
+				if ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations)) {
+					return collect($field)->transform(function ($relation) {
+						return $this->getRelation(new RequestStory(), $relation);
+					});
+				}
 			}
 
-			// this field holds blocks!
-			if (array_key_exists('component', $field[0])) {
-				return collect($field)->transform(function ($block) {
-					$class = $this->getChildClassName('Block', $block['component']);
+			// has child items - single option, multi option and Blocks fields
+			if (is_array($field[0])) {
+				// resolved relationships - entire story is returned, we just want the content and a few meta items
+				if (array_key_exists('content', $field[0])) {
+					return collect($field)->transform(function ($relation) {
+						$class = $this->getChildClassName('Block', $relation['content']['component']);
+						$relationClass = new $class($relation['content'], $this);
 
-					return new $class($block, $this);
-				});
-			}
+						$relationClass->addMeta([
+							'name' => $relation['name'],
+							'published_at' => $relation['published_at'],
+							'full_slug' => $relation['full_slug'],
+						]);
 
-			// multi assets
-			if (array_key_exists('filename', $field[0])) {
-				return new MultiAsset($field, $this);
+						return $relationClass;
+					});
+				}
+
+				// this field holds blocks!
+				if (array_key_exists('component', $field[0])) {
+					return collect($field)->transform(function ($block) {
+						$class = $this->getChildClassName('Block', $block['component']);
+
+						return new $class($block, $this);
+					});
+				}
+
+				// multi assets
+				if (array_key_exists('filename', $field[0])) {
+					return new MultiAsset($field, $this);
+				}
 			}
 		}
 
