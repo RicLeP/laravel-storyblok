@@ -6,9 +6,15 @@ namespace Riclep\Storyblok\Fields;
 
 use Illuminate\Support\Arr;
 use Riclep\Storyblok\Field;
+use Riclep\Storyblok\Page;
 
 class Table extends Field
 {
+	/**
+	 * @var array|string caption for the table
+	 */
+	protected $caption;
+
 	/**
 	 * @var string a class to apply to the <table> tag
 	 */
@@ -26,10 +32,20 @@ class Table extends Field
 	}
 
 	protected function toHtml($table) {
-		$html = '<table ' . ($this->cssClass ? 'class="' . $this->cssClass . '"' : null) . '><thead><tr>';
+		$html = '<table ' . ($this->cssClass ? 'class="' . $this->cssClass . '"' : null) . '>';
+
+		if ($this->caption) {
+			if (is_array($this->caption)) {
+				$html .= '<caption class="' . $this->caption[1] . '">' . $this->caption[0] . '</caption>';
+			} else {
+				$html .= '<caption>' . $this->caption . '</caption>';
+			}
+		}
+
+		$html .= '<thead><tr>';
 
 		foreach ($table['thead'] as $header) {
-			$html .= '<th>' . $header['value'] . '</th>';
+			$html .= '<th>' . nl2br($header['value']) . '</th>';
 		}
 
 		$html .= '</tr></thead><tbody>';
@@ -39,9 +55,9 @@ class Table extends Field
 
 			foreach ($row['body'] as $column => $cell) {
 				if ($this->headerColumns && in_array(($column + 1), Arr::wrap($this->headerColumns))) {
-					$html .= '<th>' . $cell['value'] . '</th>';
+					$html .= '<th>' . nl2br($cell['value'])  . '</th>';
 				} else {
-					$html .= '<td>' . $cell['value'] . '</td>';
+					$html .= '<td>' . nl2br($cell['value'])  . '</td>';
 				}
 			}
 
@@ -49,5 +65,17 @@ class Table extends Field
 		}
 
 		return $html . '</tbody></table>';
+	}
+
+	public function caption($caption) {
+		$this->caption = $caption;
+
+		return $this;
+	}
+
+	public function cssClass($cssClass) {
+		$this->cssClass = $cssClass;
+
+		return $this;
 	}
 }
