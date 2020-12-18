@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use Riclep\Storyblok\Http\Controllers\LiveContentController;
 use Riclep\Storyblok\Http\Controllers\StoryblokController;
+use Riclep\Storyblok\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,5 @@ use Riclep\Storyblok\Http\Controllers\StoryblokController;
 
 Route::post('/api/laravel-storyblok/clear-storyblok-cache', StoryblokController::class . '@destroy');
 Route::post('/api/laravel-storyblok/live-content', LiveContentController::class . '@index');
+
+Route::post('/api/laravel-storyblok/webhook/publish', WebhookController::class . '@publish');
