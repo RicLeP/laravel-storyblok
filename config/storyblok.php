@@ -109,6 +109,16 @@ return [
     */
 	'view_path' => 'storyblok.',
 
+	/*
+    |--------------------------------------------------------------------------
+    | Cache duration
+    |--------------------------------------------------------------------------
+    |
+    | Sets the folder where views will be stored under /resources/views
+    |
+    */
+	'webhook_secret' => env('STORYBLOK_WEBHOOK_SECRET'),
+
 
 
 ];

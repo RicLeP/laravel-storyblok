@@ -44,11 +44,5 @@
 		storyblok.on('change', function() {
 			window.location.reload(true);
 		});
-
-		storyblok.on('published', function() {
-			axios.post('/api/laravel-storyblok/clear-storyblok-cache').then((response) => {
-				console.log(response);
-			});
-		});
 	</script>
 @endif
