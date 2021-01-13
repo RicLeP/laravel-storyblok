@@ -17,8 +17,8 @@ trait EmbedsMedia
 	/**
 	 * Initialises the Embed object.
 	 */
-	protected function initEmbedsMedia() {
-		$this->_embed = Embed::create($this->content()[$this->_embedField]);
+	protected function init() {
+		$this->_embed = Embed::create($this->content);
 	}
 
 	/**
@@ -29,7 +29,7 @@ trait EmbedsMedia
 	 */
 	public function embed() {
 		if ($this->hasView()) {
-			return view()->first([
+			return (string) view()->first([
 				config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName),
 				'laravel-storyblok::embeds.' . strtolower($this->_embed->providerName),
 			], [
@@ -65,5 +65,16 @@ trait EmbedsMedia
 	 */
 	private function hasView() {
 		return view()->exists(config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName)) || view()->exists('laravel-storyblok::embeds.' . strtolower($this->_embed->providerName));
+	}
+
+
+	/**
+	 * Returns the embed code
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return $this->embed();
 	}
 }
