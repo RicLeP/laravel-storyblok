@@ -15,13 +15,6 @@ trait EmbedsMedia
 	private $_embed;
 
 	/**
-	 * The field to use as the source of the embedded item
-	 *
-	 * @var string
-	 */
-	private $_embedField;
-
-	/**
 	 * Initialises the Embed object.
 	 */
 	protected function initEmbedsMedia() {
