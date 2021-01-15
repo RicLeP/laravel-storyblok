@@ -27,12 +27,15 @@ trait EmbedsMedia
 	 *
 	 * @return string
 	 */
-	public function embed() {
-		if ($this->hasView()) {
-			return (string) view()->first([
-				config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName),
-				'laravel-storyblok::embeds.' . strtolower($this->_embed->providerName),
-			], [
+	public function html() {
+		if (method_exists($this, 'embedView')) {
+			$method = 'embedView';
+		} else {
+			$method = 'baseEmbedView';
+		}
+
+		if ($this->{$method}()) {
+			return (string) view($this->{$method}(), [
 				'embed' => $this->_embed,
 			]);
 		}
@@ -54,17 +57,26 @@ trait EmbedsMedia
 	 *
 	 * @return Embed\Embed
 	 */
-	public function embedder() {
+	public function embed() {
 		return $this->_embed;
 	}
 
 	/**
-	 * Checks if a view has been created for this service.
+	 * Returns a path to a view to use for embedding this type of media.
+	 * If the view can not be found it should return false.
 	 *
-	 * @return bool
+	 * @return false|string
 	 */
-	private function hasView() {
-		return view()->exists(config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName)) || view()->exists('laravel-storyblok::embeds.' . strtolower($this->_embed->providerName));
+	protected function baseEmbedView() {
+		if (view()->exists(config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName))) {
+			return config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName);
+		}
+
+		if (view()->exists('laravel-storyblok::embeds.' . strtolower($this->_embed->providerName))) {
+			return 'laravel-storyblok::embeds.' . strtolower($this->_embed->providerName);
+		}
+
+		return false;
 	}
 
 
@@ -75,6 +87,6 @@ trait EmbedsMedia
 	 */
 	public function __toString()
 	{
-		return $this->embed();
+		return $this->html();
 	}
 }
