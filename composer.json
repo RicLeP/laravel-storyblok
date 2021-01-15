@@ -19,10 +19,10 @@
         }
     ],
     "require": {
-        "php": "^7.1|8.0",
+        "php": "^7.1|^8.0",
+		"embed/embed": "^3.4",
         "ext-json": "*",
         "illuminate/support": "^6.0|^7.0|^8.0",
-        "imliam/laravel-env-set-command": "^1.0",
         "league/commonmark": "^1.5",
         "mundschenk-at/php-typography": "^6.5",
         "spatie/schema-org": "^2.14",
