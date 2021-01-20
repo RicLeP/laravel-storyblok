@@ -55,8 +55,9 @@ class BlockMakeCommand extends GeneratorCommand
 		// call API to get details on the Block and name comments of vars available
 
 		$name = Str::kebab($this->getNameInput());
+		$path = $this->viewPath('storyblok/components/');
 
-		if (!file_exists($this->viewPath('storyblok/components/') . $name . '.blade.php')) {
+		if (!file_exists($path . $name . '.blade.php')) {
 			$content = file_get_contents(__DIR__ . '/stubs/block.blade.stub');
 
 			$find = ['DummyClass', 'DummyCssClass'];
@@ -64,7 +65,9 @@ class BlockMakeCommand extends GeneratorCommand
 
 			$content = str_replace($find, $replace, $content);
 
-			file_put_contents($this->viewPath('storyblok/components/') . $name . '.blade.php', $content);
+			$this->files->makeDirectory($path);
+
+			file_put_contents($path . $name . '.blade.php', $content);
 		} else {
 			$this->error('Blade already exists!');
 		}
@@ -72,12 +75,17 @@ class BlockMakeCommand extends GeneratorCommand
 
 	protected function createScss() {
 		$name = Str::kebab($this->getNameInput());
+		$path = resource_path('sass/blocks/');
 
-		if (!file_exists(resource_path('sass/blocks/') . '_' . $name . '.scss')) {
+		if (!file_exists($path . '_' . $name . '.scss')) {
 			$content = file_get_contents(__DIR__ . '/stubs/block.scss.stub');
 			$content = str_replace('DummyClass', $name, $content);
 
-			file_put_contents(resource_path('sass/blocks/') . '_' . $name . '.scss', $content);
+			if (!$this->files->exists($path)) {
+				$this->files->makeDirectory($path);
+			}
+
+			file_put_contents($path . '_' . $name . '.scss', $content);
 		} else {
 			$this->error('SCSS already exists!');
 		}
