@@ -55,7 +55,7 @@ class BlockMakeCommand extends GeneratorCommand
 		// call API to get details on the Block and name comments of vars available
 
 		$name = Str::kebab($this->getNameInput());
-		$path = $this->viewPath('storyblok/components/');
+		$path = $this->viewPath('storyblok/blocks/');
 
 		if (!file_exists($path . $name . '.blade.php')) {
 			$content = file_get_contents(__DIR__ . '/stubs/block.blade.stub');
