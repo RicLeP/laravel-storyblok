@@ -3,6 +3,7 @@
 // dd($content);
 ?>
 
+{!! $content->editorLink() !!}
 <div class="DummyCssClass">
 
 </div>
