@@ -62,12 +62,19 @@ class Page
 	 *
 	 * @param array $additionalContent
 	 * @return View
+	 * @throws MissingViewException
 	 */
 	public function render($additionalContent = []) {
 		try {
 			return view()->first($this->views(), array_merge(['story' => $this], $additionalContent));
 		} catch (\Exception $exception) {
-			throw new MissingViewException('None of the views in the given array exist: [' . implode(', ', $this->views()) . ']');
+			if (get_class($this) === 'App\Storyblok\Page') {
+				$classMessage = 'Create a view or a Page called App\Storyblok\Pages\\' . Str::studly($this->block()->component()) . ' and override the views() method.';
+			} else {
+				$classMessage = 'Create one or override the views() method in App\Storyblok\Pages\\' . Str::studly($this->block()->component()) . '.';
+			}
+
+			throw new MissingViewException('None of the views in the given array exist: [' . implode(', ', $this->views()) . ']. ' . $classMessage);
 		}
 	}
 

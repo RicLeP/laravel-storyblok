@@ -122,12 +122,19 @@ class Block implements \IteratorAggregate
 	 * Returns the first matching view, passing it the fields
 	 *
 	 * @return View
+	 * @throws MissingViewException
 	 */
 	public function render() {
 		try {
 			return view()->first($this->views(), ['block' => $this]);
 		} catch (\Exception $exception) {
-			throw new MissingViewException('None of the views in the given array exist: [' . implode(', ', $this->views()) . ']');
+			if (get_class($this) === 'App\Storyblok\Block') {
+				$classMessage = 'Create a view or a Block called App\Storyblok\Blocks\\' . Str::studly($this->meta()['component']) . ' and override the views() method.';
+			} else {
+				$classMessage = 'Create one or override the views() method in App\Storyblok\Blocks\\' . Str::studly($this->meta()['component']) . '.';
+			}
+
+			throw new MissingViewException('None of the views in the given array exist: [' . implode(', ', $this->views()) . ']. ' . $classMessage);
 		}
 	}
 
