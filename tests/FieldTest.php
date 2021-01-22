@@ -14,6 +14,7 @@ use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\StoryLink;
 use Riclep\Storyblok\Fields\Textarea;
 use Riclep\Storyblok\Fields\UrlLink;
+use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
 
@@ -49,7 +50,36 @@ class FieldTest extends TestCase
 	public function can_convert_rich_text_to_string()
 	{
 		$field = new RichText($this->getFieldContents('richtext'), null);
+
 		$this->assertEquals('<p><b>textarea</b></p><p>richtext</p>', (string) $field);
+	}
+
+	/** @test */
+	public function can_convert_blocks_in_rich_text()
+	{
+		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
+		$content =  $story['story']['content']['body'];
+
+		config(['storyblok.view_path' => 'Fixtures.views.']);
+
+		$field = new RichText($content, new NullBlock([], null));
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[2]);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $field->content()[3]);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[4]);
+	}
+
+	/** @test */
+	public function can_convert_blocks_in_rich_text_to_html()
+	{
+		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
+		$content =  $story['story']['content']['body'];
+
+		config(['storyblok.view_path' => 'Fixtures.views.']);
+
+		$field = new RichText($content, new NullBlock([], null));
+
+		$this->assertEquals('<p>hello some copy</p><p><b>and here </b></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
 	}
 
 	/** @test */
