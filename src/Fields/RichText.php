@@ -19,12 +19,14 @@ class RichText extends Field
 
 		// Loop through all the nodes looking for a ‘blok’ nodes and convery them to
 		// the correct Block Class. All other nodes are converted to HTML
-		foreach ($this->content['content'] as $key => $node) {
-			if ($node['type'] === 'blok' && isset($node['attrs']['body']) && is_array($node['attrs']['body'])){
-				$class = $this->getChildClassName('Block', $node['attrs']['body'][0]['component']);
-				$block = new $class($node['attrs']['body'][0], $this->block());
+		foreach ($this->content['content'] as $node) {
+			if ($node['type'] === 'blok' && isset($node['attrs']['body']) && is_array($node['attrs']['body'])) {
+				foreach ($node['attrs']['body'] as $blockContent) {
+					$class = $this->getChildClassName('Block', $blockContent['component']);
+					$block = new $class($blockContent, $this->block());
 
-				$content[] = $block;
+					$content[] = $block;
+				}
 			} else {
 				$content[] = $richtextResolver->render(["content" => [$node]]);
 			}
@@ -43,11 +45,11 @@ class RichText extends Field
 	{
 		$html = "";
 
-		foreach ($this->content as $node) {
-			if (is_string($node)) {
-				$html .= $node;
+		foreach ($this->content as $content) {
+			if (is_string($content)) {
+				$html .= $content;
 			} else {
-				$html .= $node->render();
+				$html .= $content->render();
 			}
 		}
 
