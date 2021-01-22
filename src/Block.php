@@ -62,7 +62,9 @@ class Block implements \IteratorAggregate
 
 		$this->preprocess($content);
 
-		$this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
+		if ($parent) {
+			$this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
+		}
 
 		$this->processFields();
 

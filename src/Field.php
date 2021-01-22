@@ -12,7 +12,7 @@ abstract class Field
 	use HasMeta;
 
 	/**
-	 * @var array|string the cotent of the field
+	 * @var array|string the content of the field
 	 */
 	protected $content;
 

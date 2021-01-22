@@ -19,7 +19,9 @@ trait SchemaOrg
 				$page = $this->page();
 			}
 
-			$this->add($page);
+			if ($page) {
+				$this->add($page);
+			}
 		}
 
 	}

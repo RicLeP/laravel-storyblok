@@ -1,0 +1,120 @@
+{
+	"story": {
+		"name": "test",
+		"created_at": "2021-01-21T15:17:30.151Z",
+		"published_at": null,
+		"alternates": [],
+		"id": 34618449,
+		"uuid": "764fee7a-4219-437b-96fe-e1b25d847efc",
+		"content": {
+			"_uid": "43ee7356-368e-4efb-ab7e-4b2dd6291404",
+			"body": {
+				"type": "doc",
+				"content": [
+					{
+						"type": "paragraph",
+						"content": [
+							{
+								"text": "hello some copy",
+								"type": "text"
+							}
+						]
+					},
+					{
+						"type": "paragraph",
+						"content": [
+							{
+								"text": "and here ",
+								"type": "text",
+								"marks": [
+									{
+										"type": "bold"
+									}
+								]
+							}
+						]
+					},
+					{
+						"type": "blok",
+						"attrs": {
+							"id": "5f8242cf-1337-4885-a0fe-9464e7da98e8",
+							"body": [
+								{
+									"_uid": "i-a955539d-aed8-4dba-ab3b-60e9608da85e",
+									"name": "test",
+									"component": "person",
+									"description": "gfdgfdgd",
+									"_editable": "\u003c!--#storyblok#{\"name\": \"person\", \"space\": \"101180\", \"uid\": \"i-a955539d-aed8-4dba-ab3b-60e9608da85e\", \"id\": \"34618449\"}--\u003e"
+								},
+								{
+									"_uid": "i-6084b196-fa93-452d-8ef4-57c0faad8500",
+									"link": {
+										"id": "5ff6d20f-0685-4760-9374-483e2779d079",
+										"url": "",
+										"linktype": "story",
+										"fieldtype": "multilink",
+										"cached_url": "curriculum/bp-curriculum"
+									},
+									"label": "click me",
+									"style": "solid",
+									"theme": [
+										{
+											"_uid": "7ffab258-8b2f-44db-a7eb-55cc1205af06",
+											"component": "theme",
+											"text_colour": "yellow",
+											"background_colour": "black",
+											"_editable": "\u003c!--#storyblok#{\"name\": \"theme\", \"space\": \"101180\", \"uid\": \"7ffab258-8b2f-44db-a7eb-55cc1205af06\", \"id\": \"34618449\"}--\u003e"
+										}
+									],
+									"component": "button",
+									"_editable": "\u003c!--#storyblok#{\"name\": \"button\", \"space\": \"101180\", \"uid\": \"i-6084b196-fa93-452d-8ef4-57c0faad8500\", \"id\": \"34618449\"}--\u003e"
+								}
+							]
+						}
+					},
+					{
+						"type": "blok",
+						"attrs": {
+							"id": "5f8242cf-1337-4885-a0fe-9464e7da98e8",
+							"body": [
+								{
+									"_uid": "i-b2a17b33-7f8f-4e49-b64a-22dddc26839a",
+									"name": "name",
+									"component": "person",
+									"description": "surname",
+									"_editable": "\u003c!--#storyblok#{\"name\": \"person\", \"space\": \"101180\", \"uid\": \"i-b2a17b33-7f8f-4e49-b64a-22dddc26839a\", \"id\": \"34618449\"}--\u003e"
+								}
+							]
+						}
+					},
+					{
+						"type": "paragraph",
+						"content": [
+							{
+								"text": "lookkkkk",
+								"type": "text"
+							}
+						]
+					}
+				]
+			},
+			"component": "test",
+			"_editable": "\u003c!--#storyblok#{\"name\": \"test\", \"space\": \"101180\", \"uid\": \"43ee7356-368e-4efb-ab7e-4b2dd6291404\", \"id\": \"34618449\"}--\u003e"
+		},
+		"slug": "test",
+		"full_slug": "test",
+		"default_full_slug": null,
+		"sort_by_date": null,
+		"position": 0,
+		"tag_list": [],
+		"is_startpage": false,
+		"parent_id": 0,
+		"meta_data": null,
+		"group_id": "9f42c9d6-3e5a-435e-9600-3715063abc2b",
+		"first_published_at": null,
+		"release_id": null,
+		"lang": "default",
+		"path": null,
+		"translated_slugs": []
+	}
+}
