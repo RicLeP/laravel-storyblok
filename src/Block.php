@@ -6,7 +6,7 @@ namespace Riclep\Storyblok;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Riclep\Storyblok\Exceptions\MissingViewException;
+use Riclep\Storyblok\Exceptions\UnableToRenderException;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\MultiAsset;
@@ -122,19 +122,13 @@ class Block implements \IteratorAggregate
 	 * Returns the first matching view, passing it the fields
 	 *
 	 * @return View
-	 * @throws MissingViewException
+	 * @throws UnableToRenderException
 	 */
 	public function render() {
 		try {
 			return view()->first($this->views(), ['block' => $this]);
 		} catch (\Exception $exception) {
-			if (get_class($this) === 'App\Storyblok\Block') {
-				$classMessage = 'Create a view or a Block called App\Storyblok\Blocks\\' . Str::studly($this->meta()['component']) . ' and override the views() method.';
-			} else {
-				$classMessage = 'Create one or override the views() method in App\Storyblok\Blocks\\' . Str::studly($this->meta()['component']) . '.';
-			}
-
-			throw new MissingViewException('None of the views in the given array exist: [' . implode(', ', $this->views()) . ']. ' . $classMessage);
+			throw new UnableToRenderException('None of the views in the given array exist.', $this);
 		}
 	}
 
