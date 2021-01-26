@@ -65,7 +65,9 @@ class BlockMakeCommand extends GeneratorCommand
 
 			$content = str_replace($find, $replace, $content);
 
-			$this->files->makeDirectory($path);
+            if (!$this->files->exists($path)) {
+                $this->files->makeDirectory($path);
+            }
 
 			file_put_contents($path . $name . '.blade.php', $content);
 		} else {
