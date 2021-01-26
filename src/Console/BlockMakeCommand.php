@@ -115,19 +115,25 @@ class BlockMakeCommand extends GeneratorCommand
 	}
 
 	protected function getComponentFields($name) {
-		$components = Cache::remember('lsb-compontent-list', 600, function() {
-			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+		if (config('storyblok.oauth_token')) {
+			$components = Cache::remember('lsb-compontent-list', 600, function() {
+				$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
 
-			return collect($managementClient->get('spaces/' . config('storyblok.space_id') . '/components')->getBody()['components']);
-		});
+				return collect($managementClient->get('spaces/' . config('storyblok.space_id') . '/components')->getBody()['components']);
+			});
 
-		$schema = $components->filter(function ($component) use ($name) {
-			return $component['name'] === $name;
-		})->first()['schema'];
+			$schema = $components->filter(function ($component) use ($name) {
+				return $component['name'] === $name;
+			})->first()['schema'];
 
-		$fields = array_map(function($field) {
-			return ' * @property-read string ' . $field . "\n";
-		}, array_keys($schema));
+			$fields = array_map(function($field) {
+				return ' * @property-read string ' . $field . "\n";
+			}, array_keys($schema));
+
+			$fields = implode($fields);
+		} else {
+			$fields = '';
+		}
 
 		$phpDoc = <<<'PHPDOC'
 /**
@@ -135,7 +141,7 @@ DummyFields
  */
 PHPDOC;
 
-		return str_replace('DummyFields', implode($fields), $phpDoc);
+		return str_replace('DummyFields', $fields, $phpDoc);
 	}
 
 	/**

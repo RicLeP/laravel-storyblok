@@ -25,11 +25,11 @@ class StoryblokServiceProvider extends ServiceProvider
 				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
 				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
 			], 'storyblok');
-
-			$this->commands([
-				BlockMakeCommand::class,
-			]);
         }
+
+		$this->commands([
+			BlockMakeCommand::class,
+		]);
     }
 
     /**

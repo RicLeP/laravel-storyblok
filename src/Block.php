@@ -6,7 +6,7 @@ namespace Riclep\Storyblok;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Riclep\Storyblok\Exceptions\MissingViewException;
+use Riclep\Storyblok\Exceptions\UnableToRenderException;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\MultiAsset;
@@ -122,13 +122,13 @@ class Block implements \IteratorAggregate
 	 * Returns the first matching view, passing it the fields
 	 *
 	 * @return View
-	 * @throws MissingViewException
+	 * @throws UnableToRenderException
 	 */
 	public function render() {
 		try {
 			return view()->first($this->views(), ['block' => $this]);
 		} catch (\Exception $exception) {
-			throw new MissingViewException('None of the views in the given array exist.', $this);
+			throw new UnableToRenderException('None of the views in the given array exist.', $this);
 		}
 	}
 

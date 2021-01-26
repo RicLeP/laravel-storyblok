@@ -6,7 +6,7 @@ namespace Riclep\Storyblok;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Riclep\Storyblok\Exceptions\MissingViewException;
+use Riclep\Storyblok\Exceptions\UnableToRenderException;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
 use Riclep\Storyblok\Traits\SchemaOrg;
@@ -62,13 +62,13 @@ class Page
 	 *
 	 * @param array $additionalContent
 	 * @return View
-	 * @throws MissingViewException
+	 * @throws UnableToRenderException
 	 */
 	public function render($additionalContent = []) {
 		try {
 			return view()->first($this->views(), array_merge(['story' => $this], $additionalContent));
 		} catch (\Exception $exception) {
-			throw new MissingViewException('None of the views in the given array exist.', $this);
+			throw new UnableToRenderException('None of the views in the given array exist.', $this);
 		}
 	}
 
