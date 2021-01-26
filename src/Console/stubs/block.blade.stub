@@ -1,9 +1,9 @@
 <?php
-/** @var \App\Storyblok\Blocks\DummyClass $content */
-// dd($content);
+/** @var \App\Storyblok\Blocks\DummyClass $block */
+// dd($block);
 ?>
 
-{!! $content->editorLink() !!}
+{!! $block->editorLink() !!}
 <div class="DummyCssClass">
 
 </div>
