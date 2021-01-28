@@ -19,18 +19,18 @@ class CreateMissingBlockSolution implements RunnableSolution
 	{
 		if (get_class($this->data) === 'App\Storyblok\Block') {
 			return 'Create a view or custom Block class';
-		} else {
-			return 'Create a view or implement view logic';
 		}
+
+		return 'Create a view or implement view logic';
 	}
 
 	public function getSolutionDescription(): string
 	{
 		if (get_class($this->data) === 'App\Storyblok\Block') {
-			return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or a create Block class called `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and override the `views()` method implmenting your own view finding logic.';
-		} else {
-			return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or override the `views()` method in `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and implement your own view finding logic.';
+			return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or a create Block class called `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and override the `views()` method implementing your own view finding logic.';
 		}
+
+		return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or override the `views()` method in `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and implement your own view finding logic.';
 	}
 
 	public function getDocumentationLinks(): array
