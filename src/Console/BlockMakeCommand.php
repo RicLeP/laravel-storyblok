@@ -17,7 +17,7 @@ class BlockMakeCommand extends GeneratorCommand
 
 	protected function getStub()
 	{
-		return __DIR__ . '/stubs/block.stub';
+		return file_exists(resource_path('stubs/storyblok/block.stub')) ? resource_path('stubs/storyblok/block.stub') : __DIR__ . '/stubs/block.stub';
 	}
 
 	protected function getDefaultNamespace($rootNamespace)
@@ -52,24 +52,24 @@ class BlockMakeCommand extends GeneratorCommand
 	}
 
 	protected function createBlade() {
-		// call API to get details on the Block and name comments of vars available
-
 		$name = Str::kebab($this->getNameInput());
 		$path = $this->viewPath('storyblok/blocks/');
+		$stub = file_exists(resource_path('stubs/storyblok/block.blade.stub')) ? resource_path('stubs/storyblok/block.blade.stub') : __DIR__ . '/stubs/block.blade.stub';
 
 		if (!file_exists($path . $name . '.blade.php')) {
-			$content = file_get_contents(__DIR__ . '/stubs/block.blade.stub');
+			$content = file_get_contents($stub);
 
 			$find = ['DummyClass', 'DummyCssClass'];
 			$replace = [$this->getNameInput(), $name];
 
 			$content = str_replace($find, $replace, $content);
 
-            if (!$this->files->exists($path)) {
-                $this->files->makeDirectory($path);
-            }
+			if (!$this->files->exists($path)) {
+				$this->files->makeDirectory($path);
+			}
 
 			file_put_contents($path . $name . '.blade.php', $content);
+			$this->info('Blade created successfully.');
 		} else {
 			$this->error('Blade already exists!');
 		}
@@ -78,9 +78,10 @@ class BlockMakeCommand extends GeneratorCommand
 	protected function createScss() {
 		$name = Str::kebab($this->getNameInput());
 		$path = resource_path('sass/blocks/');
+		$stub = file_exists(resource_path('stubs/storyblok/block.scss.stub')) ? resource_path('stubs/storyblok/block.scss.stub') : __DIR__ . '/stubs/block.scss.stub';
 
 		if (!file_exists($path . '_' . $name . '.scss')) {
-			$content = file_get_contents(__DIR__ . '/stubs/block.scss.stub');
+			$content = file_get_contents($stub);
 			$content = str_replace('DummyClass', $name, $content);
 
 			if (!$this->files->exists($path)) {
@@ -88,6 +89,7 @@ class BlockMakeCommand extends GeneratorCommand
 			}
 
 			file_put_contents($path . '_' . $name . '.scss', $content);
+			$this->info('SCSS created successfully.');
 		} else {
 			$this->error('SCSS already exists!');
 		}
