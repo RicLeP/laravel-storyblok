@@ -21,10 +21,12 @@ class Image extends Asset
 			parent::__construct($content, $block);
 		}
 
-		$this->extractMetaDetails();
+		if ($this->hasFile()) {
+			$this->extractMetaDetails();
 
-		if (method_exists($this, 'transformations')) {
-			$this->transformations();
+			if (method_exists($this, 'transformations')) {
+				$this->transformations();
+			}
 		}
 	}
 
