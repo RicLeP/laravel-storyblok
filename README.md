@@ -4,6 +4,7 @@
 [![Build Status](https://img.shields.io/travis/riclep/laravel-storyblok/master.svg?style=flat-square)](https://travis-ci.org/riclep/laravel-storyblok)
 [![Quality Score](https://img.shields.io/scrutinizer/g/riclep/laravel-storyblok.svg?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
 [![Total Downloads](https://img.shields.io/packagist/dt/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
+[![Twitter](https://img.shields.io/twitter/follow/riclep.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=riclep)
 
 
 This package allows you to use fantastic [Storyblok headless CMS](https://www.storyblok.com/) with the amazing [Laravel PHP framework](https://laravel.com/). It’s designed to try and feel natural to Laravel developers and part of the ecosystem whilst also converting Storyblok’s API JSON responses into something powerful with minimal effort.
