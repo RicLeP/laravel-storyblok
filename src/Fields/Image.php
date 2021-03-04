@@ -4,7 +4,7 @@
 namespace Riclep\Storyblok\Fields;
 
 
-
+use Illuminate\Support\Str;
 use Riclep\Storyblok\Support\ImageTransformation;
 
 class Image extends Asset
@@ -82,13 +82,21 @@ class Image extends Asset
 	protected function extractMetaDetails() {
 		$path = $this->content['filename'];
 
-		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/m', $path, $dimensions, PREG_SET_ORDER, 0);
+		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
-		$this->addMeta([
-			'height' => $dimensions[0]['height'],
-			'width' => $dimensions[0]['width'],
-			'extension' => $dimensions[0]['extension'],
-		]);
+		if (Str::endsWith(strtolower($this->content['filename']), '.svg')) {
+			$this->addMeta([
+				'height' => false,
+				'width' => false,
+				'extension' => 'svg',
+			]);
+		} else {
+			$this->addMeta([
+				'height' => $dimensions[0]['height'],
+				'width' => $dimensions[0]['width'],
+				'extension' => strtolower($dimensions[0]['extension']),
+			]);
+		}
 	}
 
 	private function upgradeOldFields($content) {
