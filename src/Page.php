@@ -181,7 +181,7 @@ class Page
 	 * Does a bit of housekeeping before processing the data
 	 * from Storyblok any further
 	 */
-	private function preprocess() {
+	protected function preprocess() {
 		// TODO extract SEO plugin
 		//$this->story;
 
@@ -189,6 +189,8 @@ class Page
 			'name' => $this->story['name'],
 			'tags' => $this->story['tag_list'],
 			'slug' => $this->story['full_slug'],
+			'published_at' => Carbon::parse($this->story['first_published_at']),
+			'updated_at' => Carbon::parse($this->story['published_at']),
 		]);
 	}
 
