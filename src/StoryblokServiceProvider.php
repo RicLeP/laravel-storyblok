@@ -4,6 +4,7 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\ServiceProvider;
 use Riclep\Storyblok\Console\BlockMakeCommand;
+use Riclep\Storyblok\Console\BlockSyncCommand;
 use Storyblok\Client;
 
 class StoryblokServiceProvider extends ServiceProvider
@@ -29,6 +30,7 @@ class StoryblokServiceProvider extends ServiceProvider
 
 		$this->commands([
 			BlockMakeCommand::class,
+			BlockSyncCommand::class,
 		]);
     }
 

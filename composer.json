@@ -20,8 +20,9 @@
     ],
     "require": {
         "php": "^7.1|^8.0",
-		"embed/embed": "^3.4",
         "ext-json": "*",
+        "barryvdh/reflection-docblock": "^2.0",
+        "embed/embed": "^3.4",
         "illuminate/support": "^6.0|^7.0|^8.0",
         "league/commonmark": "^1.5",
         "mundschenk-at/php-typography": "^6.5",
