@@ -26,7 +26,7 @@ class BlockSyncCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Sync Storyblok attributes to Laravel block classes.';
+    protected $description = 'Sync Storyblok attributes to Laravel Block classes.';
     /**
      * @var Filesystem
      */
@@ -159,7 +159,7 @@ class BlockSyncCommand extends Command
 
             return $fields;
         } else {
-            $this->error("Please set your management token in the storkyblok config file");
+            $this->error("Please set your management token in the Storyblok config file");
             return [];
         }
     }
