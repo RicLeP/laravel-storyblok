@@ -26,7 +26,7 @@
         "illuminate/support": "^6.0|^7.0|^8.0",
         "league/commonmark": "^1.5",
         "mundschenk-at/php-typography": "^6.5",
-        "spatie/schema-org": "^2.14",
+        "spatie/schema-org": "^3.3",
         "storyblok/php-client": "^1.4",
         "storyblok/richtext-resolver": "dev-master"
     },
