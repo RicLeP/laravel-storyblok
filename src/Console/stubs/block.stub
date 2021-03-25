@@ -4,7 +4,8 @@ namespace DummyNamespace;
 
 use Riclep\Storyblok\Block as BaseBlock;
 
-DummyPhpDoc
+/**
+ */
 class DummyClass extends BaseBlock
 {
     //
