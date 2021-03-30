@@ -26,6 +26,10 @@ class Asset extends Field
 	 * @return bool
 	 */
 	public function hasFile() {
+		if (!array_key_exists('filename', $this->content)) {
+			return false;
+		}
+
 		return (bool) $this->content['filename'];
 	}
 }
