@@ -30,7 +30,7 @@ class BlockSyncCommand extends Command
 	/**
 	 * @var Filesystem
 	 */
-	private Filesystem $files;
+	private $files;
 
 	/**
 	 * Create a new command instance.
