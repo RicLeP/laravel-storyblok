@@ -53,7 +53,7 @@ class BlockMakeCommand extends GeneratorCommand
 
 	protected function createBlade() {
 		$name = Str::kebab($this->getNameInput());
-		$path = $this->viewPath('storyblok/blocks/');
+        $path = $this->viewPath( str_replace( '.' , '/' , config('storyblok.view_path') . 'blocks.' ) );
 		$stub = file_exists(resource_path('stubs/storyblok/block.blade.stub')) ? resource_path('stubs/storyblok/block.blade.stub') : __DIR__ . '/stubs/block.blade.stub';
 
 		if (!file_exists($path . $name . '.blade.php')) {
