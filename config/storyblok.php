@@ -77,7 +77,7 @@ return [
     | Enable caching the Storyblok API response.
     |
     */
-	'cache' => true,
+    'cache' => env('STORYBLOK_CACHE', true),
 
 	/*
     |--------------------------------------------------------------------------
@@ -87,7 +87,7 @@ return [
     | Specifies how many minutes to cache responses from Storkyblok for.
     |
     */
-	'cache_duration' => '60',
+	'cache_duration' => env('STORYBLOK_DURATION','60'),
 
 	/*
     |--------------------------------------------------------------------------
