@@ -142,11 +142,9 @@ class BlockSyncCommand extends Command
 	protected function getComponentFields($name)
 	{
 		if (config('storyblok.oauth_token')) {
-			$components = Cache::remember('lsb-compontent-list', 600, function () {
-				$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
 
-				return collect($managementClient->get('spaces/'.config('storyblok.space_id').'/components')->getBody()['components']);
-			});
+			$components = collect($managementClient->get('spaces/'.config('storyblok.space_id').'/components')->getBody()['components']);
 
 			$component = $components->firstWhere('name', $name);
 
@@ -178,19 +176,23 @@ class BlockSyncCommand extends Command
 	 * @param  $component_name
 	 */
 	protected function createStoryblokCompontent($component_name){
-			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
-			$payload = [
-				"component" =>  [
-					"name" =>  $component_name,
-					"display_name" =>  str::of( str_replace('-', ' ' ,$component_name) )->ucfirst(),
-						// "schema" =>  [],
-						// "is_root" =>  false,
-						// "is_nestable" =>  true
-				]
-			];
-			$managementClient->post('spaces/'.config('storyblok.space_id').'/components/', $payload)->getBody();
+        $managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+        
+        $payload = [
+			"component" =>  [
+				"name" =>  $component_name,
+				"display_name" =>  str::of( str_replace('-', ' ' ,$component_name) )->ucfirst(),
+					// "schema" =>  [],
+    				// "is_root" =>  false,
+					// "is_nestable" =>  true
+			]
+		];
 
-			$this->info("Storyblok component created");
+		$component = $managementClient->post('spaces/'.config('storyblok.space_id').'/components/', $payload)->getBody();
+
+		$this->info("Storyblok component created");
+        
+        return $component['component'];
 	}
 
 	/**
