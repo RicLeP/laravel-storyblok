@@ -150,6 +150,14 @@ class BlockSyncCommand extends Command
 
 			$component = $components->firstWhere('name', $name);
 
+			if( ! $component ){
+				$this->error("Storyblok component [{$name}] does not exist.");
+
+				if ($this->confirm('Do you want to create it now?')) {
+					$this->createStoryblokCompontent($name);
+				}
+			}
+
 			$fields = [];
 			foreach ($component['schema'] as $name => $data) {
 				if ( ! $this->isIgnoredType($data['type'])) {
@@ -162,6 +170,27 @@ class BlockSyncCommand extends Command
 			$this->error("Please set your management token in the Storyblok config file");
 			return [];
 		}
+	}
+
+	/**
+	 * Create a new Storyblok component with given name
+	 *
+	 * @param  $component_name
+	 */
+	protected function createStoryblokCompontent($component_name){
+			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+			$payload = [
+				"component" =>  [
+					"name" =>  $component_name,
+					"display_name" =>  str::of( str_replace('-', ' ' ,$component_name) )->ucfirst(),
+						// "schema" =>  [],
+						// "is_root" =>  false,
+						// "is_nestable" =>  true
+				]
+			];
+			$managementClient->post('spaces/'.config('storyblok.space_id').'/components/', $payload)->getBody();
+
+			$this->info("Storyblok component created");
 	}
 
 	/**
