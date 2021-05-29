@@ -104,9 +104,9 @@ abstract class Folder
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest();
 		} else {
-			// TODO tagging cache
+			$unique_tag = md5(serialize( $this->settings ));
 
-			$response = Cache::remember('folder-' . $this->slug, config('storyblok.cache_duration') * 60, function () {
+			$response = Cache::remember('folder-' . $this->slug . '-' . $unique_tag, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
 			});
 		}
