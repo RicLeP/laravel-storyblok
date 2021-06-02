@@ -290,7 +290,7 @@ class Block implements \IteratorAggregate
 		}
 
 		// legacy image fields
-		if (is_string($field) && Str::endsWith($field, ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+		if($this->isLegacyImageField($field)) {
 			return new Image($field, $this);
 		}
 
@@ -298,6 +298,18 @@ class Block implements \IteratorAggregate
 		return $field;
 	}
 
+
+	/**
+	 * Check if given string is an legacy image field
+	 *
+	 * @param  $filename
+	 * @return boolean
+	 */
+	public function isLegacyImageField($filename){
+		$allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+
+		return is_string($filename) && Str::of( $filename )->lower()->endsWith( $allowed_extentions );
+	}
 
 	/**
 	 * When the field is an array we need to do more processing
@@ -320,7 +332,9 @@ class Block implements \IteratorAggregate
 
 		// match asset fields - detecting raster images
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
-			if (Str::endsWith($field['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+
+			// legacy image fields
+			if($this->isLegacyImageField($field['filename'])) {
 				return new Image($field, $this);
 			}
 
