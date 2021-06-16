@@ -1,0 +1,11 @@
+<?php
+/* @var $block \App\Storyblok\Block */
+
+// ddd($block);
+?>
+
+
+{!! $block->editorLink() !!}
+<div class="#NAME#">
+#BODY#
+</div>
