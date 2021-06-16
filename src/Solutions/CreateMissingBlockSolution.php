@@ -27,10 +27,10 @@ class CreateMissingBlockSolution implements RunnableSolution
 	public function getSolutionDescription(): string
 	{
 		if (get_class($this->data) === 'App\Storyblok\Block') {
-			return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or a create Block class called `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and override the `views()` method implementing your own view finding logic.';
+			return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or a create Block class called `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and override the `views()` method implementing your own view finding logic. You can also scaffold all your views using `artisan ls:stub-views`.';
 		}
 
-		return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or override the `views()` method in `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and implement your own view finding logic.';
+		return 'Create one of the following views: `[' . implode(', ', $this->data->views()) . ']` or override the `views()` method in `App\Storyblok\Blocks\\' . Str::studly($this->data->meta()['component']) . '` and implement your own view finding logic. You can also scaffold all your views using `artisan ls:stub-views`.';
 	}
 
 	public function getDocumentationLinks(): array
