@@ -91,7 +91,7 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Cache duration
+    | Component class namespace
     |--------------------------------------------------------------------------
     |
     | Sets the namespace for the Page and Block classes
@@ -101,7 +101,7 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Cache duration
+    | View folder path
     |--------------------------------------------------------------------------
     |
     | Sets the folder where views will be stored under /resources/views
@@ -111,14 +111,35 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Cache duration
+    | Webhook secret
     |--------------------------------------------------------------------------
     |
-    | Sets the folder where views will be stored under /resources/views
+    | Webhook from space settings
+    | https://www.storyblok.com/docs/guide/in-depth/webhooks
     |
     */
 	'webhook_secret' => env('STORYBLOK_WEBHOOK_SECRET'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Asset domain
+    |--------------------------------------------------------------------------
+    |
+    | Storyblok asset URL, can be customized if proxy is setup
+    | https://www.storyblok.com/docs/custom-assets-domain
+    |
+    */
+    'asset_domain' => env('STORYBLOK_ASSET_DOMAIN', 'a.storyblok.com'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Image service domain
+    |--------------------------------------------------------------------------
+    |
+    | Can be customized to proxy image service requests over a custom domain
+    |
+    */
+    'image_service_domain' => env('STORYBLOK_IMAGE_SERVICE_DOMAIN', 'img2.storyblok.com'),
 
 
 ];
