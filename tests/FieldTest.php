@@ -112,6 +112,15 @@ class FieldTest extends TestCase
 	}
 
 	/** @test */
+	public function can_get_image_asset_as_url_with_custom_domain()
+	{
+		config()->set('storyblok.asset_domain', 'custom.asset.domain');
+		$field = new Image($this->getFieldContents('asset_image'), null);
+
+		$this->assertEquals('https://custom.asset.domain/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+	}
+
+	/** @test */
 	public function can_get_image_asset_dimensions()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
@@ -178,6 +187,17 @@ class FieldTest extends TestCase
 		$field3 = $field3->transform()->fitIn(400, 400, 'transparent')->format('webp');
 
 		$this->assertEquals('//img2.storyblok.com/fit-in/400x400/filters:format(webp):fill(transparent)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field3);
+	}
+
+	/** @test */
+	public function can_use_custom_image_service_domain()
+	{
+		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
+
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field = $field->transform()->fitIn(400, 400, 'ff0000');
+
+		$this->assertEquals('//custom.imageservice.domain/fit-in/400x400/filters:fill(ff0000)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 	}
 
 	/** @test */
@@ -254,6 +274,25 @@ PICTURE
 	}
 
 	/** @test */
+	public function can_get_create_picture_element_with_custom_domains()
+	{
+		config()->set('storyblok.asset_domain', 'custom.asset.domain');
+		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
+
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//custom.imageservice.domain/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)">
+<source srcset="//custom.imageservice.domain/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
+
+<img src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+</picture>
+PICTURE
+, str_replace("\t", '', $field->picture('Some alt text with "')));
+	}
+
+	/** @test */
 	public function can_get_asset_url_with_accessor()
 	{
 		$field = new AssetWithAccessor($this->getFieldContents('asset'), null);
@@ -291,6 +330,18 @@ PICTURE
 
 		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
 		$this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
+	}
+
+	/** @test */
+	public function can_use_array_access_on_multi_asset_with_custom_domain()
+	{
+		config()->set('storyblok.asset_domain', 'custom.asset.domain');
+
+		$page = $this->makePage('custom-page.json');
+		$block = $page->block(); // any parent block will for for testing
+
+		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
+		$this->assertEquals('https://custom.asset.domain/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
 	}
 
 	/** @test */

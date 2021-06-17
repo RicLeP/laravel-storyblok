@@ -93,8 +93,8 @@ class ImageTransformation
 	 */
 	public function createUrl($options): string
 	{
-		$resource = str_replace(['https:', '//a.storyblok.com'], '', $this->filename);
-		return '//img2.storyblok.com' . $options . $resource;
+		$resource = str_replace(['https:', '//' . config('storyblok.asset_domain')], '', $this->filename);
+		return '//' . config('storyblok.image_service_domain') . $options . $resource;
 	}
 
 	public function getTransformations() {

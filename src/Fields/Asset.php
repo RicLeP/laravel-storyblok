@@ -11,6 +11,15 @@ use Riclep\Storyblok\Field;
  */
 class Asset extends Field
 {
+	public function __construct($content, $block)
+	{
+		parent::__construct($content, $block);
+
+		if (isset($this->content['filename'])) {
+			$this->content['filename'] = str_replace('a.storyblok.com', config('storyblok.asset_domain'), $this->content['filename']);
+        }
+	}
+
 	public function __toString()
 	{
 		if ($this->content['filename']) {
