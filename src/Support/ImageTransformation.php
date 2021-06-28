@@ -3,7 +3,7 @@
 
 namespace Riclep\Storyblok\Support;
 
-
+use Illuminate\Support\Str;
 use Riclep\Storyblok\Fields\Image;
 
 class ImageTransformation
@@ -129,6 +129,10 @@ class ImageTransformation
 
 	public function __toString()
 	{
+		if (Str::endsWith($this->filename, 'svg')) {
+			return $this->filename;
+		}
+
 		$transforms = '';
 
 		if (array_key_exists('fit-in', $this->transformations)) {

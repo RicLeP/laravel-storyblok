@@ -75,6 +75,24 @@ class Image extends Asset
 		])->render();
 	}
 
+	public function cssVars() {
+		if ($this->transformations) {
+			$vars = '';
+
+			foreach ($this->transformations as $key => $transformation) {
+				if (Str::endsWith($this->filename, 'svg')) {
+					$vars .= '--' . $key . ': url("' . $this->filename . '"); ';
+				} else {
+					$vars .= '--' . $key . ': url("https:' . (string) $transformation['src'] . '"); ';
+				}
+			}
+
+			return $vars;
+		}
+
+		return false;
+	}
+
 	protected function getOriginalFilenameAttribute() {
 		return $this->content['filename'];
 	}
