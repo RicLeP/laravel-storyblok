@@ -133,6 +133,8 @@ class BlockSyncCommand extends Command
 			$content = str_replace($originalDoc, $updatedBlock, $content);
 
 			$this->files->replace($filepath, $content);
+			$this->files->chmod($filepath, 0644); // replace() changes permissions
+
 			$this->info('Component updated successfully.');
 		} else {
 			$this->error('Component not yet created...');
@@ -164,10 +166,10 @@ class BlockSyncCommand extends Command
 			}
 
 			return $fields;
-		} else {
-			$this->error("Please set your management token in the Storyblok config file");
-			return [];
 		}
+
+		$this->error("Please set your management token in the Storyblok config file");
+		return [];
 	}
 
 	/**
@@ -177,7 +179,7 @@ class BlockSyncCommand extends Command
 	 */
 	protected function createStoryblokCompontent($component_name){
         $managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
-        
+
         $payload = [
 			"component" =>  [
 				"name" =>  $component_name,
@@ -191,7 +193,7 @@ class BlockSyncCommand extends Command
 		$component = $managementClient->post('spaces/'.config('storyblok.space_id').'/components/', $payload)->getBody();
 
 		$this->info("Storyblok component created");
-        
+
         return $component['component'];
 	}
 
