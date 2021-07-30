@@ -12,12 +12,10 @@ use Riclep\Storyblok\Fields\Table;
 class FieldFactory
 {
 	public function build($block, $field, $key) {
-		// TODO process old asset fields
-		// TODO option to convert all text fields to a class - single or multiline?
-
 		// does the Block assign any $_casts? This is key (field) => value (class)
-		if (property_exists($block, '_casts') && array_key_exists($key, $block->_casts)) {
-			return new $block->_casts[$key]($field, $block);
+		if (array_key_exists($key, $block->getCasts())) {
+			$casts = $block->getCasts();
+			return new $casts[$key]($field, $block);
 		}
 
 		// find Fields specific to this Block matching: BlockNameFieldName

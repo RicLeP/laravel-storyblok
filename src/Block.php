@@ -40,7 +40,7 @@ class Block implements \IteratorAggregate
 	/**
 	 * @var array the path of nested components
 	 */
-	public $_casts = [];
+	protected $_casts = [];
 
 	/**
 	 * @var Collection all the fields for the Block
@@ -344,5 +344,9 @@ class Block implements \IteratorAggregate
 		]);
 
 		return $relationClass;
+	}
+
+	public function getCasts() {
+		return $this->_casts;
 	}
 }
