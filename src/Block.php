@@ -266,17 +266,6 @@ class Block implements \IteratorAggregate
 	}
 
 	/**
-	 * When the field is an array we need to do more processing
-	 *
-	 * @param $field
-	 * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
-	 */
-	private function arrayFieldTypes($field, $key) {
-		$factory = new ArrayFieldFactory();
-		return $factory->build($this, $field, $key);
-	}
-
-	/**
 	 * Storyblok returns fields and other meta content at the same level so
 	 * let’s do a little tidying up first
 	 *

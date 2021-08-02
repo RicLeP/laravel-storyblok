@@ -35,11 +35,7 @@ class FieldFactory
 
 		// complex fields
 		if (is_array($field) && !empty($field)) {
-
-
 			return $this->arrayField($block, $field, $key);
-
-			//return $block->arrayFieldTypes($field, $key);
 		}
 
 		// legacy image fields
