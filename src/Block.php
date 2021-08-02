@@ -261,54 +261,8 @@ class Block implements \IteratorAggregate
 	 * @throws \Storyblok\ApiException
 	 */
 	private function getFieldType($field, $key) {
-		// TODO process old asset fields
-		// TODO option to convert all text fields to a class - single or multiline?
-
-		// does the Block assign any $_casts? This is key (field) => value (class)
-		if (property_exists($this, '_casts') && array_key_exists($key, $this->_casts)) {
-			return new $this->_casts[$key]($field, $this);
-		}
-
-		// find Fields specific to this Block matching: BlockNameFieldName
-		if ($class = $this->getChildClassName('Field', $this->component() . '_' . $key)) {
-			return new $class($field, $this);
-		}
-
-		// auto-match Field classes
-		if ($class = $this->getChildClassName('Field', $key)) {
-			return new $class($field, $this);
-		}
-
-		// single item relations
-		if (Str::isUuid($field) && ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations))) {
-			return $this->getRelation(new RequestStory(), $field);
-		}
-
-		// complex fields
-		if (is_array($field) && !empty($field)) {
-			return $this->arrayFieldTypes($field, $key);
-		}
-
-		// legacy image fields
-		if($this->isLegacyImageField($field)) {
-			return new Image($field, $this);
-		}
-
-		// strings or anything else - do nothing
-		return $field;
-	}
-
-
-	/**
-	 * Check if given string is an legacy image field
-	 *
-	 * @param  $filename
-	 * @return boolean
-	 */
-	public function isLegacyImageField($filename){
-		$allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-
-		return is_string($filename) && Str::of( $filename )->lower()->endsWith( $allowed_extentions );
+		$factory = new FieldFactory();
+		return $factory->build($this, $field, $key);
 	}
 
 	/**
@@ -318,80 +272,8 @@ class Block implements \IteratorAggregate
 	 * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
 	 */
 	private function arrayFieldTypes($field, $key) {
-		// match link fields
-		if (array_key_exists('linktype', $field)) {
-			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
-
-			return new $class($field, $this);
-		}
-
-		// match rich-text fields
-		if (array_key_exists('type', $field) && $field['type'] === 'doc') {
-			return new RichText($field, $this);
-		}
-
-		// match asset fields - detecting raster images
-		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
-
-			// legacy image fields
-			if($this->isLegacyImageField($field['filename'])) {
-				return new Image($field, $this);
-			}
-
-			return new Asset($field, $this);
-		}
-
-		// match table fields
-		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
-			return new Table($field, $this);
-		}
-
-		if (array_key_exists(0, $field)) {
-			// it’s an array of relations - request them if we’re auto or manual resolving
-			if (Str::isUuid($field[0])) {
-				if ($this->_autoResolveRelations || in_array($key, $this->_resolveRelations)) {
-					return collect($field)->transform(function ($relation) {
-						return $this->getRelation(new RequestStory(), $relation);
-					});
-				}
-			}
-
-			// has child items - single option, multi option and Blocks fields
-			if (is_array($field[0])) {
-				// resolved relationships - entire story is returned, we just want the content and a few meta items
-				if (array_key_exists('content', $field[0])) {
-					return collect($field)->transform(function ($relation) {
-						$class = $this->getChildClassName('Block', $relation['content']['component']);
-						$relationClass = new $class($relation['content'], $this);
-
-						$relationClass->addMeta([
-							'name' => $relation['name'],
-							'published_at' => $relation['published_at'],
-							'full_slug' => $relation['full_slug'],
-						]);
-
-						return $relationClass;
-					});
-				}
-
-				// this field holds blocks!
-				if (array_key_exists('component', $field[0])) {
-					return collect($field)->transform(function ($block) {
-						$class = $this->getChildClassName('Block', $block['component']);
-
-						return new $class($block, $this);
-					});
-				}
-
-				// multi assets
-				if (array_key_exists('filename', $field[0])) {
-					return new MultiAsset($field, $this);
-				}
-			}
-		}
-
-		// just return the array
-		return $field;
+		$factory = new ArrayFieldFactory();
+		return $factory->build($this, $field, $key);
 	}
 
 	/**
@@ -449,7 +331,7 @@ class Block implements \IteratorAggregate
 		return $this->_fields;
 	}
 
-	protected function getRelation(RequestStory $request, $relation) {
+	public function getRelation(RequestStory $request, $relation) {
 		$response = $request->get($relation);
 
 		$class = $this->getChildClassName('Block', $response['content']['component']);
@@ -462,5 +344,9 @@ class Block implements \IteratorAggregate
 		]);
 
 		return $relationClass;
+	}
+
+	public function getCasts() {
+		return $this->_casts;
 	}
 }
