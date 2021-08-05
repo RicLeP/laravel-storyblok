@@ -59,6 +59,12 @@ class Image extends Asset
 		return 'image/' . $extension;
 	}
 
+	public function setTransformations($transformations) {
+		$this->transformations = $transformations;
+
+		return $this;
+	}
+
 	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element') {
 		if ($default) {
 			$imgSrc = (string) $this->transformations[$default]['src'];
