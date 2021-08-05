@@ -250,7 +250,7 @@ class FieldTest extends TestCase
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-, str_replace("\t", '', $field->picture('Some alt text with "')));
+			, str_replace("\t", '', $field->picture('Some alt text with "')));
 
 		$this->assertEquals(<<<'PICTURE'
 <picture>
@@ -259,7 +259,7 @@ PICTURE
 <img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile')));
+			, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile')));
 
 		$this->assertEquals(<<<'PICTURE'
 <picture>
@@ -268,9 +268,52 @@ PICTURE
 <img src="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;"  class="laravel storyblok"  id="some-id" >
 </picture>
 PICTURE
-, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
+			, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
 
 
+	}
+
+	/** @test */
+	public function can_set_picture_element_transforms()
+	{
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//img2.storyblok.com/200x200/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 400px)">
+<source srcset="//img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 1200px)">
+
+<img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+</picture>
+PICTURE
+			, str_replace("\t", '', $field->setTransformations([
+				'mobile' => [
+					'src' => $field->transform()->resize(200, 200)->format('webp'),
+					'media' => '(min-width: 400px)',
+				],
+				'desktop' => [
+					'src' => $field->transform()->resize(500, 400),
+					'media' => '(min-width: 1200px)',
+				],
+			])->picture('Some alt text with "')));
+
+		$this->assertEquals(<<<'PICTURE'
+<picture>
+<source srcset="//img2.storyblok.com/400x400/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/jpeg" media="(min-width: 800px)">
+
+<img src="//img2.storyblok.com/200x200/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+</picture>
+PICTURE
+			, str_replace("\t", '', $field->setTransformations([
+				'mobile' => [
+					'src' => $field->transform()->resize(200, 200)->format('webp'),
+					'media' => '(min-width: 400px)',
+				],
+				'desktop' => [
+					'src' => $field->transform()->resize(400, 400),
+					'media' => '(min-width: 800px)',
+				],
+			])->picture('Some alt text with "', 'mobile')));
 	}
 
 	/** @test */
