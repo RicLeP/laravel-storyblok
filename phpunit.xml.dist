@@ -16,10 +16,14 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">src/traits</directory>
+            <directory suffix=".php">src/Fields</directory>
+            <directory suffix=".php">src/Traits</directory>
             <file>src/Block.php</file>
-            <file>src/Page.php</file>
-            <file>src/Storyblok.php</file>
+            <file>src/Field.php</file>
+            <file>src/FieldFactory.php</file>
+			<file>src/Folder.php</file>
+			<file>src/Page.php</file>
+			<file>src/Support/ImageTransformation.php</file>
         </whitelist>
     </filter>
     <logging>
