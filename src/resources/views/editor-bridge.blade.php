@@ -1,48 +1,39 @@
 
 @if (config('storyblok.edit_mode'))
-	{{ $story->block()->flatten() }}
-
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script type="text/javascript" src="//app.storyblok.com/f/storyblok-latest.js"></script>
+	<script src="https://app.storyblok.com/f/storyblok-v2-latest.js"></script>
 
 	<script type="text/javascript">
-		document.onreadystatechange = function () {
-			if (document.readyState === 'complete') {
-				Vue.set(app.__vue__, 'laravelStoryblokLive', {!! json_encode($story->liveContent) !!});
-			}
-		}
-
-		storyblok.init({
+		const storyblokInstance = new StoryblokBridge({
 			accessToken: '{{ config('storyblok.api_preview_key') }}'
 		});
 
-		storyblok.pingEditor(function() {
-			if (storyblok.inEditor) {
-				storyblok.enterEditmode
-			}
+		storyblokInstance.on(['change', 'published'], function() {
+			window.location.reload()
 		});
 
-		let CancelToken = axios.CancelToken;
-		let inputCall = CancelToken.source();
+		@if (config('storyblok.live-preview'))
+		storyblokInstance.on('input', (event) => {
+			const CancelToken = axios.CancelToken;
+			let source = CancelToken.source();
 
-		storyblok.on('input', (payload) => {
-			axios.post('/api/laravel-storyblok/live-content', {
-				'content': payload.story.content,
-				cancelToken: inputCall.token
+			source && source.cancel('Operation canceled due to new request.');
+
+			// save the new request for cancellation
+			source = axios.CancelToken.source();
+
+			axios.post('{{ url()->current() }}', {
+				data: event
+			}, {
+				cancelToken: source.token
 			}).then((response) => {
-				Vue.set(app.__vue__, 'laravelStoryblokLive', response.data);
-			}).catch(function(thrown) {
-				if (axios.isCancel(thrown)) {
-					console.log('First request canceled', thrown.message);
-				} else {
-					// handle error
-				}
+				document.querySelector('{{ config('storyblok.live-element') }}').innerHTML = response.data;
+
+				const storyblokInstance = new StoryblokBridge({
+					accessToken: '{{ config('storyblok.api_preview_key') }}'
+				});
 			});
 		});
-
-		storyblok.on('change', function() {
-			window.location.reload(true);
-		});
+		@endif
 	</script>
 @endif
