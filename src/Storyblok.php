@@ -32,4 +32,12 @@ class Storyblok
 
 		return new $class($response);
 	}
+
+	public function setData($data) {
+		$response = $data;
+
+		$class = $this->getChildClassName('Page', $response['content']['component']);
+
+		return new $class($response);
+	}
 }
