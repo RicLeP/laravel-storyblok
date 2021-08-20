@@ -60,7 +60,6 @@ class Block implements \IteratorAggregate
 	public function __construct($content, $parent = null)
 	{
 		$this->_parent = $parent;
-
 		$this->preprocess($content);
 
 		if ($parent) {
@@ -244,7 +243,7 @@ class Block implements \IteratorAggregate
 	}
 
 	/**
-	 * Loops over every field to get te ball rolling
+	 * Loops over every field to get the ball rolling
 	 */
 	private function processFields() {
 		$this->_fields->transform(function ($field, $key) {
@@ -276,38 +275,6 @@ class Block implements \IteratorAggregate
 
 		// remove non-content keys
 		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
-	}
-
-	/**
-	 * Returns cotent of the field. In the visual editor it returns a VueJS template tag
-	 *
-	 * @param $field
-	 * @return string
-	 */
-	public function liveField($field) {
-		if (config('storyblok.edit_mode')) {
-			return '{{ Object.keys(laravelStoryblokLive).length ? laravelStoryblokLive.uuid_' . str_replace('-', '_', $this->uuid()) . '.' . $field . ' : null }}';
-		}
-
-		return $this->{$field};
-	}
-
-	/**
-	 * Flattens all the fields in an array keyed by their UUID to make linking the JS simple
-	 */
-	public function flatten() {
-		$this->content()->each(function ($item, $key) {
-
-			if ($item instanceof Collection) {
-				$item->each(function ($item) {
-					$item->flatten();
-				});
-			} elseif ($item instanceof Field) {
-				$this->page()->liveContent['uuid_' . str_replace('-', '_', $this->uuid())][$key] = (string) $item;
-			} else {
-				$this->page()->liveContent['uuid_' . str_replace('-', '_', $this->uuid())][$key] = $item;
-			}
-		});
 	}
 
 	/**

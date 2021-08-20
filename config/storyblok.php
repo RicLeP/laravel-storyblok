@@ -141,5 +141,25 @@ return [
     */
     'image_service_domain' => env('STORYBLOK_IMAGE_SERVICE_DOMAIN', 'img2.storyblok.com'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enable editor live preview
+    |--------------------------------------------------------------------------
+    |
+    | This turns on live preview of changes in the editor if correctly set up
+    |
+    */
+    'live-preview' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Editor live preview selector
+    |--------------------------------------------------------------------------
+    |
+    | Class or ID selector for the HTML element wrapping your live preview content
+    |
+    */
+    'live-element' => '.storyblok-live',
+
 
 ];

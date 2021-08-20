@@ -2,17 +2,19 @@
 
 namespace Riclep\Storyblok\Http\Controllers;
 
-use Riclep\Storyblok\Support\NullPage;
+use IvoPetkov\HTML5DOMDocument;
+use Riclep\Storyblok\StoryblokFacade as StoryBlok;
 use Illuminate\Http\Request;
-use Riclep\Storyblok\Block;
 
 class LiveContentController
 {
-    public function index(Request $request) {
-		$content = new Block($request->all()['content'], new NullPage());
+    public function show(Request $request, $slug = '/') {
+		config(['storyblok.edit_mode' => true]);
 
-		$content->flatten();
+		$page = Storyblok::setData($request->get('data')['story'])->render();
+		$dom = new HTML5DOMDocument();
+		$dom->loadHTML($page);
 
-		return json_encode($content->page()->liveContent);
+		return $dom->querySelector(config('storyblok.live-element'))->innerHTML;
 	}
 }

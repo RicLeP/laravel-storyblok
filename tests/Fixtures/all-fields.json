@@ -168,6 +168,14 @@
 				"fieldtype": "multilink",
 				"cached_url": "key-people/primary-contact"
 			},
+			"link_anchor": {
+				"id": "8a6eee6b-025e-484e-9219-8ad6596a74fa",
+				"url": "",
+				"anchor": "the-anchor",
+				"linktype": "story",
+				"fieldtype": "multilink",
+				"cached_url": "key-people/primary-contact"
+			},
 			"link_url": {
 				"id": "",
 				"url": "https://sirric.co.uk",

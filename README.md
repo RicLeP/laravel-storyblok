@@ -27,6 +27,8 @@ This package allows you to use fantastic [Storyblok headless CMS](https://www.st
 
 [Read the full docs](https://ls.sirric.co.uk/docs)
 
+[Contribute to the docs](https://github.com/RicLeP/laravel-storyblok-docs/)
+
 ## Future plans
 
 - More transformations of content

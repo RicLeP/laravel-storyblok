@@ -427,6 +427,13 @@ PICTURE
 	}
 
 	/** @test */
+	public function can_get_story_link_url_with_anchor()
+	{
+		$field = new StoryLink($this->getFieldContents('link_anchor'), null);
+		$this->assertEquals('key-people/primary-contact#the-anchor', (string) $field);
+	}
+
+	/** @test */
 	public function can_use_custom_field_class()
 	{
 		$page = $this->makePage();
