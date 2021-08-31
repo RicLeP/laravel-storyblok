@@ -4,9 +4,10 @@
 namespace Riclep\Storyblok\Fields;
 
 
-use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\Table\TableExtension;
+use League\CommonMark\MarkdownConverter;
 use Riclep\Storyblok\Field;
 
 class Markdown extends Field
@@ -18,10 +19,17 @@ class Markdown extends Field
 	 */
 	public function __toString()
 	{
-		$environment = Environment::createCommonMarkEnvironment();
+		$config = [
+			'html_input' => 'escape',
+			'allow_unsafe_links' => false,
+			'max_nesting_level' => 100,
+		];
+
+		$environment = new Environment($config);
+		$environment->addExtension(new CommonMarkCoreExtension());
 		$environment->addExtension(new TableExtension());
 
-		$converter = new CommonMarkConverter([], $environment);
+		$converter = new MarkdownConverter($environment);
 
 		return $converter->convertToHtml($this->content);
 	}
