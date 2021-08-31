@@ -4,7 +4,7 @@
 namespace Riclep\Storyblok\Fields;
 
 
-use League\CommonMark\Environment;
+use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\Table\TableExtension;
 use League\CommonMark\MarkdownConverter;
@@ -31,6 +31,6 @@ class Markdown extends Field
 
 		$converter = new MarkdownConverter($environment);
 
-		return $converter->convertToHtml($this->content);
+		return (string) $converter->convertToHtml($this->content);
 	}
 }
