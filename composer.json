@@ -25,7 +25,7 @@
         "embed/embed": "^3.4",
         "illuminate/support": "^6.0|^7.0|^8.0",
 		"ivopetkov/html5-dom-document-php": "2.*",
-        "league/commonmark": "^1.5",
+        "league/commonmark": "^2.0",
         "mundschenk-at/php-typography": "^6.5",
         "spatie/schema-org": "^3.3",
         "storyblok/php-client": "^1.4",
