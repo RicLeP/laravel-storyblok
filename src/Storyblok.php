@@ -15,7 +15,7 @@ class Storyblok
 	 * Reads the requested story from the API
 	 *
 	 * @param $slug
-	 * @param null $resolveRelations
+	 * @param array|null $resolveRelations
 	 * @return mixed
 	 * @throws \Storyblok\ApiException
 	 */
