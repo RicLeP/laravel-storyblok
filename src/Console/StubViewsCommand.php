@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class StubViewsCommand extends Command
 {
@@ -37,6 +38,14 @@ class StubViewsCommand extends Command
      */
     public function handle()
     {
+	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
+		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
+	    }
+
+	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
+		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
+	    }
+
 		$client = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
 
 		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
