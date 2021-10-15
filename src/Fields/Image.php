@@ -65,11 +65,18 @@ class Image extends Asset
 		return $this;
 	}
 
-	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element') {
+	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element', $reverse = false) {
 		if ($default) {
 			$imgSrc = (string) $this->transformations[$default]['src'];
 		} else {
 			$imgSrc = $this->filename;
+		}
+
+		// srcset seems to work the opposite way to picture elements when working out sizes
+		if ($reverse) {
+			$transformations = array_reverse($this->transformations);
+		} else {
+			$transformations = $this->transformations;
 		}
 
 		return view($view, [
@@ -77,8 +84,12 @@ class Image extends Asset
 			'attributes' => $attributes,
 			'default' => $default,
 			'imgSrc' => $imgSrc,
-			'transformations' => $this->transformations,
+			'transformations' => $transformations,
 		])->render();
+	}
+
+	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
+		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset', true);
 	}
 
 	public function cssVars() {

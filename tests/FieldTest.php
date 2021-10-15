@@ -269,8 +269,6 @@ PICTURE
 </picture>
 PICTURE
 			, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
-
-
 	}
 
 	/** @test */
@@ -334,6 +332,25 @@ PICTURE
 PICTURE
 , str_replace("\t", '', $field->picture('Some alt text with "')));
 	}
+
+
+	/** @test */
+	public function can_create_img_srcset()
+	{
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertEquals(<<<'SRCSET'
+<img srcset=" //img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg 500w,  //img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg 100w, " sizes="   (min-width: 1200px)  500px,     100px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+SRCSET
+			, str_replace("\t", '', $field->srcset('Some alt text with "')));
+
+		$this->assertEquals(<<<'SRCSET'
+<img srcset=" //img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg 500w,  //img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg 100w, " sizes="   (min-width: 1200px)  500px,     100px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+SRCSET
+			, str_replace("\t", '', $field->srcset('Some alt text with "')));
+	}
+
+
 
 	/** @test */
 	public function can_get_asset_url_with_accessor()
