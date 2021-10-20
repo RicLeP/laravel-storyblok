@@ -34,7 +34,7 @@ class Block implements \IteratorAggregate
 	public $_resolveRelations = [];
 
 	/**
-	 * @var array Remove unresolved relations such as those that 404
+	 * @var bool Remove unresolved relations such as those that 404
 	 */
 	public $_filterRelations = true;
 
