@@ -80,9 +80,15 @@ class FieldFactory
 			// it’s an array of relations - request them if we’re auto or manual resolving
 			if (Str::isUuid($field[0])) {
 				if ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations)) {
-					return collect($field)->transform(function ($relation) use ($block) {
+					$relations = collect($field)->transform(function ($relation) use ($block) {
 						return $block->getRelation(new RequestStory(), $relation);
 					});
+
+					if ($block->_filterRelations) {
+						$relations = $relations->filter();
+					}
+
+					return $relations;
 				}
 			}
 

@@ -15,6 +15,7 @@ use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Traits\CssClasses;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
+use Storyblok\ApiException;
 
 class Block implements \IteratorAggregate
 {
@@ -31,6 +32,11 @@ class Block implements \IteratorAggregate
 	 * @var array list of field names containing relations to resolve
 	 */
 	public $_resolveRelations = [];
+
+	/**
+	 * @var array Remove unresolved relations such as those that 404
+	 */
+	public $_filterRelations = true;
 
 	/**
 	 * @var array the path of nested components
@@ -288,18 +294,22 @@ class Block implements \IteratorAggregate
 	}
 
 	public function getRelation(RequestStory $request, $relation) {
-		$response = $request->get($relation);
+		try {
+			$response = $request->get($relation);
 
-		$class = $this->getChildClassName('Block', $response['content']['component']);
-		$relationClass = new $class($response['content'], $this);
+			$class = $this->getChildClassName('Block', $response['content']['component']);
+			$relationClass = new $class($response['content'], $this);
 
-		$relationClass->addMeta([
-			'name' => $response['name'],
-			'published_at' => $response['published_at'],
-			'full_slug' => $response['full_slug'],
-		]);
+			$relationClass->addMeta([
+				'name' => $response['name'],
+				'published_at' => $response['published_at'],
+				'full_slug' => $response['full_slug'],
+			]);
 
-		return $relationClass;
+			return $relationClass;
+		} catch (ApiException $e) {
+			return null;
+		}
 	}
 
 	public function getCasts() {
