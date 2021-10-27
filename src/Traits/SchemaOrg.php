@@ -47,6 +47,10 @@ trait SchemaOrg
 	 * @param $page
 	 */
 	private function add($page) {
-		$page->replaceMeta('schema_org', array_merge([$this->schemaOrg()], $this->meta()['schema_org'] ?? []));
+		$currentSchemaOrg = $page->meta('schema_org');
+
+		$currentSchemaOrg[] = $this->schemaOrg();
+
+		$page->replaceMeta('schema_org', $currentSchemaOrg ?? []);
 	}
 }
