@@ -318,7 +318,7 @@ class BlockTest extends TestCase
 	{
 		$page = $this->makePage('custom-page.json');
 
-		$this->assertInstanceOf('Spatie\SchemaOrg\Person', $page->meta()['schema_org'][1]);
+		$this->assertInstanceOf('Spatie\SchemaOrg\Person', $page->meta()['schema_org'][0]);
 	}
 
 	/** @test */
