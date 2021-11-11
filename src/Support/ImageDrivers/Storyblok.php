@@ -1,50 +1,28 @@
 <?php
 
-
-namespace Riclep\Storyblok\Support;
+namespace Riclep\Storyblok\Support\ImageDrivers;
 
 use Illuminate\Support\Str;
-use Riclep\Storyblok\Fields\Image;
 
-class ImageTransformation
+class Storyblok extends BaseDriver
 {
-	private $filename;
-	private $focus;
-	protected $transformations = [];
-	private $image;
 
-	public function __construct(Image $image)
-	{
-		$this->filename = $image->filename;
-		$this->focus = $image->focus;
-		$this->image = $image;
+
+
+	protected function hasFile() {
+		return $this->image->hasFile();
 	}
 
-	public function width() {
-		return $this->transformations['width'] ?? $this->image->width();
-	}
-
-	public function height() {
-		return $this->transformations['height'] ?? $this->image->height();
-	}
-
-	public function type() {
-		if (array_key_exists('format', $this->transformations)) {
-			return 'image/' . $this->transformations['format'];
-		}
-
-		return $this->image->type();
-	}
 
 	public function resize($width = 0, $height = 0, $focus = null)
 	{
-		$this->transformations = array_merge($this->transformations, [
+		$this->transformations = array_merge($this->image->transformations, [
 			'width' => $width,
 			'height' => $height,
 		]);
 
 		if ($focus) {
-			$this->transformations = array_merge($this->transformations, [
+			$this->transformations = array_merge($this->image->transformations, [
 				'focus' => $focus,
 			]);
 		}
@@ -54,12 +32,12 @@ class ImageTransformation
 
 	public function format($format, $quality = null)
 	{
-		$this->transformations = array_merge($this->transformations, [
+		$this->transformations = array_merge($this->image->transformations, [
 			'format' => $format,
 		]);
 
 		if ($quality) {
-			$this->transformations = array_merge($this->transformations, [
+			$this->transformations = array_merge($this->image->transformations, [
 				'quality' => $quality,
 			]);
 		}
@@ -69,7 +47,7 @@ class ImageTransformation
 
 	public function fitIn($width = 0, $height = 0, $fill = 'transparent')
 	{
-		$this->transformations = array_merge($this->transformations, [
+		$this->transformations = array_merge($this->image->transformations, [
 			'width' => $width,
 			'height' => $height,
 			'fill' => $fill,
@@ -91,14 +69,10 @@ class ImageTransformation
 	 * @param $options
 	 * @return string
 	 */
-	public function createUrl($options): string
+	public function createUrl($options = null): string
 	{
-		$resource = str_replace(['https:', '//' . config('storyblok.asset_domain')], '', $this->filename);
+		$resource = str_replace(['https:', '//' . config('storyblok.asset_domain')], '', $this->image->content()['filename']);
 		return '//' . config('storyblok.image_service_domain') . $options . $resource;
-	}
-
-	public function getTransformations() {
-		return $this->transformations;
 	}
 
 	private function hasFilters() {
@@ -120,17 +94,19 @@ class ImageTransformation
 			$filters .= ':fill(' . $this->transformations['fill'] . ')';
 		}
 
-		if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->focus) {
-			$filters .= ':focal(' . $this->focus . ')';
+		if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->image->focus) {
+			$filters .= ':focal(' . $this->image->focus . ')';
 		}
 
 		return $filters;
 	}
 
+
+
 	public function __toString()
 	{
-		if (Str::endsWith($this->filename, 'svg')) {
-			return $this->filename;
+		if (Str::endsWith($this->image->content()['filename'], 'svg')) {
+			return $this->image->content()['filename'];
 		}
 
 		$transforms = '';
@@ -153,5 +129,29 @@ class ImageTransformation
 		}
 
 		return $this->createUrl($transforms);
+	}
+
+
+
+
+
+	protected function extractMetaDetails() {
+		$path = $this->image->content()['filename'];
+
+		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
+
+		if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
+			$this->image->addMeta([
+				'height' => false,
+				'width' => false,
+				'extension' => 'svg',
+			]);
+		} else {
+			$this->image->addMeta([
+				'height' => $dimensions[0]['height'],
+				'width' => $dimensions[0]['width'],
+				'extension' => strtolower($dimensions[0]['extension']),
+			]);
+		}
 	}
 }

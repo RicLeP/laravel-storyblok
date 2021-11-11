@@ -141,6 +141,7 @@ class FieldTest extends TestCase
 	public function can_resize_image()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
+		////$field = $field->transform()->resize(234, 432);
 		$field = $field->transform()->resize(234, 432);
 
 		$this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
@@ -227,13 +228,13 @@ class FieldTest extends TestCase
 		$field = new Image($this->getFieldContents('hero'), null);
 		$field = $field->transform()->fitIn('transparent');
 
-		$this->assertEquals('png', $field->getTransformations()['format']);
+		$this->assertEquals('png', $field->getImage()->getTransformations()['format']);
 
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
 		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
 
-		$this->assertEquals('webp', $field2->getTransformations()['format']);
+		$this->assertEquals('webp', $field2->getImage()->getTransformations()['format']);
 	}
 
 
@@ -241,7 +242,6 @@ class FieldTest extends TestCase
 	public function can_get_create_picture_elements()
 	{
 		$field = new HeroImage($this->getFieldContents('hero'), null);
-
 		$this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)">

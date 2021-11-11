@@ -7,6 +7,7 @@ use Riclep\Storyblok\Console\BlockMakeCommand;
 use Riclep\Storyblok\Console\BlockSyncCommand;
 use Riclep\Storyblok\Console\ComponentViewCommand;
 use Riclep\Storyblok\Console\StubViewsCommand;
+use Riclep\Storyblok\Managers\ImageTransformerManager;
 use Storyblok\Client;
 
 class StoryblokServiceProvider extends ServiceProvider
@@ -69,8 +70,18 @@ class StoryblokServiceProvider extends ServiceProvider
 			$client = new Client(config('storyblok.api_public_key'));
 		}
 
-		// if we’re in Storyblok’s edit mode let’s save that in the config for easy access
-		$client->editMode(config('storyblok.draft'));
+	    // if we’re in Storyblok’s edit mode let’s save that in the config for easy access
+	    $client->editMode(config('storyblok.draft'));
+
+	    // This will bind a single instance of our Manager to the Service Container
+	    $this->app->singleton('image-transformer', function ($app) {
+		    return new ImageTransformerManager($app);
+	    });
+
+	    // This singleton allows to retrieve the driver set has default from the manager
+	    $this->app->singleton('image-transformer.driver', function ($app) {
+		    return $app['image-transformer']->driver();
+	    });
 
 		$this->app->instance('Storyblok\Client', $client);
     }

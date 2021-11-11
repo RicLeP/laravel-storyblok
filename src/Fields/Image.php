@@ -5,15 +5,18 @@ namespace Riclep\Storyblok\Fields;
 
 
 use Illuminate\Support\Str;
+use Riclep\Storyblok\Managers\ImageTransformerManager;
 use Riclep\Storyblok\Support\ImageTransformation;
 
 class Image extends Asset
 {
-	protected $transformations = [];
+	public $transformations = [];
+
+	protected $driver;
 
 	public function __construct($content, $block)
 	{
-
+		// TODO - handle legacy image component ---- use driver instead???
 		if (is_string($content)) {
 			$this->upgradeOldFields($content);
 			parent::__construct($this->content, $block);
@@ -21,24 +24,12 @@ class Image extends Asset
 			parent::__construct($content, $block);
 		}
 
-		if ($this->hasFile()) {
-			$this->extractMetaDetails();
-
-			if (method_exists($this, 'transformations')) {
-				$this->transformations();
-			}
-		}
+		$this->driver = new ImageTransformerManager(app());
+		$this->driver->init($this);
 	}
 
 	public function transform($name = null) {
-		if ($name) {
-			if (array_key_exists($name, $this->transformations) ) {
-				return $this->transformations[$name];
-			}
-			return false;
-		}
-
-		return new ImageTransformation($this);
+		return $this->driver->transform($name);
 	}
 
 	public function width() {
@@ -49,6 +40,7 @@ class Image extends Asset
 		return $this->meta('height');
 	}
 
+	// in driver???
 	public function type() {
 		$extension = $this->meta('extension');
 
@@ -65,6 +57,7 @@ class Image extends Asset
 		return $this;
 	}
 
+	// in driver - then we can use clever features of each
 	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element', $reverse = false) {
 		if ($default) {
 			$imgSrc = (string) $this->transformations[$default]['src'];
@@ -88,6 +81,7 @@ class Image extends Asset
 		])->render();
 	}
 
+	// in driver
 	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
 		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset', true);
 	}
@@ -114,25 +108,10 @@ class Image extends Asset
 		return $this->content['filename'];
 	}
 
-	protected function extractMetaDetails() {
-		$path = $this->content['filename'];
-
-		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
-
-		if (Str::endsWith(strtolower($this->content['filename']), '.svg')) {
-			$this->addMeta([
-				'height' => false,
-				'width' => false,
-				'extension' => 'svg',
-			]);
-		} else {
-			$this->addMeta([
-				'height' => $dimensions[0]['height'],
-				'width' => $dimensions[0]['width'],
-				'extension' => strtolower($dimensions[0]['extension']),
-			]);
-		}
+	public function getTransformations() {
+		return $this->transformations;
 	}
+
 
 	private function upgradeOldFields($content) {
 		$this->content = [
