@@ -6,7 +6,7 @@ namespace Riclep\Storyblok\Fields;
 
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Managers\ImageTransformerManager;
-
+use Riclep\Storyblok\Support\ImageDrivers\Storyblok;
 
 
 class Image extends Asset
@@ -17,18 +17,97 @@ class Image extends Asset
 
 	public function __construct($content, $block)
 	{
+		if (is_string($content)) {
+			$this->upgradeOldFields($content);
+		}
+
+		parent::__construct($content, $block);
+
+
 		// TODO - handle legacy image component ---- use driver instead???
+		/*
 		if (is_string($content)) {
 			$this->upgradeOldFields($content);
 			parent::__construct($this->content, $block);
 		} else {
 			parent::__construct($content, $block);
 		}
-
-		$this->driver = new ImageTransformerManager(app());
+*/
+		$this->driver = new Storyblok();
 		$this->driver->init($this);
 	}
 
+
+	public function width() {
+		return $this->driver->width(); /// TODO - get original?
+	}
+
+	public function height() {
+		return $this->driver->height(); /// TODO - get original?
+	}
+
+	public function mime() {
+		return $this->driver->mime(); /// TODO - get original?
+	}
+
+
+	public function transform() {
+		//$driver = new Storyblok();
+		//return $driver->init($this);
+	}
+
+// in driver - then we can use clever features of each
+	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element', $reverse = false) {
+		if ($default) {
+			$imgSrc = (string) $this->transformations[$default]['src'];
+		} else {
+			$imgSrc = $this->filename;
+		}
+
+		dd($this->transformations);
+
+		// srcset seems to work the opposite way to picture elements when working out sizes
+		if ($reverse) {
+			$transformations = array_reverse($this->transformations);
+		} else {
+			$transformations = $this->transformations;
+		}
+		return view($view, [
+			'alt' => $alt,
+			'attributes' => $attributes,
+			'default' => $default,
+			'imgSrc' => $imgSrc,
+			'transformations' => $transformations,
+		])->render();
+	}
+
+	public function setContent($content) {
+		$this->content = $content;
+	}
+
+
+	private function upgradeOldFields($content) {
+		$this->content = [
+			'filename' => $content,
+			'alt' => null,
+			'copyright' => null,
+			'fieltype' => 'asset',
+			'focus' => null,
+			'name' => '',
+			'title' => null,
+		];
+	}
+
+
+
+
+
+
+
+
+
+
+	/*
 	public function transform($name = null) {
 		return $this->driver->transform($name);
 	}
@@ -49,11 +128,12 @@ class Image extends Asset
 		return $this->driver->extension();
 	}
 
-
+*/
 	/**
 	 * @deprecated since version 2.7
 	 * @return mixed
 	 */
+	/*
 	public function type() {
 		return $this->driver->mime();
 	}
@@ -76,28 +156,6 @@ class Image extends Asset
 		return $this;
 	}
 
-	// in driver - then we can use clever features of each
-	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element', $reverse = false) {
-		if ($default) {
-			$imgSrc = (string) $this->transformations[$default]['src'];
-		} else {
-			$imgSrc = $this->filename;
-		}
-
-		// srcset seems to work the opposite way to picture elements when working out sizes
-		if ($reverse) {
-			$transformations = array_reverse($this->transformations);
-		} else {
-			$transformations = $this->transformations;
-		}
-		return view($view, [
-			'alt' => $alt,
-			'attributes' => $attributes,
-			'default' => $default,
-			'imgSrc' => $imgSrc,
-			'transformations' => $transformations,
-		])->render();
-	}
 
 	// in driver
 	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
@@ -142,4 +200,5 @@ class Image extends Asset
 			'title' => null,
 		];
 	}
+	*/
 }

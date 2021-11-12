@@ -125,8 +125,13 @@ class FieldTest extends TestCase
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
+		$this->assertEquals($field->width(), 960);
+		$this->assertEquals($field->height(), 1280);
+/*
+ * // replacing meta
 		$this->assertEquals($field->meta('width'), 960);
 		$this->assertEquals($field->meta('height'), 1280);
+*/
 	}
 
 	/** @test */
@@ -227,16 +232,12 @@ class FieldTest extends TestCase
 		$field = new Image($this->getFieldContents('hero'), null);
 		$field = $field->transform()->fitIn('transparent');
 
-		$this->assertEquals('png', $field->extension());
-		$this->assertEquals('image/png', $field->type()); // deprecated
 		$this->assertEquals('image/png', $field->mime());
 
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
 		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
 
-		$this->assertEquals('webp', $field2->extension());
-		$this->assertEquals('image/webp', $field2->type()); // deprecated
 		$this->assertEquals('image/webp', $field2->mime());
 	}
 
@@ -245,8 +246,6 @@ class FieldTest extends TestCase
 	public function can_get_create_picture_elements()
 	{
 		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		dd($field->picture('Some alt text with "'));
 
 		$this->assertEquals(<<<'PICTURE'
 <picture>

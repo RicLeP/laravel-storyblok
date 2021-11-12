@@ -7,6 +7,67 @@ use Riclep\Storyblok\Traits\HasMeta;
 
 abstract class BaseDriver
 {
+	protected $meta = [];
+	protected $transformations = [];
+	protected Image $image;
+
+	public function init(Image $image)
+	{
+		$this->image = $image;
+
+		$this->extractMetaDetails();
+
+		if (method_exists($this->image, 'transformations')) {
+			$this->image->transformations();
+		}
+
+		/*if ($this->hasFile()) { /// has file should be in hte driver
+			$this->extractMetaDetails();
+
+			if (method_exists($this->image, 'transformations')) {
+				$this->image->runTransformations();
+			}
+		}*/
+	}
+
+
+
+
+
+	protected function setMime($extension) {
+		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
+	}
+
+
+	public function width() {
+		return $this->transformations['width'] ?? $this->meta['width'];
+	}
+
+	public function height() {
+		return $this->transformations['height'] ?? $this->meta['height'];
+	}
+
+	public function mime() {
+		return $this->transformations['mime'] ?? $this->meta['mime'];
+	}
+
+
+
+	public function transform()
+	{
+		return $this;
+	}
+
+	public function __toString() {
+		return $this->buildUrl();
+	}
+
+
+
+
+
+
+	/*
 	use HasMeta;
 
 	protected $image;
@@ -58,12 +119,12 @@ abstract class BaseDriver
 	public function extension() {
 		return $this->meta('extension');
 	}
-
-
+*/
 	/**
 	 * @deprecated since version 2.7
 	 * @return string
 	 */
+	/*
 	public function type() {
 		return $this->mime();
 	}
@@ -71,4 +132,5 @@ abstract class BaseDriver
 	protected function setMime($extension) {
 		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
 	}
+	*/
 }
