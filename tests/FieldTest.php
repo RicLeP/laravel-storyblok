@@ -141,7 +141,6 @@ class FieldTest extends TestCase
 	public function can_resize_image()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-		////$field = $field->transform()->resize(234, 432);
 		$field = $field->transform()->resize(234, 432);
 
 		$this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
@@ -208,13 +207,13 @@ class FieldTest extends TestCase
 
 		$this->assertEquals(960, $field->width());
 		$this->assertEquals(1280, $field->height());
-		$this->assertEquals('image/jpeg', $field->type());
+		$this->assertEquals('image/jpeg', $field->mime());
 
 		$field1 = $field->transform()->format('png');
 
 		$this->assertEquals(960, $field1->width());
 		$this->assertEquals(1280, $field1->height());
-		$this->assertEquals('image/png', $field1->type());
+		$this->assertEquals('image/png', $field1->mime());
 
 		$field2 = $field->transform()->resize(100, 200);
 
@@ -228,13 +227,17 @@ class FieldTest extends TestCase
 		$field = new Image($this->getFieldContents('hero'), null);
 		$field = $field->transform()->fitIn('transparent');
 
-		$this->assertEquals('png', $field->getImage()->getTransformations()['format']);
+		$this->assertEquals('png', $field->extension());
+		$this->assertEquals('image/png', $field->type()); // deprecated
+		$this->assertEquals('image/png', $field->mime());
 
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
 		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
 
-		$this->assertEquals('webp', $field2->getImage()->getTransformations()['format']);
+		$this->assertEquals('webp', $field2->extension());
+		$this->assertEquals('image/webp', $field2->type()); // deprecated
+		$this->assertEquals('image/webp', $field2->mime());
 	}
 
 
@@ -242,6 +245,9 @@ class FieldTest extends TestCase
 	public function can_get_create_picture_elements()
 	{
 		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		dd($field->picture('Some alt text with "'));
+
 		$this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="//img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg" type="image/webp" media="(min-width: 600px)">
@@ -346,6 +352,25 @@ SRCSET
 
 		$this->assertEquals(<<<'SRCSET'
 <img srcset=" //img2.storyblok.com/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg 500w,  //img2.storyblok.com/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg 100w, " sizes="   (min-width: 1200px)  500px,     100px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+SRCSET
+			, str_replace("\t", '', $field->srcset('Some alt text with "')));
+	}
+
+	/** @test */
+	public function can_create_img_srcset_with_custom_domains()
+	{
+		config()->set('storyblok.asset_domain', 'custom.asset.domain');
+		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
+
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertEquals(<<<'SRCSET'
+<img srcset="https://custom.imageservice.domain/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg 500w, https://custom.imageservice.domain/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg 100w, " sizes="   (min-width: 1200px)  500px,     100px,  " src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+SRCSET
+			, str_replace("\t", '', $field->srcset('Some alt text with "')));
+
+		$this->assertEquals(<<<'SRCSET'
+<img srcset="https://custom.imageservice.domain/500x400/f/87028/960x1280/31a1d8dc75/bottle.jpg 500w, https://custom.imageservice.domain/100x120/filters:format(webp)/f/87028/960x1280/31a1d8dc75/bottle.jpg 100w, " sizes="   (min-width: 1200px)  500px,     100px,  " src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 SRCSET
 			, str_replace("\t", '', $field->srcset('Some alt text with "')));
 	}

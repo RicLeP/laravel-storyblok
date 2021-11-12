@@ -6,7 +6,8 @@ namespace Riclep\Storyblok\Fields;
 
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Managers\ImageTransformerManager;
-use Riclep\Storyblok\Support\ImageTransformation;
+
+
 
 class Image extends Asset
 {
@@ -33,22 +34,40 @@ class Image extends Asset
 	}
 
 	public function width() {
-		return $this->meta('width');
+		return $this->driver->width();
 	}
 
 	public function height() {
-		return $this->meta('height');
+		return $this->driver->height();
 	}
 
-	// in driver???
-	public function type() {
-		$extension = $this->meta('extension');
+	public function mime() {
+		return $this->driver->mime();
+	}
 
-		if ($extension === 'jpg') {
-			$extension = 'jpeg';
+	public function extension() {
+		return $this->driver->extension();
+	}
+
+
+	/**
+	 * @deprecated since version 2.7
+	 * @return mixed
+	 */
+	public function type() {
+		return $this->driver->mime();
+	}
+
+	public function meta($key = null, $default = null) {
+		if ($key) {
+			if (array_key_exists($key, $this->driver->meta())) {
+				return $this->driver->meta($key);
+			}
+
+			return $default;
 		}
 
-		return 'image/' . $extension;
+		return $this->driver->meta();
 	}
 
 	public function setTransformations($transformations) {
@@ -71,7 +90,6 @@ class Image extends Asset
 		} else {
 			$transformations = $this->transformations;
 		}
-
 		return view($view, [
 			'alt' => $alt,
 			'attributes' => $attributes,
@@ -108,8 +126,8 @@ class Image extends Asset
 		return $this->content['filename'];
 	}
 
-	public function getTransformations() {
-		return $this->transformations;
+	public function runTransformations() {
+		$this->transformations();
 	}
 
 

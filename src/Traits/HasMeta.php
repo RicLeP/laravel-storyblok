@@ -31,11 +31,14 @@ trait HasMeta
 	}
 
 	/**
-	 * Adds items to the meta content keeping any that already exist
+	 * Adds items to the meta content optionally replacing existing keys
 	 *
 	 * @param $fields
 	 */
-	public function addMeta($fields) {
+	public function addMeta($fields, $replace = false) {
+		if ($replace) {
+			$this->_meta = array_merge($this->_meta, $fields);
+		}
 		$this->_meta = array_merge($fields, $this->_meta);
 	}
 

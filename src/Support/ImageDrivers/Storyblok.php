@@ -16,38 +16,48 @@ class Storyblok extends BaseDriver
 
 	public function resize($width = 0, $height = 0, $focus = null)
 	{
-		$this->transformations = array_merge($this->image->transformations, [
+		$this->transformations = array_merge($this->transformations, [
 			'width' => $width,
 			'height' => $height,
 		]);
 
 		if ($focus) {
-			$this->transformations = array_merge($this->image->transformations, [
+			$this->transformations = array_merge($this->transformations, [
 				'focus' => $focus,
 			]);
 		}
+
+		$this->addMeta([
+			'width' => $width,
+			'height' => $height,
+		], true);
 
 		return $this;
 	}
 
 	public function format($format, $quality = null)
 	{
-		$this->transformations = array_merge($this->image->transformations, [
+		$this->transformations = array_merge($this->transformations, [
 			'format' => $format,
 		]);
 
 		if ($quality) {
-			$this->transformations = array_merge($this->image->transformations, [
+			$this->transformations = array_merge($this->transformations, [
 				'quality' => $quality,
 			]);
 		}
+
+		$this->addMeta([
+			'extension' => $format,
+			'mime' => $this->setMime($format),
+		], true);
 
 		return $this;
 	}
 
 	public function fitIn($width = 0, $height = 0, $fill = 'transparent')
 	{
-		$this->transformations = array_merge($this->image->transformations, [
+		$this->transformations = array_merge($this->transformations, [
 			'width' => $width,
 			'height' => $height,
 			'fill' => $fill,
@@ -58,6 +68,11 @@ class Storyblok extends BaseDriver
 		if ($fill === 'transparent') {
 			$this->format('png');
 		}
+
+		$this->addMeta([
+			'width' => $width,
+			'height' => $height,
+		], true);
 
 		return $this;
 	}
@@ -128,11 +143,10 @@ class Storyblok extends BaseDriver
 			$transforms .= $this->applyFilters();
 		}
 
+		dump($this->transformations);
+
 		return $this->createUrl($transforms);
 	}
-
-
-
 
 
 	protected function extractMetaDetails() {
@@ -141,17 +155,19 @@ class Storyblok extends BaseDriver
 		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
 		if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
-			$this->image->addMeta([
+			$this->addMeta([
 				'height' => false,
 				'width' => false,
 				'extension' => 'svg',
-			]);
+				'mime' => 'image/svg+xml',
+			], true);
 		} else {
-			$this->image->addMeta([
+			$this->addMeta([
 				'height' => $dimensions[0]['height'],
 				'width' => $dimensions[0]['width'],
 				'extension' => strtolower($dimensions[0]['extension']),
-			]);
+				'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
+			], true);
 		}
 	}
 }

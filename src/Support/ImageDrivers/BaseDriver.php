@@ -3,11 +3,14 @@
 namespace Riclep\Storyblok\Support\ImageDrivers;
 
 use Riclep\Storyblok\Fields\Image;
+use Riclep\Storyblok\Traits\HasMeta;
 
 abstract class BaseDriver
 {
+	use HasMeta;
+
 	protected $image;
-	protected $transformations;
+	protected $transformations = [];
 
 	abstract protected function extractMetaDetails();
 
@@ -19,7 +22,7 @@ abstract class BaseDriver
 			$this->extractMetaDetails();
 
 			if (method_exists($this->image, 'transformations')) {
-				$this->image->getTransformations();
+				$this->image->runTransformations();
 			}
 		}
 	}
@@ -41,19 +44,31 @@ abstract class BaseDriver
 	}
 
 	public function width() {
-		return $this->image->transformations['width'] ?? $this->image->width();
+		return $this->meta('width');
 	}
 
 	public function height() {
-		return $this->image->transformations['height'] ?? $this->image->height();
+		return $this->meta('height');
 	}
 
+	public function mime() {
+		return $this->meta('mime');
+	}
+
+	public function extension() {
+		return $this->meta('extension');
+	}
+
+
+	/**
+	 * @deprecated since version 2.7
+	 * @return string
+	 */
 	public function type() {
-		if (array_key_exists('format', $this->image->transformations)) {
-			return 'image/' . $this->image->transformations['format'];
-		}
-
-		return $this->image->type();
+		return $this->mime();
 	}
 
+	protected function setMime($extension) {
+		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
+	}
 }
