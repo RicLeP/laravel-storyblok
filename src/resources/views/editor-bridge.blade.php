@@ -12,7 +12,7 @@
 			window.location.reload()
 		});
 
-		@if (config('storyblok.live-preview'))
+		@if (config('storyblok.live_preview'))
 		storyblokInstance.on('input', (event) => {
 			const CancelToken = axios.CancelToken;
 			let source = CancelToken.source();
@@ -27,7 +27,7 @@
 			}, {
 				cancelToken: source.token
 			}).then((response) => {
-				document.querySelector('{{ config('storyblok.live-element') }}').innerHTML = response.data;
+				document.querySelector('{{ config('storyblok.live_element') }}').innerHTML = response.data;
 
 				const storyblokInstance = new StoryblokBridge({
 					accessToken: '{{ config('storyblok.api_preview_key') }}'

@@ -3,11 +3,6 @@
 
 namespace Riclep\Storyblok\Fields;
 
-
-use Illuminate\Support\Str;
-use Riclep\Storyblok\Support\ImageDrivers\Storyblok;
-
-
 class Image extends Asset
 {
 	public $transformations = [];
@@ -18,42 +13,36 @@ class Image extends Asset
 	{
 		parent::__construct($content, $block);
 
-		if (is_string($content)) {
-			$this->upgradeOldFields($content);
+		if (method_exists($this, 'transformations')) {
+			$this->transformations();
 		}
 
-
-		// TODO - handle legacy image component ---- use driver instead???
-		/*
-		if (is_string($content)) {
-			$this->upgradeOldFields($content);
-			parent::__construct($this->content, $block);
-		} else {
-			parent::__construct($content, $block);
-		}
-*/
-		$this->driver = new Storyblok();
-		$this->driver->init($this);
+		$driverClass = config('storyblok.image_transformer');
+		$this->driver = new $driverClass($this);
+		$this->driver->init();
 	}
 
-
-	public function width() {
-		return $this->driver->width(); /// TODO - get original?
+	public function width($original = false) {
+		return $this->driver->width($original);
 	}
 
-	public function height() {
-		return $this->driver->height(); /// TODO - get original?
+	public function height($original = false) {
+		return $this->driver->height($original);
 	}
 
-	public function mime() {
-		return $this->driver->mime(); /// TODO - get original?
+	public function mime($original = false) {
+		return $this->driver->mime($original);
 	}
-
 
 	public function transform() {
-		$driver = new Storyblok();
+		$driverClass = config('storyblok.image_transformer');
+		$driver = new $driverClass($this);
 
-		return $driver->init($this);
+		return $driver->init();
+	}
+
+	public function setContent($content) {
+		$this->content = $content;
 	}
 
 // in driver - then we can use clever features of each
@@ -70,6 +59,7 @@ class Image extends Asset
 		} else {
 			$transformations = $this->transformations;
 		}
+
 		return view($view, [
 			'alt' => $alt,
 			'attributes' => $attributes,
@@ -79,128 +69,21 @@ class Image extends Asset
 		])->render();
 	}
 
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
-
-	private function upgradeOldFields($content) {
-		//dd($this->content);
-
-		$this->content = [
-			'filename' => $content,
-			'alt' => null,
-			'copyright' => null,
-			'fieltype' => 'asset',
-			'focus' => null,
-			'name' => '',
-			'title' => null,
-		];
-
-		//dd($this->content);
-	}
-
-
-
-
-
-
-
-
-
-
-	/*
-	public function transform($name = null) {
-		return $this->driver->transform($name);
-	}
-
-	public function width() {
-		return $this->driver->width();
-	}
-
-	public function height() {
-		return $this->driver->height();
-	}
-
-	public function mime() {
-		return $this->driver->mime();
-	}
-
-	public function extension() {
-		return $this->driver->extension();
-	}
-
-*/
-	/**
-	 * @deprecated since version 2.7
-	 * @return mixed
-	 */
-	/*
-	public function type() {
-		return $this->driver->mime();
-	}
-
-	public function meta($key = null, $default = null) {
-		if ($key) {
-			if (array_key_exists($key, $this->driver->meta())) {
-				return $this->driver->meta($key);
-			}
-
-			return $default;
-		}
-
-		return $this->driver->meta();
-	}
-
-	public function setTransformations($transformations) {
-		$this->transformations = $transformations;
-
-		return $this;
-	}
-
-
-	// in driver
 	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
 		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset', true);
 	}
 
-	public function cssVars() {
-		if ($this->transformations) {
-			$vars = '';
+	public function setTransformations($transformations, $mutate = true) {
+		if ($mutate) {
+			$this->transformations = $transformations;
 
-			foreach ($this->transformations as $key => $transformation) {
-				if (Str::endsWith($this->filename, 'svg')) {
-					$vars .= '--' . $key . ': url("' . $this->filename . '"); ';
-				} else {
-					$vars .= '--' . $key . ': url("https:' . (string) $transformation['src'] . '"); ';
-				}
-			}
-
-			return $vars;
+			return $this;
 		}
 
-		return false;
-	}
+		$class = get_class($this); // don’t mutate original object
+		$image = new $class($this->content, $this->block);
+		$image->transformations = $transformations;
 
-	protected function getOriginalFilenameAttribute() {
-		return $this->content['filename'];
+		return $image;
 	}
-
-	public function runTransformations() {
-		$this->transformations();
-	}
-
-
-	private function upgradeOldFields($content) {
-		$this->content = [
-			'filename' => $content,
-			'alt' => null,
-			'copyright' => null,
-			'fieltype' => 'asset',
-			'focus' => null,
-			'name' => '',
-			'title' => null,
-		];
-	}
-	*/
 }

@@ -1,11 +1,33 @@
 <?php
 
-namespace Riclep\Storyblok\Support\ImageDrivers;
+namespace Riclep\Storyblok\Support\ImageTransformers;
 
 use Illuminate\Support\Str;
 
-class Storyblok extends BaseDriver
+class Storyblok extends BaseTransformer
 {
+
+	public function preprocess() {
+		if (is_string($this->image->content())) {
+			$this->upgradeOldFields($this->image->content());
+		}
+	}
+
+	private function upgradeOldFields($content) {
+		//dd($this->content);
+
+		$this->image->setContent([
+			'filename' => $content,
+			'alt' => null,
+			'copyright' => null,
+			'fieltype' => 'asset',
+			'focus' => null,
+			'name' => '',
+			'title' => null,
+		]);
+
+		//dd($this->content);
+	}
 
 	protected function extractMetaDetails() {
 		$path = $this->image->content()['filename'];
@@ -29,7 +51,6 @@ class Storyblok extends BaseDriver
 		}
 	}
 
-
 	public function resize($width = 0, $height = 0, $focus = null)
 	{
 		$this->transformations = array_merge($this->transformations, [
@@ -45,8 +66,6 @@ class Storyblok extends BaseDriver
 
 		return $this;
 	}
-
-
 
 	public function buildUrl() {
 		if ($this->transformations === 'svg') {
@@ -70,13 +89,14 @@ class Storyblok extends BaseDriver
 			$transforms .= $this->applyFilters();
 		}
 
-		return $this->createUrl($transforms);
+		return $this->assetDomain($transforms);
 	}
 
-	public function createUrl($options = null): string
+	public function assetDomain($options = null): string
 	{
-		$resource = str_replace(['https:', '//' . config('storyblok.asset_domain')], '', $this->image->content()['filename']);
-		return '//' . config('storyblok.image_service_domain') . $options . $resource;
+		$resource = str_replace(config('storyblok.asset_domain'), config('storyblok.image_service_domain'), $this->image->content()['filename']);
+
+		return $resource . '/m' . $options;
 	}
 
 
@@ -105,8 +125,6 @@ class Storyblok extends BaseDriver
 
 		return $filters;
 	}
-
-
 
 	public function format($format, $quality = null)
 	{

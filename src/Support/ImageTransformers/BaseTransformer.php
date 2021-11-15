@@ -1,35 +1,28 @@
 <?php
 
-namespace Riclep\Storyblok\Support\ImageDrivers;
+namespace Riclep\Storyblok\Support\ImageTransformers;
 
 use Riclep\Storyblok\Fields\Image;
-use Riclep\Storyblok\Traits\HasMeta;
 
-abstract class BaseDriver
+abstract class BaseTransformer
 {
 	protected $meta = [];
 	protected $transformations = [];
 	protected Image $image;
 
-	public function init(Image $image)
-	{
+	public function __construct(Image $image) {
 		$this->image = $image;
 
+		if (method_exists('preprocess', $this)) {
+			$this->preprocess();
+		}
+	}
+
+	public function init()
+	{
 		$this->extractMetaDetails();
 
 		return $this;
-
-		/*if (method_exists($this->image, 'transformations')) {
-			$this->image->transformations();
-		}*/
-
-		/*if ($this->hasFile()) { /// has file should be in hte driver
-			$this->extractMetaDetails();
-
-			if (method_exists($this->image, 'transformations')) {
-				$this->image->runTransformations();
-			}
-		}*/
 	}
 
 
@@ -38,15 +31,27 @@ abstract class BaseDriver
 	}
 
 
-	public function width() {
+	public function width($original = false) {
+		if ($original) {
+			return $this->meta['width'];
+		}
+
 		return $this->transformations['width'] ?? $this->meta['width'];
 	}
 
-	public function height() {
+	public function height($original = false) {
+		if ($original) {
+			return $this->meta['height'];
+		}
+
 		return $this->transformations['height'] ?? $this->meta['height'];
 	}
 
-	public function mime() {
+	public function mime($original = false) {
+		if ($original) {
+			return $this->meta['mime'];
+		}
+
 		return $this->transformations['mime'] ?? $this->meta['mime'];
 	}
 

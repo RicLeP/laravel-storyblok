@@ -131,7 +131,6 @@ class FieldFactory
 	}
 
 
-
 	/**
 	 * Check if given string is an legacy image field
 	 *
@@ -141,6 +140,8 @@ class FieldFactory
 	public function isLegacyImageField($filename){
 		$allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 
-		return is_string($filename) && Str::of( $filename )->lower()->endsWith( $allowed_extentions );
+		return is_string($filename)
+			&& Str::of($filename)->lower()->startsWith('https://a.storyblok.com')
+			&& Str::of($filename)->lower()->endsWith($allowed_extentions);
 	}
 }

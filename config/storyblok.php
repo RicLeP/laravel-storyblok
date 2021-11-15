@@ -1,5 +1,7 @@
 <?php
 
+use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
+
 return [
 
 	/*
@@ -139,7 +141,17 @@ return [
     | Can be customized to proxy image service requests over a custom domain
     |
     */
-    'image_service_domain' => env('STORYBLOK_IMAGE_SERVICE_DOMAIN', 'img2.storyblok.com'),
+    'image_service_domain' => env('STORYBLOK_IMAGE_SERVICE_DOMAIN', 'a.storyblok.com'),
+
+	/*
+	|--------------------------------------------------------------------------
+	| Image transformation driver
+	|--------------------------------------------------------------------------
+	|
+	| The class used for transforming images Fields / image URLs
+	|
+	*/
+	'image_transformer' => Storyblok::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -149,7 +161,7 @@ return [
     | This turns on live preview of changes in the editor if correctly set up
     |
     */
-    'live-preview' => true,
+    'live_preview' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -159,7 +171,7 @@ return [
     | Class or ID selector for the HTML element wrapping your live preview content
     |
     */
-    'live-element' => '.storyblok-live',
+    'live_element' => '.storyblok-live',
 
 
 ];
