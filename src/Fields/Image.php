@@ -5,7 +5,6 @@ namespace Riclep\Storyblok\Fields;
 
 
 use Illuminate\Support\Str;
-use Riclep\Storyblok\Managers\ImageTransformerManager;
 use Riclep\Storyblok\Support\ImageDrivers\Storyblok;
 
 
@@ -17,11 +16,11 @@ class Image extends Asset
 
 	public function __construct($content, $block)
 	{
+		parent::__construct($content, $block);
+
 		if (is_string($content)) {
 			$this->upgradeOldFields($content);
 		}
-
-		parent::__construct($content, $block);
 
 
 		// TODO - handle legacy image component ---- use driver instead???
@@ -52,8 +51,9 @@ class Image extends Asset
 
 
 	public function transform() {
-		//$driver = new Storyblok();
-		//return $driver->init($this);
+		$driver = new Storyblok();
+
+		return $driver->init($this);
 	}
 
 // in driver - then we can use clever features of each
@@ -63,8 +63,6 @@ class Image extends Asset
 		} else {
 			$imgSrc = $this->filename;
 		}
-
-		dd($this->transformations);
 
 		// srcset seems to work the opposite way to picture elements when working out sizes
 		if ($reverse) {
@@ -87,6 +85,8 @@ class Image extends Asset
 
 
 	private function upgradeOldFields($content) {
+		//dd($this->content);
+
 		$this->content = [
 			'filename' => $content,
 			'alt' => null,
@@ -96,6 +96,8 @@ class Image extends Asset
 			'name' => '',
 			'title' => null,
 		];
+
+		//dd($this->content);
 	}
 
 
