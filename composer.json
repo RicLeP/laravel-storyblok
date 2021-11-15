@@ -24,6 +24,7 @@
         "barryvdh/reflection-docblock": "^2.0",
         "embed/embed": "^3.4",
         "illuminate/support": "^6.0|^7.0|^8.0",
+        "imgix/imgix-php": "^3.3",
         "ivopetkov/html5-dom-document-php": "2.*",
         "league/commonmark": "^2.0",
         "mundschenk-at/php-typography": "^6.5",

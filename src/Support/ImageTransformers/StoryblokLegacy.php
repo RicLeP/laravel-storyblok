@@ -2,8 +2,6 @@
 
 namespace Riclep\Storyblok\Support\ImageTransformers;
 
-use Illuminate\Support\Str;
-
 class StoryblokLegacy extends Storyblok
 {
 	public function assetDomain($options = null): string

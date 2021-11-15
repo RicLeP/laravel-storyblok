@@ -10,6 +10,9 @@ abstract class BaseTransformer
 	protected $transformations = [];
 	protected Image $image;
 
+	abstract public function buildUrl();
+	abstract protected function extractMetaDetails();
+
 	public function __construct(Image $image) {
 		$this->image = $image;
 
