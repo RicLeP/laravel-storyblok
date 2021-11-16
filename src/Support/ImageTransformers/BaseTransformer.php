@@ -10,9 +10,24 @@ abstract class BaseTransformer
 	protected $transformations = [];
 	protected Image $image;
 
+	/**
+	 * @return string The transformed image URL
+	 */
 	abstract public function buildUrl();
+
+
+	/**
+	 * Extracts meta details for the current image such as width
+	 * and height, mime and anything else of use
+	 *
+	 * @return null
+	 */
 	abstract protected function extractMetaDetails();
 
+
+	/**
+	 * @param Image $image
+	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
 
@@ -21,19 +36,25 @@ abstract class BaseTransformer
 		}
 	}
 
-	public function init()
-	{
+	/**
+	 * Performs any actions needed once the object is created
+	 * and any preprocessing is completed
+	 *
+	 * @return $this
+	 */
+	public function init() {
 		$this->extractMetaDetails();
 
 		return $this;
 	}
 
-
-	protected function setMime($extension) {
-		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
-	}
-
-
+	/**
+	 * Returns the width of the transformed image. Optionally you
+	 * can request the original width
+	 *
+	 * @param $original
+	 * @return int
+	 */
 	public function width($original = false) {
 		if ($original) {
 			return $this->meta['width'];
@@ -42,6 +63,13 @@ abstract class BaseTransformer
 		return $this->transformations['width'] ?? $this->meta['width'];
 	}
 
+	/**
+	 * Returns the height of the transformed image. Optionally you
+	 * can request the original height
+	 *
+	 * @param $original
+	 * @return mixed
+	 */
 	public function height($original = false) {
 		if ($original) {
 			return $this->meta['height'];
@@ -50,6 +78,13 @@ abstract class BaseTransformer
 		return $this->transformations['height'] ?? $this->meta['height'];
 	}
 
+	/**
+	 * Returns the mime of the transformed image. Optionally you
+	 * can request the original mime
+	 *
+	 * @param $original
+	 * @return mixed
+	 */
 	public function mime($original = false) {
 		if ($original) {
 			return $this->meta['mime'];
@@ -58,7 +93,22 @@ abstract class BaseTransformer
 		return $this->transformations['mime'] ?? $this->meta['mime'];
 	}
 
+	/**
+	 * Returns the mime from a particular file extension
+	 *
+	 * @param $extension
+	 * @return string
+	 */
+	protected function setMime($extension) {
+		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
+	}
 
+	/**
+	 * Casts the image transformation as a sting using the
+	 * buildUrl method
+	 *
+	 * @return string
+	 */
 	public function __toString() {
 		return $this->buildUrl();
 	}

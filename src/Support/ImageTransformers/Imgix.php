@@ -8,6 +8,13 @@ use Imgix\UrlBuilder;
 class Imgix extends BaseTransformer
 {
 
+	/**
+	 * Resize the image to the given dimensions
+	 *
+	 * @param $width
+	 * @param $height
+	 * @return $this
+	 */
 	public function resize($width = 0, $height = 0)
 	{
 		$this->transformations = array_merge($this->transformations, [
@@ -18,6 +25,13 @@ class Imgix extends BaseTransformer
 		return $this;
 	}
 
+	/**
+	 * Fit the image in the given dimensions
+	 *
+	 * @param $mode
+	 * @param $options
+	 * @return $this
+	 */
 	public function fit($mode, $options = [])
 	{
 		$this->transformations = array_merge($this->transformations, [
@@ -29,6 +43,13 @@ class Imgix extends BaseTransformer
 		return $this;
 	}
 
+	/**
+	 * Specify the crop type to use for the image
+	 *
+	 * @param $mode
+	 * @param $options
+	 * @return $this
+	 */
 	public function crop($mode, $options = [])
 	{
 		$this->transformations = array_merge($this->transformations, [
@@ -40,7 +61,13 @@ class Imgix extends BaseTransformer
 		return $this;
 	}
 
-
+	/**
+	 * Set the image format you want returned
+	 *
+	 * @param $format
+	 * @param $quality
+	 * @return $this
+	 */
 	public function format($format, $quality = null)
 	{
 		if ($format === 'auto') {
@@ -62,6 +89,13 @@ class Imgix extends BaseTransformer
 		return $this;
 	}
 
+	/**
+	 * Manually set any options you want for the transformation as
+	 * and array of key value pairs
+	 *
+	 * @param $options
+	 * @return $this
+	 */
 	public function options($options)
 	{
 		$this->transformations = array_merge($this->transformations, $options);
@@ -70,6 +104,11 @@ class Imgix extends BaseTransformer
 	}
 
 
+	/**
+	 * Returns an imgix URL using their builder
+	 *
+	 * @return string
+	 */
 	public function buildUrl() {
 		if ($this->transformations === 'svg') {
 			return $this->image->content()['filename'];
@@ -82,6 +121,11 @@ class Imgix extends BaseTransformer
 		return $builder->createURL($this->image->content()['filename'], $this->transformations);
 	}
 
+	/**
+	 * Gets the image meta from the given URL
+	 *
+	 * @return void|null
+	 */
 	protected function extractMetaDetails() {
 		$path = $this->image->content()['filename'];
 
