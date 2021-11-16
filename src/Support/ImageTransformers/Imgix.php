@@ -22,6 +22,8 @@ class Imgix extends BaseTransformer
 			'h' => $height,
 		]);
 
+		//dd($this);
+
 		return $this;
 	}
 
@@ -122,7 +124,7 @@ class Imgix extends BaseTransformer
 	}
 
 	/**
-	 * Gets the image meta from the given URL
+	 * Gets the image meta from the given Storyblok URL
 	 *
 	 * @return void|null
 	 */
@@ -131,20 +133,22 @@ class Imgix extends BaseTransformer
 
 		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
-		if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
-			$this->meta = [
-				'height' => false,
-				'width' => false,
-				'extension' => 'svg',
-				'mime' => 'image/svg+xml',
-			];
-		} else {
-			$this->meta = [
-				'height' => $dimensions[0]['height'],
-				'width' => $dimensions[0]['width'],
-				'extension' => strtolower($dimensions[0]['extension']),
-				'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
-			];
+		if ($dimensions) {
+			if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
+				$this->meta = [
+					'height' => false,
+					'width' => false,
+					'extension' => 'svg',
+					'mime' => 'image/svg+xml',
+				];
+			} else {
+				$this->meta = [
+					'height' => $dimensions[0]['height'],
+					'width' => $dimensions[0]['width'],
+					'extension' => strtolower($dimensions[0]['extension']),
+					'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
+				];
+			}
 		}
 	}
 }

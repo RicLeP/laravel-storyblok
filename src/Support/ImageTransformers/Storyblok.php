@@ -148,20 +148,22 @@ class Storyblok extends BaseTransformer
 
 		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
-		if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
-			$this->meta = [
-				'height' => false,
-				'width' => false,
-				'extension' => 'svg',
-				'mime' => 'image/svg+xml',
-			];
-		} else {
-			$this->meta = [
-				'height' => $dimensions[0]['height'],
-				'width' => $dimensions[0]['width'],
-				'extension' => strtolower($dimensions[0]['extension']),
-				'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
-			];
+		if ($dimensions) {
+			if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
+				$this->meta = [
+					'height' => null,
+					'width' => null,
+					'extension' => 'svg',
+					'mime' => 'image/svg+xml',
+				];
+			} else {
+				$this->meta = [
+					'height' => $dimensions[0]['height'],
+					'width' => $dimensions[0]['width'],
+					'extension' => strtolower($dimensions[0]['extension']),
+					'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
+				];
+			}
 		}
 	}
 

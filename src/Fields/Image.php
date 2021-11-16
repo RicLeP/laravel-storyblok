@@ -73,17 +73,20 @@ class Image extends Asset
 		return $this->transformer->mime($original);
 	}
 
-	// TODO ------ set ‘driver’
-
 	/**
 	 * Create a new transformation on the image
 	 *
-	 * @param $original
+	 * @param $transformer
 	 * @return mixed
 	 */
-	public function transform() {
-		$transformerClass = config('storyblok.image_transformer');
-		$driver = new $transformerClass($this);
+	public function transform($transformer = null) {
+		if ($transformer) {
+			$transformerClass = $transformer;
+			$driver = new $transformerClass($this);
+		} else {
+			$transformerClass = config('storyblok.image_transformer');
+			$driver = new $transformerClass($this);
+		}
 
 		return $driver->init();
 	}

@@ -6,8 +6,25 @@ use Riclep\Storyblok\Fields\Image;
 
 abstract class BaseTransformer
 {
-	protected $meta = [];
+	/**
+	 * Stores basic details about the image
+	 *
+	 * @var
+	 */
+	protected $meta = [
+		'height' => null,
+		'width' => null,
+		'extension' => null,
+		'mime' => null,
+	];
+
+	/**
+	 * Stores all the transformations
+	 *
+	 * @var array
+	 */
 	protected $transformations = [];
+
 	protected Image $image;
 
 	/**

@@ -17,6 +17,7 @@ use Riclep\Storyblok\Fields\UrlLink;
 use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
+use Riclep\Storyblok\Tests\Fixtures\Fields\Imgix;
 
 class FieldTest extends TestCase
 {
@@ -575,5 +576,34 @@ SRCSET
 		$block = $page->block();
 
 		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\Hero', $block->hero);
+	}
+
+	/** @test */
+	public function can_transform_image_url_with_imgix()
+	{
+		config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\Imgix::class);
+		config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
+		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
+
+		$field = new Imgix($this->getFieldContents('imgix'), null);
+		$field = $field->transform()->resize(1000, 300);
+
+		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-3.3.1&w=1000&s=3e64b50ce487db48093b5d5b3449c156', $field->buildUrl());
+
+		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-3.3.1&w=1000&s=3e64b50ce487db48093b5d5b3449c156', (string) $field);
+	}
+
+	/** @test */
+	public function can_change_image_transformer_to_imgix()
+	{
+		config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
+		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
+
+		$field = new Image($this->getFieldContents('hero'), null);
+		$field = $field->transform(\Riclep\Storyblok\Support\ImageTransformers\Imgix::class)->resize(1000, 300);
+
+		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-3.3.1&w=1000&s=804d97c0c0517b44c0a636737a35b4c7', $field->buildUrl());
+
+		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-3.3.1&w=1000&s=804d97c0c0517b44c0a636737a35b4c7', (string) $field);
 	}
 }
