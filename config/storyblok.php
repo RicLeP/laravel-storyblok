@@ -1,7 +1,5 @@
 <?php
 
-use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
-
 return [
 
 	/*
@@ -151,7 +149,7 @@ return [
 	| The class used for transforming images Fields / image URLs
 	|
 	*/
-	'image_transformer' => Storyblok::class,
+	'image_transformer' => \Riclep\Storyblok\Support\ImageTransformers\Storyblok::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -172,6 +170,4 @@ return [
     |
     */
     'live_element' => '.storyblok-live',
-
-
 ];

@@ -6,6 +6,19 @@ use Illuminate\Support\Str;
 
 class Storyblok extends BaseTransformer
 {
+
+	/**
+	 * Performs any actions needed once the object is created
+	 * and any preprocessing is completed
+	 *
+	 * @return $this
+	 */
+	public function init() {
+		$this->extractMetaDetails();
+
+		return $this;
+	}
+
 	/**
 	 * Resizes the image and sets the focal point
 	 *

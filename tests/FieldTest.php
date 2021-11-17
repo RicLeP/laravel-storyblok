@@ -600,7 +600,7 @@ SRCSET
 		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
 
 		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform(\Riclep\Storyblok\Support\ImageTransformers\Imgix::class)->resize(1000, 300);
+		$field = $field->transformer(\Riclep\Storyblok\Support\ImageTransformers\Imgix::class)->transform()->resize(1000, 300);
 
 		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-3.3.1&w=1000&s=804d97c0c0517b44c0a636737a35b4c7', $field->buildUrl());
 

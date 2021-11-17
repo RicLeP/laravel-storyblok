@@ -54,18 +54,6 @@ abstract class BaseTransformer
 	}
 
 	/**
-	 * Performs any actions needed once the object is created
-	 * and any preprocessing is completed
-	 *
-	 * @return $this
-	 */
-	public function init() {
-		$this->extractMetaDetails();
-
-		return $this;
-	}
-
-	/**
 	 * Returns the width of the transformed image. Optionally you
 	 * can request the original width
 	 *

@@ -13,11 +13,18 @@ class Image extends Asset
 	public $transformations = [];
 
 	/**
-	 * The transformer class used for this image
+	 * The transformer used for this image
 	 *
 	 * @var mixed
 	 */
 	protected $transformer;
+
+	/**
+	 * The transformer class used for transformations
+	 *
+	 * @var mixed
+	 */
+	protected $transformerClass;
 
 	/**
 	 * Constructs the image image field
@@ -34,13 +41,18 @@ class Image extends Asset
 			parent::__construct($content, $block);
 		}
 
+		$this->transformerClass = config('storyblok.image_transformer');
+
+		$transformerClass = $this->transformerClass;
+		$this->transformer = new $transformerClass($this);
+
+		if (method_exists($this->transformer, 'init')) {
+			$this->transformer->init();
+		}
+
 		if (method_exists($this, 'transformations')) {
 			$this->transformations();
 		}
-
-		$transformerClass = config('storyblok.image_transformer');
-		$this->transformer = new $transformerClass($this);
-		$this->transformer->init();
 	}
 
 	/**
@@ -74,21 +86,39 @@ class Image extends Asset
 	}
 
 	/**
-	 * Create a new transformation on the image
+	 * Create a new or get a transformation of the image
+	 *
+	 * @param $tranformation
+	 * @return mixed
+	 */
+	public function transform($tranformation = null) {
+		if ($tranformation) {
+			if (array_key_exists($tranformation, $this->transformations) ) {
+				return $this->transformations[$tranformation];
+			}
+			return false;
+		}
+
+		$transformerClass = $this->transformerClass;
+		$this->transformer = new $transformerClass($this);
+
+		if (method_exists($this->transformer, 'init')) {
+			$this->transformer->init();
+		}
+
+		return $this->transformer;
+	}
+
+	/**
+	 * Set the driver to use for transformations
 	 *
 	 * @param $transformer
 	 * @return mixed
 	 */
-	public function transform($transformer = null) {
-		if ($transformer) {
-			$transformerClass = $transformer;
-			$driver = new $transformerClass($this);
-		} else {
-			$transformerClass = config('storyblok.image_transformer');
-			$driver = new $transformerClass($this);
-		}
+	public function transformer($transformer) {
+		$this->transformerClass = $transformer;
 
-		return $driver->init();
+		return $this;
 	}
 
 
