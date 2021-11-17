@@ -12,8 +12,10 @@ use Riclep\Storyblok\Fields\Markdown;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\StoryLink;
+use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Fields\Textarea;
 use Riclep\Storyblok\Fields\UrlLink;
+use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
 use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
@@ -126,13 +128,8 @@ class FieldTest extends TestCase
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
-		$this->assertEquals($field->width(), 960);
-		$this->assertEquals($field->height(), 1280);
-/*
- * // replacing meta
-		$this->assertEquals($field->meta('width'), 960);
-		$this->assertEquals($field->meta('height'), 1280);
-*/
+		$this->assertEquals(960, $field->width(),);
+		$this->assertEquals(1280, $field->height());
 	}
 
 	/** @test */
@@ -284,6 +281,18 @@ class FieldTest extends TestCase
 		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
 
 		$this->assertEquals('image/webp', $field2->mime());
+	}
+
+
+	/** @test */
+	public function can_use_a_named_transformation()
+	{
+
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$this->assertInstanceOf(Storyblok::class, $field->transform('mobile')['src']);
+		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)', (string) $field->transform('mobile')['src']);
+		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile')['src']->format('png'));
 	}
 
 
@@ -486,13 +495,28 @@ SRCSET
 
 		$field = new Asset($this->getFieldContents('asset_empty'), null);
 		$this->assertFalse($field->hasFile());
+		$this->assertEquals((string) $field, '');
+
+		$field = new Asset(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": null,
+				"title": null,
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertFalse($field->hasFile());
 	}
 
 	/** @test */
 	public function can_check_multi_asset_has_files()
 	{
 		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will for for testing
+		$block = $page->block(); // any parent block will do for testing
 
 		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
 		$this->assertTrue($field->hasFiles());
@@ -505,10 +529,47 @@ SRCSET
 	public function can_use_array_access_on_multi_asset()
 	{
 		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will for for testing
+		$block = $page->block(); // any parent block will do for testing
 
 		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
 		$this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
+
+		$this->assertTrue($field->offsetExists(3));
+		$this->assertFalse($field->offsetExists(4));
+
+		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->offsetGet(1));
+
+		$this->assertEquals(0, $field->key());
+
+		$field->next();
+
+		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->current());
+
+		$field->next();
+		$this->assertEquals(2, $field->key());
+
+		$field->rewind();
+		$this->assertEquals(0, $field->key());
+
+		$this->assertTrue($field->valid());
+		$this->assertEquals(4, $field->count());
+
+		$this->assertArrayHasKey(2, $field);
+		$field->offsetUnset(2);
+		$this->assertArrayNotHasKey(2, $field);
+		$this->assertEquals(3, $field->count());
+
+		$field->offsetSet(2, 'hello');
+		$this->assertEquals('hello', $field[2]);
+
+		$field->offsetSet(3, 'hello2');
+		$this->assertEquals('hello2', $field[3]);
+
+		$field->offsetSet(null, 'hello3');
+		$this->assertEquals('hello3', $field[4]);
+
+
+		$this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg,https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
 	}
 
 	/** @test */
@@ -605,5 +666,23 @@ SRCSET
 		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-3.3.1&w=1000&s=804d97c0c0517b44c0a636737a35b4c7', $field->buildUrl());
 
 		$this->assertEquals('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-3.3.1&w=1000&s=804d97c0c0517b44c0a636737a35b4c7', (string) $field);
+	}
+
+	/** @test */
+	public function can_convert_table_fields_to_html()
+	{
+		$field = new Table($this->getFieldContents('table'), null);
+
+		$this->assertEquals('<table ><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field);
+
+		$this->assertEquals('<table class="class class--2"><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field->cssClass('class class--2'));
+
+
+		$field2 = new Table($this->getFieldContents('table'), null);
+
+		$this->assertEquals('<table ><caption>caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption('caption'));
+
+		$this->assertEquals('<table ><caption class="caption class">caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption(['caption', 'caption class']));
+
 	}
 }
