@@ -32,7 +32,8 @@ class RequestStory
 				$cache = $cache->tags('storyblok');
 			}
 
-			$response = $cache->remember($slugOrUuid, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
+			$api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key' ));
+			$response = $cache->remember($slugOrUuid . '_' . $api_hash , config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
 				return $this->makeRequest($slugOrUuid);
 			});
 		}
