@@ -72,11 +72,6 @@ class StoryblokServiceProvider extends ServiceProvider
 	    // if we’re in Storyblok’s edit mode let’s save that in the config for easy access
 	    $client->editMode(config('storyblok.draft'));
 
-	    // This will bind a single instance of our Manager to the Service Container
-	    $this->app->singleton('image-transformer', function ($app) {
-		    return new ImageTransformerManager($app);
-	    });
-
 	    // This singleton allows to retrieve the driver set has default from the manager
 	    $this->app->singleton('image-transformer.driver', function ($app) {
 		    return $app['image-transformer']->driver();
