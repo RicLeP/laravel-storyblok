@@ -7,7 +7,6 @@ use Riclep\Storyblok\Console\BlockMakeCommand;
 use Riclep\Storyblok\Console\BlockSyncCommand;
 use Riclep\Storyblok\Console\ComponentViewCommand;
 use Riclep\Storyblok\Console\StubViewsCommand;
-use Riclep\Storyblok\Managers\ImageTransformerManager;
 use Storyblok\Client;
 
 class StoryblokServiceProvider extends ServiceProvider
