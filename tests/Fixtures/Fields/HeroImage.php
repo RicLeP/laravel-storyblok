@@ -9,7 +9,7 @@ use Riclep\Storyblok\Fields\Image;
 class HeroImage extends Image
 {
 
-	protected function transformations() {
+	public function transformations() {
 		$this->transformations = [
 			'mobile' => [
 				'src' => $this->transform()->resize(100, 120)->format('webp'),
