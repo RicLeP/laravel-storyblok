@@ -19,12 +19,13 @@
         }
     ],
     "require": {
-        "php": "^7.1|^8.0",
+        "php": "^7.4|^8.0",
         "ext-json": "*",
         "barryvdh/reflection-docblock": "^2.0",
         "embed/embed": "^3.4",
         "illuminate/support": "^6.0|^7.0|^8.0",
-		"ivopetkov/html5-dom-document-php": "2.*",
+        "imgix/imgix-php": "^3.3",
+        "ivopetkov/html5-dom-document-php": "2.*",
         "league/commonmark": "^2.0",
         "mundschenk-at/php-typography": "^6.5",
         "spatie/schema-org": "^3.3",
@@ -49,7 +50,6 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
     },
     "config": {
         "sort-packages": true
@@ -57,7 +57,7 @@
     "extra": {
         "laravel": {
             "providers": [
-				"Riclep\\Storyblok\\StoryblokServiceProvider"
+                "Riclep\\Storyblok\\StoryblokServiceProvider"
             ],
             "aliases": {
                 "Storyblok": "Riclep\\Storyblok\\StoryblokFacade"

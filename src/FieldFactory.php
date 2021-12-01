@@ -11,6 +11,14 @@ use Riclep\Storyblok\Fields\Table;
 
 class FieldFactory
 {
+	/**
+	 * Works out what class should be used for the given block’s content
+	 *
+	 * @param $block
+	 * @param $field
+	 * @param $key
+	 * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+	 */
 	public function build($block, $field, $key) {
 		// does the Block assign any $_casts? This is key (field) => value (class)
 		if (array_key_exists($key, $block->getCasts())) {
@@ -38,8 +46,8 @@ class FieldFactory
 			return $this->arrayField($block, $field, $key);
 		}
 
-		// legacy image fields
-		if ($this->isLegacyImageField($field)) {
+		// legacy and string image fields
+		if ($this->isStringImageField($field)) {
 			return new Image($field, $block);
 		}
 
@@ -47,6 +55,14 @@ class FieldFactory
 		return $field;
 	}
 
+	/**
+	 * If given an array field we need more processing to determine the class
+	 *
+	 * @param $block
+	 * @param $field
+	 * @param $key
+	 * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+	 */
 	public function arrayField($block, $field, $key) {
 		// match link fields
 		if (array_key_exists('linktype', $field)) {
@@ -63,8 +79,8 @@ class FieldFactory
 		// match asset fields - detecting raster images
 		if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
 
-			// legacy image fields
-			if($this->isLegacyImageField($field['filename'])) {
+			// legacy and string image fields
+			if($this->isStringImageField($field['filename'])) {
 				return new Image($field, $block);
 			}
 
@@ -131,16 +147,15 @@ class FieldFactory
 	}
 
 
-
 	/**
-	 * Check if given string is an legacy image field
+	 * Check if given string is a string image field
 	 *
 	 * @param  $filename
 	 * @return boolean
 	 */
-	public function isLegacyImageField($filename){
+	public function isStringImageField($filename){
 		$allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 
-		return is_string($filename) && Str::of( $filename )->lower()->endsWith( $allowed_extentions );
+		return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extentions);
 	}
 }

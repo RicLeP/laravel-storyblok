@@ -17,10 +17,18 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	 */
 	private $iteratorIndex = 0;
 
+	/**
+	 * Returns a comma delimited list of filenames
+	 *
+	 * @return string
+	 */
 	public function __toString()
 	{
-		// TODO
-		return '';
+		return $this->content->map(function ($item) {
+			if (is_object($item) && $item->has('filename')) {
+				return $item->filename;
+			}
+		})->filter()->implode(',');
 	}
 
 	/**
@@ -56,8 +64,7 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	}
 
 	/*
-	 * Methods for ArrayAccess Trait - allows us to dig straight down to the content collection
-	 * when calling a key on the Object
+	 * Methods for ArrayAccess Trait - allows us to dig straight down to the content collection when calling a key on the Object
 	 * */
 	public function offsetSet($offset, $value) {
 		if (is_null($offset)) {

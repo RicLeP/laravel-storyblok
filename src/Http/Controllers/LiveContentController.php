@@ -15,6 +15,6 @@ class LiveContentController
 		$dom = new HTML5DOMDocument();
 		$dom->loadHTML($page);
 
-		return $dom->querySelector(config('storyblok.live-element'))->innerHTML;
+		return $dom->querySelector(config('storyblok.live_element'))->innerHTML;
 	}
 }
