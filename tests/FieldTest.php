@@ -289,10 +289,12 @@ class FieldTest extends TestCase
 	{
 
 		$field = new HeroImage($this->getFieldContents('hero'), null);
+		$field->transform('mobile');
 
 		$this->assertInstanceOf(Storyblok::class, $field->transform('mobile')['src']);
 		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)', (string) $field->transform('mobile')['src']);
 		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile')['src']->format('png'));
+		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile'));
 	}
 
 
