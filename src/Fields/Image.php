@@ -3,6 +3,8 @@
 
 namespace Riclep\Storyblok\Fields;
 
+use Riclep\Storyblok\Support\ImageTransformation;
+
 class Image extends Asset
 {
 	/**
@@ -94,7 +96,7 @@ class Image extends Asset
 	public function transform($tranformation = null) {
 		if ($tranformation) {
 			if (array_key_exists($tranformation, $this->transformations) ) {
-				return $this->transformations[$tranformation];
+				return new ImageTransformation($this->transformations[$tranformation]);
 			}
 			return false;
 		}
