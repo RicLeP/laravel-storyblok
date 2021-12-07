@@ -5,7 +5,7 @@ namespace Riclep\Storyblok\Listeners;
 use Illuminate\Support\Facades\Cache;
 use Riclep\Storyblok\Events\StoryblokPublished;
 
-class Published
+class ClearCache
 {
 	/**
 	 * Create the event listener.
