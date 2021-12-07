@@ -4,6 +4,7 @@ namespace Riclep\Storyblok\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Riclep\Storyblok\Events\StoryblokPublished;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WebhookController
@@ -23,11 +24,7 @@ class WebhookController
 		$signature = hash_hmac('sha1', $request->getContent(), config('storyblok.webhook_secret'));
 
 		if ($request->header('webhook-signature') === $signature) {
-			if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
-				Cache::tags('storyblok')->flush();
-			} else {
-				Cache::flush();
-			}
+			StoryblokPublished::dispatch($request->all());
 
 			return ['success' => true];
 		}
