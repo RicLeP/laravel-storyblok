@@ -3,7 +3,7 @@
 namespace Riclep\Storyblok\Listeners;
 
 use Illuminate\Support\Facades\Cache;
-use Riclep\Storyblok\Events\StoryblokPublished;
+use Riclep\Storyblok\Events\PublishingEvent;
 
 class ClearCache
 {
@@ -20,10 +20,10 @@ class ClearCache
 	/**
 	 * Handle the event.
 	 *
-	 * @param StoryblokPublished $event
+	 * @param PublishingEvent $event
 	 * @return void
 	 */
-	public function handle(StoryblokPublished $event)
+	public function handle(PublishingEvent $event)
 	{
 		if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
 			Cache::tags('storyblok')->flush();

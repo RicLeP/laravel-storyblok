@@ -4,7 +4,7 @@ namespace Riclep\Storyblok\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 
-class StoryblokPublished implements PublishingEvent
+class StoryblokUnpublished implements PublishingEvent
 {
 	use Dispatchable;
 
