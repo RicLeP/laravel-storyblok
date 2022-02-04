@@ -64,6 +64,10 @@ class RequestStory
 			$storyblokClient = $storyblokClient->resolveRelations($this->resolveRelations);
 		}
 
+		if (config('storyblok.resolve_links')) {
+			$storyblokClient = $storyblokClient->resolveLinks(config('storyblok.resolve_links'));
+		}
+
 		if (Str::isUuid($slugOrUuid)) {
 			$storyblokClient =  $storyblokClient->getStoryByUuid($slugOrUuid);
 		} else {

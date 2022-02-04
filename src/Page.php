@@ -186,6 +186,7 @@ class Page
 		//$this->story;
 
 		$this->addMeta([
+			'_uid' => $this->story['uuid'],
 			'name' => $this->story['name'],
 			'tags' => $this->story['tag_list'],
 			'slug' => $this->story['full_slug'],

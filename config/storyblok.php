@@ -151,6 +151,17 @@ return [
 	*/
 	'image_transformer' => \Riclep\Storyblok\Support\ImageTransformers\Storyblok::class,
 
+	/*
+	|--------------------------------------------------------------------------
+	| Resolve story links in content
+	|--------------------------------------------------------------------------
+	|
+	| Resolve links to stories when using link and multi link fields, valid
+	| settings are 'url', 'story' or false
+	|
+	*/
+	'resolve_links' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Enable editor live preview
