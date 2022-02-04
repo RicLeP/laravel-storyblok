@@ -128,7 +128,7 @@ class Storyblok extends BaseTransformer
 	 * @return string
 	 */
 	private function applyFilters() {
-		$filters = '/filters';
+		$filters = '';
 
 		if (array_key_exists('format', $this->transformations)) {
 			$filters .= ':format(' . $this->transformations['format'] . ')';
@@ -144,6 +144,10 @@ class Storyblok extends BaseTransformer
 
 		if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->image->content()['focus']) {
 			$filters .= ':focal(' . $this->image->content()['focus'] . ')';
+		}
+
+		if ($filters) {
+			$filters = '/filters' . $filters;
 		}
 
 		return $filters;
