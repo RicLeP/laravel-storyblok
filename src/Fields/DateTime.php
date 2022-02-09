@@ -18,6 +18,6 @@ class DateTime extends Field
 	 * Converts the field to a carbon object
 	 */
 	protected function init() {
-		$this->content = Carbon::parse($this->content);
+		$this->content = $this->content ? Carbon::parse($this->content) : null;
 	}
 }
