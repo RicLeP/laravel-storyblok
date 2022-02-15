@@ -4,24 +4,38 @@
 namespace Riclep\Storyblok;
 
 
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Riclep\Storyblok\Traits\HasChildClasses;
-use Storyblok\Client;
 
 abstract class Folder
 {
 	use HasChildClasses;
 
-	/**
-	 * @var bool should we request the start / index page
-	 */
-	protected $startPage = false;
-
 
 	/**
 	 * @var int Current pagination page
 	 */
-	protected $currentPage = 0;
+	public $currentPage = 0;
+
+
+	/**
+	 * @var int the total number of stories matching the request
+	 */
+	public $totalStories;
+
+
+	/**
+	 * @var null|Collection the collection of stories in the folder
+	 */
+	public $stories;
+
+
+	/**
+	 * @var bool should we request the start / index page
+	 */
+	protected $startPage = false;
 
 
 	/**
@@ -47,24 +61,41 @@ abstract class Folder
 	 */
 	protected $settings = [];
 
+
+	public function paginate($page = null, $pageName = 'page')
+	{
+		$page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+		return new LengthAwarePaginator(
+			$this->stories,
+			$this->totalStories,
+			$this->perPage,
+			$page,
+			[
+				'path' => LengthAwarePaginator::resolveCurrentPath(),
+				'pageName' => $pageName,
+			]
+		);
+	}
+
+
 	/**
 	 * Reads a content of the returned stories, processing each one
 	 *
-	 * @return \Illuminate\Support\Collection
+	 * @return Folder
 	 */
 	public function read() {
-		$response = $this->get();
-
-		$stories = collect($response);
-
-		$stories->transform(function ($story) {
+		$stories = $this->get()->transform(function ($story) {
 			$blockClass = $this->getChildClassName('Page', $story['content']['component']);
 
 			return new $blockClass($story);
 		});
 
-		return $stories;
+		$this->stories = $stories;
+
+		return $this;
 	}
+
 
 	/**
 	 * Sets the slug of the folder to request
@@ -75,6 +106,7 @@ abstract class Folder
 		$this->slug = $slug;
 	}
 
+
 	/**
 	 * The order in which we want the items in the response to be returned
 	 *
@@ -83,6 +115,7 @@ abstract class Folder
 	public function sort($sortBy) {
 		$this->sortBy = $sortBy;
 	}
+
 
 	/**
 	 * Define the settings for the API call
@@ -95,9 +128,19 @@ abstract class Folder
 
 
 	/**
+	 * Returns the total number of stories for this page
+	 *
+	 * @return int
+	 */
+	public function count() {
+		return $this->stories->count() ?? 0;
+	}
+
+
+	/**
 	 * Caches the response and returns just the bit we want
 	 *
-	 * @return array
+	 * @return Collection
 	 */
 	protected function get()
 	{
@@ -111,13 +154,16 @@ abstract class Folder
 			});
 		}
 
-		return $response['stories'];
+		$this->totalStories = $response['headers']['Total'][0];
+
+		return collect($response['stories']);
 	}
+
 
 	/**
 	 * Makes the actual request
 	 *
-	 * @return array|\Storyblok\stdClass
+	 * @return array
 	 */
 	private function makeRequest() {
 		$storyblokClient = resolve('Storyblok\Client');
@@ -130,6 +176,9 @@ abstract class Folder
 			'per_page' => $this->perPage,
 		], $this->settings));
 
-		return $storyblokClient->getBody();
+		return [
+			'headers' => $storyblokClient->getHeaders(),
+			'stories' => $storyblokClient->getBody()['stories'],
+		];
 	}
 }
