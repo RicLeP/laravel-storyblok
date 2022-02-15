@@ -154,7 +154,7 @@ abstract class Folder
 			});
 		}
 
-		$this->totalStories = $response['headers']['Total'];
+		$this->totalStories = $response['headers']['Total'][0];
 
 		return collect($response['stories']);
 	}

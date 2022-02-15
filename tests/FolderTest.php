@@ -46,13 +46,5 @@ class FolderTest extends TestCase
 		$this->assertInstanceOf(Collection::class, $folder->stories);
 		$this->assertInstanceOf(Page::class, $folder->stories[0]);
 	}
-
-	/** @test */
-	public function can_paginate_stories() {
-		$folder = new Folder();
-		$folder->read();
-
-		dd($folder->paginate()->links());
-	}
 }
 
