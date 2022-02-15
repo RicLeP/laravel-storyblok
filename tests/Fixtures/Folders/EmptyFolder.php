@@ -6,7 +6,7 @@ namespace Riclep\Storyblok\Tests\Fixtures\Folders;
 
 use Illuminate\Support\Collection;
 
-class Folder extends \Riclep\Storyblok\Folder
+class EmptyFolder extends \Riclep\Storyblok\Folder
 {
 	/**
 	 * Override the default folder as we don’t want to make an API
@@ -16,8 +16,8 @@ class Folder extends \Riclep\Storyblok\Folder
 	 */
 	protected function get()
 	{
-		$this->totalStories = 15;
+		$this->totalStories = 0;
 
-		return collect(json_decode(file_get_contents(__DIR__ . '/../folder.json'), true)['stories']);
+		return collect(json_decode(file_get_contents(__DIR__ . '/../empty-folder.json'), true)['stories']);
 	}
 }
