@@ -138,6 +138,19 @@ abstract class Folder
 
 
 	/**
+	 * Sets the number of items per page
+	 *
+	 * @param $perPage
+	 * @return $this
+	 */
+	public function perPage($perPage) {
+		$this->perPage = $perPage;
+
+		return $this;
+	}
+
+
+	/**
 	 * Caches the response and returns just the bit we want
 	 *
 	 * @return Collection
