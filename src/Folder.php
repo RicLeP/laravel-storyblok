@@ -178,7 +178,7 @@ abstract class Folder
 	 *
 	 * @return array
 	 */
-	private function makeRequest() {
+	protected function makeRequest() {
 		$storyblokClient = resolve('Storyblok\Client');
 
 		$storyblokClient =  $storyblokClient->getStories(array_merge([
