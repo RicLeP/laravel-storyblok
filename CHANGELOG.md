@@ -1,6 +1,6 @@
 # Changelog
 
-You can find the [changelog in the package docs](https://ls.sirric.co.uk/docs/2.4/whats-new)
+You can find the [changelog in the package docs](https://ls.sirric.co.uk)
 
 
 

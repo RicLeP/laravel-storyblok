@@ -685,6 +685,83 @@ SRCSET
 		$this->assertEquals('<table ><caption>caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption('caption'));
 
 		$this->assertEquals('<table ><caption class="caption class">caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption(['caption', 'caption class']));
-
 	}
+
+
+
+
+	/** @test */
+	public function can_set_focal_point()
+	{
+		// default
+		$field = new Image(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": "",
+				"title": null,
+				"filename": "https://a.storyblok.com/f/96945/100x100/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertEquals('center', $field->focalPointAlignment());
+		$this->assertEquals('left', $field->focalPointAlignment('left'));
+
+		// left top
+		$field2 = new Image(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": "30x20:31x21",
+				"title": null,
+				"filename": "https://a.storyblok.com/f/96945/120x120/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertEquals('25% 17%', $field2->focalPointAlignment());
+		$this->assertEquals('left top', $field2->focalPointAlignment('center', true));
+
+
+		// center center
+		$field3 = new Image(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": "41x41:42x42",
+				"title": null,
+				"filename": "https://a.storyblok.com/f/96945/120x120/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertEquals('34% 34%', $field3->focalPointAlignment());
+		$this->assertEquals('center center', $field3->focalPointAlignment('center', true));
+
+
+		// right bottom
+		$field4 = new Image(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": "88x119:89x120",
+				"title": null,
+				"filename": "https://a.storyblok.com/f/96945/120x120/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertEquals('73% 99%', $field4->focalPointAlignment());
+		$this->assertEquals('right bottom', $field4->focalPointAlignment('center', true));
+	}
+
 }

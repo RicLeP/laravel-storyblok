@@ -47,8 +47,7 @@ The tests are mostly up-to-date and cover the majority of the code. A few areas 
 
 ## Contributing
 
-Please feel free to help expand and improve this project. Currently it supports most of the basic usage for block, fields and content. It would be great to add more advanced features and transformations or simply fix bugs.
-
+Please feel free to help expand and improve this project. The package uses Git Flow but you can submit a pull request to be merged to the develop branch.
 ### Security
 
 If you discover any security related issues, please email ric@wearebwi.com instead of using the issue tracker.
