@@ -194,6 +194,48 @@ class Image extends Asset
 	}
 
 	/**
+	 * Reads the focus property if available and returns a string that can be used for CSS
+	 * object-position or background-position. The default should be any valid value for
+	 * the CSS property being used. Rigid will use hard alignments to edges.
+	 *
+	 * @param $default
+	 * @param $rigid
+	 * @return string
+	 */
+	public function focalPointAlignment($default = 'center', $rigid = false) {
+		if (!$this->focus) {
+			return $default;
+		}
+
+		preg_match_all('/\d+/', $this->focus, $matches);
+
+		$leftPercent = round(($matches[0][0] / $this->width()) * 100);
+		$topPercent = round(($matches[0][1] / $this->height()) * 100);
+
+		if ($rigid) {
+			if ($leftPercent > 66) {
+				$horizontalAlignment = 'right';
+			} else if ($leftPercent > 33) {
+				$horizontalAlignment = 'center';
+			} else {
+				$horizontalAlignment = 'left';
+			}
+
+			if ($topPercent > 66) {
+				$verticalAlignment = 'bottom';
+			} else if ($topPercent > 33) {
+				$verticalAlignment = 'center';
+			} else {
+				$verticalAlignment = 'top';
+			}
+
+			return $horizontalAlignment . ' ' . $verticalAlignment;
+		}
+
+		return $leftPercent . '% ' . $topPercent . '%';
+	}
+
+	/**
 	 * Converts string fields into full image fields
 	 *
 	 * @param $content
