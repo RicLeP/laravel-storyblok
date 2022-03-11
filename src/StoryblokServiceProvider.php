@@ -63,11 +63,11 @@ class StoryblokServiceProvider extends ServiceProvider
 		}
 
         // register the Storyblok client, checking if we are in edit more of the dev requests draft content
-		if (config('storyblok.draft')) {
-			$client = new Client(config('storyblok.api_preview_key'), "api.storyblok.com", "v1", true);
-		} else {
-			$client = new Client(config('storyblok.api_public_key'), "api.storyblok.com", "v1", true);
-		}
+	    if (config('storyblok.draft')) {
+		    $client = new Client(config('storyblok.api_preview_key'), "api.storyblok.com", "v1", config('storyblok.use_ssl'));
+	    } else {
+		    $client = new Client(config('storyblok.api_public_key'), "api.storyblok.com", "v1", config('storyblok.use_ssl'));
+	    }
 
 	    // if we’re in Storyblok’s edit mode let’s save that in the config for easy access
 	    $client->editMode(config('storyblok.draft'));
