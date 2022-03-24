@@ -17,7 +17,7 @@ use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
 use Storyblok\ApiException;
 
-class Block implements \IteratorAggregate
+class Block implements \IteratorAggregate, \JsonSerializable
 {
 	use CssClasses;
 	use HasChildClasses;
@@ -281,6 +281,16 @@ class Block implements \IteratorAggregate
 
 		// remove non-content keys
 		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
+	}
+
+	/**
+	 * Casting Block to JSON
+	 *
+	 * @return Collection|mixed
+	 */
+	public function jsonSerialize()
+	{
+		return $this->content();
 	}
 
 	/**
