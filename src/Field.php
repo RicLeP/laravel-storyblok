@@ -21,6 +21,15 @@ abstract class Field
 	 */
 	protected $block;
 
+
+	/**
+	 * Key/value pairs of additional content you want the
+	 * field to have access to. Pass anything you like
+	 *
+	 * @var array
+	 */
+	public $with;
+
 	/**
 	 * Creates the new field taking it’s content and a reference
 	 * to the parent Block
@@ -38,18 +47,56 @@ abstract class Field
 		}
 	}
 
+	/**
+	 * Returns the content of the Field
+	 *
+	 * @return array|string
+	 */
 	public function content() {
 		return $this->content;
 	}
 
+	/**
+	 * Returns the Block this Field belongs to
+	 *
+	 * @return Block
+	 */
 	public function block() {
 		return $this->block;
 	}
 
+	/**
+	 * Checks if the requested key is in the Field’s content
+	 *
+	 * @param $key
+	 * @return bool
+	 */
 	public function has($key) {
 		return array_key_exists($key, $this->content);
 	}
 
+
+	/**
+	 * Allows key/value pairs to be passed into the Field such as CSS
+	 * classes when rendering __toString or another content.
+	 * Example: {{ $field->with(['classes' => 'my-class']) }}
+	 *
+	 * @param $with
+	 * @return Field
+	 */
+	public function with($with) {
+		$this->with = $with;
+
+		return $this;
+	}
+
+	/**
+	 * Magic accessor to pull content from the content. Works just like
+	 * Laravel’s model accessors.
+	 *
+	 * @param $key
+	 * @return false|mixed|string
+	 */
 	public function __get($key) {
 		$accessor = 'get' . Str::studly($key) . 'Attribute';
 
@@ -68,5 +115,10 @@ abstract class Field
 		}
 	}
 
+	/**
+	 * Prints the Field as a string
+	 *
+	 * @return string
+	 */
 	abstract public function __toString();
 }

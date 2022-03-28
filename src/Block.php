@@ -124,14 +124,15 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * Returns the first matching view, passing it the fields
+	 * Returns the first matching view, passing it the Block and optional data
 	 *
+	 * @param array $with
 	 * @return View
 	 * @throws UnableToRenderException
 	 */
-	public function render() {
+	public function render($with = []) {
 		try {
-			return view()->first($this->views(), ['block' => $this]);
+			return view()->first($this->views(), array_merge(['block' => $this], $with));
 		} catch (\Exception $exception) {
 			throw new UnableToRenderException('None of the views in the given array exist.', $this);
 		}
@@ -266,8 +267,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @throws \Storyblok\ApiException
 	 */
 	private function getFieldType($field, $key) {
-		$factory = new FieldFactory();
-		return $factory->build($this, $field, $key);
+		return (new FieldFactory())->build($this, $field, $key);
 	}
 
 	/**

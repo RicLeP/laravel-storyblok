@@ -20,6 +20,7 @@ use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
 use Riclep\Storyblok\Tests\Fixtures\Fields\Imgix;
+use Riclep\Storyblok\Tests\Fixtures\Fields\WithImage;
 
 class FieldTest extends TestCase
 {
@@ -762,6 +763,27 @@ SRCSET
 
 		$this->assertEquals('73% 99%', $field4->focalPointAlignment());
 		$this->assertEquals('right bottom', $field4->focalPointAlignment('center', true));
+	}
+
+
+	/** @test */
+	public function can_add_with_content()
+	{
+		// default
+		$field = new WithImage(json_decode(
+			'{
+				"id": 1223942,
+				"alt": null,
+				"name": "",
+				"focus": "",
+				"title": null,
+				"filename": "https://a.storyblok.com/f/96945/100x100/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg",
+				"copyright": null,
+				"fieldtype": "asset"
+			}', true
+		), null);
+
+		$this->assertEquals('<img src="https://a.storyblok.com/f/96945/100x100/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg class="some-class">', (string) $field->with(['class' => 'some-class']));
 	}
 
 }
