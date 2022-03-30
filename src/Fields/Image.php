@@ -168,7 +168,7 @@ class Image extends Asset
 	 * @return string
 	 */
 	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
-		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset', true);
+		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset');
 	}
 
 	/**
