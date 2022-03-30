@@ -306,8 +306,8 @@ class FieldTest extends TestCase
 
 		$this->assertEquals(<<<'PICTURE'
 <picture>
-<source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
+<source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
 
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
@@ -386,8 +386,8 @@ PICTURE
 
 		$this->assertEquals(<<<'PICTURE'
 <picture>
-<source srcset="https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
 <source srcset="https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
+<source srcset="https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
 
 <img src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
@@ -402,7 +402,7 @@ PICTURE
 		$field = new HeroImage($this->getFieldContents('hero'), null);
 
 		$this->assertEquals(<<<'SRCSET'
-<img srcset=" https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w,  https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w, " sizes="   (min-width: 600px)  100px,     500px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+<img srcset=" https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w,  https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w, " sizes="  (min-width: 1200px) 500px,    (min-width: 600px) 100px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 SRCSET
 			, str_replace("\t", '', $field->srcset('Some alt text with "')));
 	}
@@ -416,7 +416,7 @@ SRCSET
 		$field = new HeroImage($this->getFieldContents('hero'), null);
 
 		$this->assertEquals(<<<'SRCSET'
-<img srcset=" https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w,  https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w, " sizes="   (min-width: 600px)  100px,     500px,  " src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
+<img srcset=" https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w,  https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w, " sizes="  (min-width: 1200px) 500px,    (min-width: 600px) 100px,  " src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 SRCSET
 			, str_replace("\t", '', $field->srcset('Some alt text with "')));
 	}

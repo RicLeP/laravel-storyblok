@@ -11,13 +11,13 @@ class HeroImage extends Image
 
 	public function transformations() {
 		$this->transformations = [
-			'mobile' => [
-				'src' => $this->transform()->resize(100, 120)->format('webp'),
-				'media' => '(min-width: 600px)',
-			],
 			'desktop' => [
 				'src' => $this->transform()->resize(500, 400),
 				'media' => '(min-width: 1200px)',
+			],
+			'mobile' => [
+				'src' => $this->transform()->resize(100, 120)->format('webp'),
+				'media' => '(min-width: 600px)',
 			],
 		];
 	}
