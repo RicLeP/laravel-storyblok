@@ -1,9 +1,10 @@
 # Use Storyblok’s amazing headless CMS in way that feels familiar to Laravel developers
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
-[![Build Status](https://img.shields.io/travis/riclep/laravel-storyblok/master.svg?style=flat-square)](https://travis-ci.org/riclep/laravel-storyblok)
+[![Build](https://img.shields.io/scrutinizer/build/g/riclep/laravel-storyblok?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
 [![Quality Score](https://img.shields.io/scrutinizer/g/riclep/laravel-storyblok.svg?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
 [![Total Downloads](https://img.shields.io/packagist/dt/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M2C42W6)
 [![Twitter](https://img.shields.io/twitter/follow/riclep.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=riclep)
 
 
@@ -48,6 +49,7 @@ The tests are mostly up-to-date and cover the majority of the code. A few areas 
 ## Contributing
 
 Please feel free to help expand and improve this project. The package uses Git Flow but you can submit a pull request to be merged to the develop branch.
+
 ### Security
 
 If you discover any security related issues, please email ric@wearebwi.com instead of using the issue tracker.
