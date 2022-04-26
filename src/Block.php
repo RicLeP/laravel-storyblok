@@ -288,7 +288,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return Collection|mixed
 	 */
-	public function jsonSerialize()
+	public function jsonSerialize(): mixed
 	{
 		return $this->content();
 	}
