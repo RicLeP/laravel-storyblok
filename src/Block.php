@@ -299,7 +299,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return \Traversable
 	 */
-	public function getIterator() {
+	public function getIterator(): \Traversable {
 		return $this->_fields;
 	}
 
