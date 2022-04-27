@@ -119,7 +119,7 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	/*
 	 * Countable trait
 	 * */
-	public function count()
+	public function count(): int
 	{
 		return $this->content->count();
 	}
