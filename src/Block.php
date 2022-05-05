@@ -250,6 +250,15 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
+	 * Casts the Block as a string - json serializes the $_fields Collection
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return (string) $this->jsonSerialize();
+	}
+
+	/**
 	 * Loops over every field to get the ball rolling
 	 */
 	private function processFields() {

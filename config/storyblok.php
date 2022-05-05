@@ -101,10 +101,11 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Component class namespace
+    | Component class namespaces
     |--------------------------------------------------------------------------
     |
-    | Sets the namespace for the Page and Block classes
+    | A list of name spaces to search when finding Blocks and Fields. They are
+    | listed in the order searched and loaded.
     |
     */
 	'component_class_namespace' => ['App\Storyblok\\'],
