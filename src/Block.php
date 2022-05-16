@@ -3,6 +3,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -139,6 +140,22 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
+	 * Pass an array of views rendering the first match, passing it the Block and optional data
+	 *
+	 * @param array|string $views
+	 * @param array $with
+	 * @return View
+	 * @throws UnableToRenderException
+	 */
+	public function renderUsing($views, $with = []) {
+		try {
+			return view()->first(Arr::wrap($views), array_merge(['block' => $this], $with));
+		} catch (\Exception $exception) {
+			throw new UnableToRenderException('None of the views in the given array exist.', $this);
+		}
+	}
+
+	/**
 	 * Returns an array of possible views for the current Block based on
 	 * it’s $componentPath match the component prefixed by each of it’s
 	 * ancestors in turn, starting with the closest, for example:
@@ -247,6 +264,15 @@ class Block implements \IteratorAggregate, \JsonSerializable
 		}
 
 		return null;
+	}
+
+	/**
+	 * Casts the Block as a string - json serializes the $_fields Collection
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return (string) $this->jsonSerialize();
 	}
 
 	/**

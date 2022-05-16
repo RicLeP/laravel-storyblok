@@ -164,6 +164,27 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_render_block()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		config(['storyblok.view_path' => 'Fixtures.views.']);
+
+		$this->assertEquals('text', (string) $block->render());
+	}
+
+
+	/** @test */
+	public function can_render_using()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals('rendering using text', (string) $block->renderUsing(['Fixtures.views.blocks.render-using']));
+	}
+
+	/** @test */
 	public function can_load_relations()
 	{
 		$page = $this->makePage('relation.json');
