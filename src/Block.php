@@ -3,6 +3,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -133,6 +134,22 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	public function render($with = []) {
 		try {
 			return view()->first($this->views(), array_merge(['block' => $this], $with));
+		} catch (\Exception $exception) {
+			throw new UnableToRenderException('None of the views in the given array exist.', $this);
+		}
+	}
+
+	/**
+	 * Pass an array of views rendering the first match, passing it the Block and optional data
+	 *
+	 * @param array|string $views
+	 * @param array $with
+	 * @return View
+	 * @throws UnableToRenderException
+	 */
+	public function renderUsing($views, $with = []) {
+		try {
+			return view()->first(Arr::wrap($views), array_merge(['block' => $this], $with));
 		} catch (\Exception $exception) {
 			throw new UnableToRenderException('None of the views in the given array exist.', $this);
 		}
