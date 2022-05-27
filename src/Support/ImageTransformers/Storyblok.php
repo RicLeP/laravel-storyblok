@@ -35,6 +35,14 @@ class Storyblok extends BaseTransformer
 		]);
 
 		if ($focus) {
+			if ($focus === 'auto') {
+				if ($this->image->focus) {
+					$focus = 'focal-point';
+				} else {
+					$focus = 'smart';
+				}
+			}
+
 			$this->transformations = array_merge($this->transformations, [
 				'focus' => $focus,
 			]);
