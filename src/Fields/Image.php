@@ -209,8 +209,8 @@ class Image extends Asset
 
 		preg_match_all('/\d+/', $this->focus, $matches);
 
-		$leftPercent = round(($matches[0][0] / $this->width()) * 100);
-		$topPercent = round(($matches[0][1] / $this->height()) * 100);
+		$leftPercent = round(($matches[0][0] / $this->width(true)) * 100);
+		$topPercent = round(($matches[0][1] / $this->height(true)) * 100);
 
 		if ($rigid) {
 			if ($leftPercent > 66) {
