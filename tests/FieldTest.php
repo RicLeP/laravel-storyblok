@@ -129,7 +129,7 @@ class FieldTest extends TestCase
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
 
-		$this->assertEquals(960, $field->width(),);
+		$this->assertEquals(960, $field->width());
 		$this->assertEquals(1280, $field->height());
 	}
 
@@ -253,6 +253,8 @@ class FieldTest extends TestCase
 		$this->assertEquals('image/jpeg', $field->mime());
 
 		$field1 = $field->transform()->format('png');
+
+//		dd($field1);
 
 		$this->assertEquals(960, $field1->width());
 		$this->assertEquals(1280, $field1->height());

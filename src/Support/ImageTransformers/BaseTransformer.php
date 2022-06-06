@@ -62,10 +62,19 @@ abstract class BaseTransformer
 	 */
 	public function width($original = false) {
 		if ($original) {
-			return $this->meta['width'];
+			return (int) $this->meta['width'];
 		}
 
-		return $this->transformations['width'] ?? $this->meta['width'];
+//		dd(empty($this->transformations));
+
+		// the width was not set so we need to compute it
+		if (array_key_exists('width', $this->transformations) && $this->transformations['width'] === 0) {
+			$scalePercent = round(($this->height() / $this->height(true) * 100), 2);
+
+			return round((int) $this->meta['width'] / 100 * $scalePercent);
+		}
+
+		return $this->transformations['width'] ?? (int) $this->meta['width'];
 	}
 
 	/**
@@ -77,8 +86,16 @@ abstract class BaseTransformer
 	 */
 	public function height($original = false) {
 		if ($original) {
-			return $this->meta['height'];
+			return (int) $this->meta['height'];
 		}
+
+		// the height was not set so we need to compute it
+		if (array_key_exists('height', $this->transformations) && $this->transformations['height'] === 0) {
+			$scalePercent = round(($this->width() / $this->width(true) * 100), 2);
+
+			return round((int) $this->meta['height'] / 100 * $scalePercent);
+		}
+
 
 		return $this->transformations['height'] ?? $this->meta['height'];
 	}
