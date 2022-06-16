@@ -16,13 +16,16 @@ use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Traits\CssClasses;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
+use Riclep\Storyblok\Traits\HasSettings;
 use Storyblok\ApiException;
+
 
 class Block implements \IteratorAggregate, \JsonSerializable
 {
 	use CssClasses;
 	use HasChildClasses;
 	use HasMeta;
+	use HasSettings;
 
 	/**
 	 * @var bool resolve UUID relations automatically
@@ -303,10 +306,19 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $content
 	 */
 	private function preprocess($content) {
-		$this->_fields = collect(array_diff_key($content, array_flip(['_editable', '_uid', 'component'])));
+		// run pre-process traits - methods matching preprocessTraitClassName()
+		foreach (class_uses_recursive($this) as $trait) {
+			if (method_exists($this, $method = 'preprocess' . class_basename($trait))) {
+				$content = $this->{$method}($content);
+			}
+		}
+
+		$fields = ['_editable', '_uid', 'component'];
+
+		$this->_fields = collect(array_diff_key($content, array_flip($fields)));
 
 		// remove non-content keys
-		$this->_meta = array_intersect_key($content, array_flip(['_editable', '_uid', 'component']));
+		$this->_meta = array_intersect_key($content, array_flip($fields));
 	}
 
 	/**
