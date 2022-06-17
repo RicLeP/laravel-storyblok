@@ -30,4 +30,8 @@ trait HasSettings
 
 		return $this->_settings;
 	}
+
+	public function hasSettings() {
+		return $this->_settings;
+	}
 }
