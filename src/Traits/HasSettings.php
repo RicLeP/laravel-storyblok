@@ -32,7 +32,7 @@ trait HasSettings
 		return $content;
 	}
 
-	protected function isComaSeparatedList($string) {
+	protected function isCommaSeparatedList($string) {
 		if (!preg_match('/^[\w]+(,[\w]*)+$/', $string)) {
 			return false;
 		}
