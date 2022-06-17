@@ -15,8 +15,8 @@ trait HasSettings
 			})->map(function ($setting) {
 				$settings = collect(array_diff_key($setting, array_flip(['_editable', '_uid', 'component'])))
 					->map(function($setting) {
-						if ($this->isComaSeparatedList($setting)) {
-							return $this->isComaSeparatedList($setting);
+						if ($this->isCommaSeparatedList($setting)) {
+							return $this->isCommaSeparatedList($setting);
 						}
 
 						return $setting;
@@ -37,7 +37,9 @@ trait HasSettings
 			return false;
 		}
 
-		return array_map('trim', explode(',', $string));
+		return array_map(function($item) {
+			return (int) trim($item);
+		}, explode(',', $string));
 	}
 
 	public function settings($setting = null) {
