@@ -111,7 +111,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @param $field
 	 * @param $component
-	 * @return mixed
+	 * @return boolean
 	 */
 	public function hasChildBlock($field, $component) {
 		return $this->content()[$field]->contains(function($item) use ($component) {
