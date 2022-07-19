@@ -231,6 +231,17 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_get_find_child_block()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertTrue($block->hasChildBlock('blocks', 'Person'));
+		$this->assertFalse($block->hasChildBlock('blocks', 'NotHere'));
+
+	}
+
+	/** @test */
 	public function can_get_parent()
 	{
 		$page = $this->makePage();

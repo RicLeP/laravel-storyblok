@@ -192,4 +192,14 @@ return [
     |
     */
     'live_element' => '.storyblok-live',
+
+	/*
+	|--------------------------------------------------------------------------
+	| Name of the field to be used for settings
+	|--------------------------------------------------------------------------
+	|
+	| Set the field name to be used to store the generic settings components
+	|
+	*/
+	'settings_field' => 'settings',
 ];
