@@ -96,13 +96,27 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * Checks if the fields contain the specified key
+	 * Checks if this Block’s fields contain the specified key
 	 *
 	 * @param $key
 	 * @return bool
 	 */
 	public function has($key) {
 		return $this->_fields->has($key);
+	}
+
+	/**
+	 * Checks if a ‘Blocks’ fieldtype contains a specific block component
+	 * Pass the $field that contains the blocks and the component type to search for
+	 *
+	 * @param $field
+	 * @param $component
+	 * @return mixed
+	 */
+	public function hasChildBlock($field, $component) {
+		return $this->content()[$field]->contains(function($item) use ($component) {
+			return $item->meta('component') === $component;
+		});
 	}
 
 	/**
