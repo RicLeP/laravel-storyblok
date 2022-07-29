@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Riclep\Storyblok\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;

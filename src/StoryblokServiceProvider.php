@@ -2,12 +2,12 @@
 
 namespace Riclep\Storyblok;
 
-use App\Console\Commands\ExportStoryCommand;
-use App\Console\Commands\ImportStoryCommand;
 use Illuminate\Support\ServiceProvider;
 use Riclep\Storyblok\Console\BlockMakeCommand;
 use Riclep\Storyblok\Console\BlockSyncCommand;
 use Riclep\Storyblok\Console\ComponentViewCommand;
+use Riclep\Storyblok\Console\ExportStoryCommand;
+use Riclep\Storyblok\Console\ImportStoryCommand;
 use Riclep\Storyblok\Console\StubViewsCommand;
 use Storyblok\Client;
 
