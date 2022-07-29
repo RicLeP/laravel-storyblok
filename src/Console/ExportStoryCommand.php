@@ -4,6 +4,7 @@ namespace Riclep\Storyblok\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Storyblok\ManagementClient;
 
 class ExportStoryCommand extends Command
@@ -46,7 +47,7 @@ class ExportStoryCommand extends Command
 	    ])->getBody()['stories'];
 
 		if ($storyExists) {
-			$filename = 'storyblok-' . str($this->argument('slug'))->replace('/', '-')->slug() . '.json';
+			$filename = 'storyblok-' . Str::of($this->argument('slug'))->replace('/', '-')->slug() . '.json';
 
 			$story = $this->client->get('spaces/' . config('storyblok.space_id') . '/stories/' . $storyExists[0]['id'])->getBody();
 
