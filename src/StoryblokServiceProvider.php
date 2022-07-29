@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Riclep\Storyblok\Console\BlockMakeCommand;
 use Riclep\Storyblok\Console\BlockSyncCommand;
 use Riclep\Storyblok\Console\ComponentViewCommand;
+use Riclep\Storyblok\Console\ExportStoryCommand;
+use Riclep\Storyblok\Console\ImportStoryCommand;
 use Riclep\Storyblok\Console\StubViewsCommand;
 use Storyblok\Client;
 
@@ -35,6 +37,8 @@ class StoryblokServiceProvider extends ServiceProvider
 			BlockSyncCommand::class,
 			StubViewsCommand::class,
 			ComponentViewCommand::class,
+			ExportStoryCommand::class,
+			ImportStoryCommand::class,
 		]);
     }
 
