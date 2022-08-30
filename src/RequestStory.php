@@ -13,7 +13,20 @@ class RequestStory
 	 * @var array An array of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	private $resolveRelations;
+	protected $resolveRelations;
+
+
+	/**
+	 * @var string The language version of the Story to load
+	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
+	 */
+	protected $language;
+
+	/**
+	 * @var string The fallback language version of the Story to load
+	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
+	 */
+	protected $fallbackLanguage;
 
 	/**
 	 * Caches the response if needed
@@ -46,18 +59,29 @@ class RequestStory
 	 *
 	 * @param $resolveRelations
 	 */
-	public function prepareRelations($resolveRelations) {
+	public function resolveRelations($resolveRelations) {
 		$this->resolveRelations = implode(',', $resolveRelations);
+	}
+
+	/**
+	 * Set the language and fallback language to use for this Story, will default to ‘default’
+	 *
+	 * @param string $language
+	 * @param string|null $fallbackLanguage
+	 */
+	public function language($language, $fallbackLanguage = null) {
+		$this->language = $language;
+		$this->fallbackLanguage = $fallbackLanguage;
 	}
 
 	/**
 	 * Makes the API request
 	 *
 	 * @param $slugOrUuid
-	 * @return array|\Storyblok\stdClass
+	 * @return array|\stdClass
 	 * @throws \Storyblok\ApiException
 	 */
-	private function makeRequest($slugOrUuid) {
+	protected function makeRequest($slugOrUuid) {
 		$storyblokClient = resolve('Storyblok\Client');
 
 		if ($this->resolveRelations) {
@@ -66,6 +90,14 @@ class RequestStory
 
 		if (config('storyblok.resolve_links')) {
 			$storyblokClient = $storyblokClient->resolveLinks(config('storyblok.resolve_links'));
+		}
+
+		if ($this->language) {
+			$storyblokClient = $storyblokClient->language($this->language);
+		}
+
+		if ($this->fallbackLanguage) {
+			$storyblokClient = $storyblokClient->fallbackLanguage($this->fallbackLanguage);
 		}
 
 		if (Str::isUuid($slugOrUuid)) {
