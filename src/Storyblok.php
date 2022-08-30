@@ -21,16 +21,14 @@ class Storyblok
 	 * @return mixed
 	 * @throws ApiException
 	 */
-	public function read($slug, $resolveRelations = null, $language = null) {
+	public function read($slug, $resolveRelations = null, $language = null, $fallbackLanguage = null) {
 		$storyblokRequest = new RequestStory();
 
 		if ($resolveRelations) {
 			$storyblokRequest->resolveRelations($resolveRelations);
 		}
 
-		if ($language) {
-			$storyblokRequest->language($language);
-		}
+		$storyblokRequest->language($language, $fallbackLanguage);
 
 		$response = $storyblokRequest->get($slug);
 
