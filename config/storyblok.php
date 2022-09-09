@@ -2,7 +2,7 @@
 
 return [
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok Preview API key
     |--------------------------------------------------------------------------
@@ -12,9 +12,9 @@ return [
     | in the editor or when debug mode is enabled.
     |
     */
-	'api_preview_key' => env('STORYBLOK_PREVIEW_API_KEY'),
+    'api_preview_key' => env('STORYBLOK_PREVIEW_API_KEY'),
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok Public API key
     |--------------------------------------------------------------------------
@@ -23,9 +23,19 @@ return [
     | This key is used when your website is live and debug is off.
     |
     */
-	'api_public_key' => env('STORYBLOK_PUBLIC_API_KEY'),
+    'api_public_key' => env('STORYBLOK_PUBLIC_API_KEY'),
 
-	/*
+    /*
+    |--------------------------------------------------------------------------
+    | Specify which Storyblok API region to use
+    |--------------------------------------------------------------------------
+    |
+    | Defaults to null which should be the original EU region
+    |
+    */
+    'api_region' => null,
+
+    /*
     |--------------------------------------------------------------------------
     | Use SSL when calling the Storyblok API
     |--------------------------------------------------------------------------
@@ -33,9 +43,9 @@ return [
     | Request content from the secure https address or just http
     |
     */
-	'use_ssl' => true,
+    'use_ssl' => true,
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok draft mode
     |--------------------------------------------------------------------------
@@ -43,10 +53,9 @@ return [
     | Request draft data
     |
     */
-	'draft' => env('STORYBLOK_DRAFT', false),
+    'draft' => env('STORYBLOK_DRAFT', false),
 
-
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok Personal access token
     |--------------------------------------------------------------------------
@@ -54,11 +63,9 @@ return [
     | Enter your Storyblok Personal access token to access their management API
     |
     */
-	'oauth_token' => env('STORYBLOK_OAUTH_TOKEN', null),
+    'oauth_token' => env('STORYBLOK_OAUTH_TOKEN', null),
 
-
-
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok Space ID
     |--------------------------------------------------------------------------
@@ -66,10 +73,9 @@ return [
     | Enter your Storyblok space ID for use with the management API
     |
     */
-	'space_id' => env('STORYBLOK_SPACE_ID', null),
+    'space_id' => env('STORYBLOK_SPACE_ID', null),
 
-
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok debug
     |--------------------------------------------------------------------------
@@ -77,9 +83,9 @@ return [
     | Enable debug mode for Storyblok. This prints useful data to the screen.
     |
     */
-	'debug' => env('STORYBLOK_DEBUG'),
+    'debug' => env('STORYBLOK_DEBUG'),
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Enable caching
     |--------------------------------------------------------------------------
@@ -89,7 +95,7 @@ return [
     */
     'cache' => env('STORYBLOK_CACHE', true),
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Cache duration
     |--------------------------------------------------------------------------
@@ -97,9 +103,9 @@ return [
     | Specifies how many minutes to cache responses from Storkyblok for.
     |
     */
-	'cache_duration' => env('STORYBLOK_DURATION','60'),
+    'cache_duration' => env('STORYBLOK_DURATION','60'),
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Component class namespaces
     |--------------------------------------------------------------------------
@@ -108,9 +114,9 @@ return [
     | listed in the order searched and loaded.
     |
     */
-	'component_class_namespace' => ['App\Storyblok\\'],
+    'component_class_namespace' => ['App\Storyblok\\'],
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | View folder path
     |--------------------------------------------------------------------------
@@ -118,9 +124,9 @@ return [
     | Sets the folder where views will be stored under /resources/views
     |
     */
-	'view_path' => 'storyblok.',
+    'view_path' => 'storyblok.',
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Webhook secret
     |--------------------------------------------------------------------------
@@ -129,7 +135,7 @@ return [
     | https://www.storyblok.com/docs/guide/in-depth/webhooks
     |
     */
-	'webhook_secret' => env('STORYBLOK_WEBHOOK_SECRET'),
+    'webhook_secret' => env('STORYBLOK_WEBHOOK_SECRET'),
 
     /*
     |--------------------------------------------------------------------------
@@ -152,26 +158,26 @@ return [
     */
     'image_service_domain' => env('STORYBLOK_IMAGE_SERVICE_DOMAIN', 'a.storyblok.com'),
 
-	/*
-	|--------------------------------------------------------------------------
-	| Image transformation driver
-	|--------------------------------------------------------------------------
-	|
-	| The class used for transforming images Fields / image URLs
-	|
-	*/
-	'image_transformer' => \Riclep\Storyblok\Support\ImageTransformers\Storyblok::class,
+    /*
+    |--------------------------------------------------------------------------
+    | Image transformation driver
+    |--------------------------------------------------------------------------
+    |
+    | The class used for transforming images Fields / image URLs
+    |
+    */
+    'image_transformer' => \Riclep\Storyblok\Support\ImageTransformers\Storyblok::class,
 
-	/*
-	|--------------------------------------------------------------------------
-	| Resolve story links in content
-	|--------------------------------------------------------------------------
-	|
-	| Resolve links to stories when using link and multi link fields, valid
-	| settings are 'url', 'story' or false
-	|
-	*/
-	'resolve_links' => false,
+    /*
+    |--------------------------------------------------------------------------
+    | Resolve story links in content
+    |--------------------------------------------------------------------------
+    |
+    | Resolve links to stories when using link and multi link fields, valid
+    | settings are 'url', 'story' or false
+    |
+    */
+    'resolve_links' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -193,13 +199,13 @@ return [
     */
     'live_element' => '.storyblok-live',
 
-	/*
-	|--------------------------------------------------------------------------
-	| Name of the field to be used for settings
-	|--------------------------------------------------------------------------
-	|
-	| Set the field name to be used to store the generic settings components
-	|
-	*/
-	'settings_field' => 'settings',
+    /*
+    |--------------------------------------------------------------------------
+    | Name of the field to be used for settings
+    |--------------------------------------------------------------------------
+    |
+    | Set the field name to be used to store the generic settings components
+    |
+    */
+    'settings_field' => 'settings',
 ];
