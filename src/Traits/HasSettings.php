@@ -50,7 +50,15 @@ trait HasSettings
 		return $this->_settings;
 	}
 
-	public function hasSettings() {
+	public function hasSettings($setting = null) {
+		if ($setting) {
+			if ($this->_settings->has($setting)) {
+				return $this->_settings[$setting];
+			}
+
+			return false;
+		}
+
 		return $this->_settings;
 	}
 }
