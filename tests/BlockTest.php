@@ -378,15 +378,4 @@ class BlockTest extends TestCase
 
 		$this->assertEquals('', $page->block()->editorLink());
 	}
-
-	/** @test */
-	public function can_apply_typography()
-	{
-		$page = $this->makePage('custom-page.json');
-
-		$this->assertEquals('This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check', $page->blocks[0]->columns[0]->Text);
-
-		$this->assertEquals('<p>This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check</p><p>Another <span class="push-double"></span>​<span class="pull-double">“</span>paragraph”. <span class="numbers">3</span>×<span class="numbers">4</span>&nbsp;<span class="caps">CAPITALS</span>.</p>', $page->blocks[0]->columns[0]->Html);
-	}
-
 }

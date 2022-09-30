@@ -78,6 +78,10 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
 		$this->processFields();
 
+		if (method_exists($this, 'init')) {
+			$this->init();
+		}
+
 		// run automatic traits - methods matching initTraitClassName()
 		foreach (class_uses_recursive($this) as $trait) {
 			if (method_exists($this, $method = 'init' . class_basename($trait))) {
