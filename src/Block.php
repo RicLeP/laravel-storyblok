@@ -13,7 +13,6 @@ use Riclep\Storyblok\Fields\Image;
 use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
-use Riclep\Storyblok\Traits\CssClasses;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
 use Riclep\Storyblok\Traits\HasSettings;
@@ -22,7 +21,6 @@ use Storyblok\ApiException;
 
 class Block implements \IteratorAggregate, \JsonSerializable
 {
-	use CssClasses;
 	use HasChildClasses;
 	use HasMeta;
 	use HasSettings;

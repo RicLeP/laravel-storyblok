@@ -6,7 +6,6 @@ namespace Riclep\Storyblok\Fields;
 
 use Illuminate\Support\Arr;
 use Riclep\Storyblok\Field;
-use Riclep\Storyblok\Page;
 
 class Table extends Field
 {
