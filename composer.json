@@ -27,7 +27,6 @@
 	    "imgix/imgix-php": "^3.3",
 	    "ivopetkov/html5-dom-document-php": "2.*",
 	    "league/commonmark": "^2.0",
-	    "mundschenk-at/php-typography": "^6.5",
 	    "spatie/schema-org": "^3.3",
 	    "storyblok/php-client": "^2.2",
 	    "storyblok/richtext-resolver": "2.0.0"
