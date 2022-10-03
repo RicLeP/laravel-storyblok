@@ -76,8 +76,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
 		$this->processFields();
 
-		if (method_exists($this, 'init')) {
-			$this->init();
+		if (method_exists($this, 'fieldsReady')) {
+			$this->fieldsReady();
 		}
 
 		// run automatic traits - methods matching initTraitClassName()
