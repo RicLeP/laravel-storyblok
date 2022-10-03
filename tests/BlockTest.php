@@ -301,43 +301,6 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
-	public function can_get_css_class()
-	{
-		$page = $this->makePage();
-		$block = $page->block();
-
-		$this->assertEquals('all-fields', $block->cssClass());
-		$this->assertEquals('person', $block->blocks[0]->cssClass());
-	}
-
-	/** @test */
-	public function can_get_css_class_with_parent()
-	{
-		$page = $this->makePage();
-		$block = $page->block();
-
-		$this->assertEquals('person@all-fields', $block->blocks[0]->cssClassWithParent());
-	}
-
-	/** @test */
-	public function can_get_layout()
-	{
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block();
-
-		$this->assertEquals('layout_columns', $block->blocks[0]->columns[0]->getLayout());
-	}
-
-	/** @test */
-	public function can_get_css_class_with_layout()
-	{
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block();
-
-		$this->assertEquals('person@layout_columns', $block->blocks[0]->columns[0]->cssClassWithLayout());
-	}
-
-	/** @test */
 	public function nonexisting_field_returns_null_from_magic_getter()
 	{
 		$page = $this->makePage('custom-page.json');
@@ -378,15 +341,4 @@ class BlockTest extends TestCase
 
 		$this->assertEquals('', $page->block()->editorLink());
 	}
-
-	/** @test */
-	public function can_apply_typography()
-	{
-		$page = $this->makePage('custom-page.json');
-
-		$this->assertEquals('This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check', $page->blocks[0]->columns[0]->Text);
-
-		$this->assertEquals('<p>This is some text to test typography is applied <span class="numbers">10</span>×<span class="numbers">10</span>&nbsp;let’s&nbsp;check</p><p>Another <span class="push-double"></span>​<span class="pull-double">“</span>paragraph”. <span class="numbers">3</span>×<span class="numbers">4</span>&nbsp;<span class="caps">CAPITALS</span>.</p>', $page->blocks[0]->columns[0]->Html);
-	}
-
 }

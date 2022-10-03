@@ -2,7 +2,7 @@
 
 namespace Riclep\Storyblok\Solutions;
 
-use Facade\IgnitionContracts\RunnableSolution;
+use Spatie\Ignition\Contracts\RunnableSolution;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 

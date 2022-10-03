@@ -3,9 +3,9 @@
 namespace Riclep\Storyblok\Exceptions;
 
 use Exception;
-use Facade\IgnitionContracts\Solution;
-use Facade\IgnitionContracts\BaseSolution;
-use Facade\IgnitionContracts\ProvidesSolution;
+use Spatie\Ignition\Contracts\Solution;
+use Spatie\Ignition\Contracts\BaseSolution;
+use Spatie\Ignition\Contracts\ProvidesSolution;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Solutions\CreateMissingBlockSolution;
 
@@ -20,7 +20,7 @@ class UnableToRenderException extends Exception implements ProvidesSolution
 		$this->data = $data;
 	}
 
-	/** @return  \Facade\IgnitionContracts\Solution */
+	/** @return  \Spatie\Ignition\Contracts\Solution */
 	public function getSolution(): Solution
 	{
 		if (get_class($this->data) === 'App\Storyblok\Block') {
