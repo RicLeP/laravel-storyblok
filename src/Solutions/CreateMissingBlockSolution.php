@@ -50,7 +50,7 @@ class CreateMissingBlockSolution implements RunnableSolution
 		return 'Create ' . Str::studly($this->data->meta()['component']) . ' Block class';
 	}
 
-	public function run(array $parameters = [])
+	public function run(array $parameters = []): void
 	{
 		Artisan::call('ls:block', $parameters);
 	}
