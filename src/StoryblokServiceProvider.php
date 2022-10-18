@@ -35,10 +35,7 @@ class StoryblokServiceProvider extends ServiceProvider
 		$this->commands([
 			BlockMakeCommand::class,
 			BlockSyncCommand::class,
-			StubViewsCommand::class,
-			ComponentViewCommand::class,
-			ExportStoryCommand::class,
-			ImportStoryCommand::class,
+			StubViewsCommand::class
 		]);
     }
 
