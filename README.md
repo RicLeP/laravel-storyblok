@@ -16,12 +16,12 @@ This package allows you to use fantastic [Storyblok headless CMS](https://www.st
 - Each Storyblok component is automatically transformed into a PHP class using a simple naming convention - just match your class and component names.
 - NEW! All fields in your components are converted to a Field PHP class allowing you to manipulate their data. The package automatically detects common types like rich text fields, assets and markdown.
 - Asset fields are converted to Assets classes allowing you to manipulate them as required.
-- Blocks and fields know where they sit in relation to their ancestors and CSS classes can be created to help your styling.
+- Blocks and fields know where they sit in relation to their ancestors and [CSS classes](https://github.com/RicLeP/laravel-storyblok-css) can be created to help your styling.
 - The structure of the JSON data is preserved but super powered making it simple to loop over in your views.
 - It’s simple to link to the Storyblok visual composer by including one view and calling a method for each block in your Blade.
-- Request ‘Folders’ of content such as a list of articles or a team of people.
+- Request ‘Folders’ of content such as a list of articles or a team of people complete with pagination.
 - Feels like Laravel - use date casting and accessors exactly as you would with models.
-- Richer Typography with PHP Typography baked in.
+- Richer Typography using a [supporting package](https://github.com/RicLeP/laravel-storyblok-typography) utilising PHP Typography.
 
 
 ## Documentation
@@ -29,6 +29,10 @@ This package allows you to use fantastic [Storyblok headless CMS](https://www.st
 [Read the full docs](https://ls.sirric.co.uk/docs)
 
 [Contribute to the docs](https://github.com/RicLeP/laravel-storyblok-docs/)
+
+## Laravel Storyblok CLI
+
+After more useful Artisan commands to help manage your content? Check out my [Laravel Storyblok CLI package](https://github.com/RicLeP/laravel-storyblok-cli)
 
 ## Future plans
 
