@@ -59,7 +59,7 @@ trait HasSettings
 
 	public function hasSettings($setting = null) {
 		if ($setting) {
-			if ($this->_settings->has($setting)) {
+			if ($this->_settings?->has($setting)) {
 				return $this->_settings[$setting];
 			}
 
