@@ -38,7 +38,14 @@ trait HasSettings
 		}
 
 		return array_map(function($item) {
-			return (int) trim($item);
+			$item = trim($item);
+
+			// return $item as a int if it is a string of an int
+			if (preg_match('/^\d+$/', $item)) {
+				return (int) $item;
+			}
+
+			return $item;
 		}, explode(',', $string));
 	}
 
@@ -52,7 +59,7 @@ trait HasSettings
 
 	public function hasSettings($setting = null) {
 		if ($setting) {
-			if ($this->_settings->has($setting)) {
+			if ($this->_settings?->has($setting)) {
 				return $this->_settings[$setting];
 			}
 
