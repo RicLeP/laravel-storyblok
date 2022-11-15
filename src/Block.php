@@ -368,12 +368,58 @@ class Block implements \IteratorAggregate, \JsonSerializable
 				'name' => $response['name'],
 				'published_at' => $response['published_at'],
 				'full_slug' => $response['full_slug'],
+				'page_uuid' => $relation,
 			]);
 
 			return $relationClass;
 		} catch (ApiException $e) {
 			return null;
 		}
+	}
+
+	/**
+	 * Returns an inverse relationship to the current Block. For example if Service has a Multi-Option field
+	 * relationship to People, on People you can request all the Services it has been related to
+	 *
+	 * @param $foreignRelationshipField
+	 * @param $foreignRelationshipType
+	 * @param $components
+	 * @param $options
+	 * @return array
+	 */
+	public function inverseRelation($foreignRelationshipField, $foreignRelationshipType = 'multi', $components = null, $options = null) {
+		$storyblokClient = resolve('Storyblok\Client');
+
+		$type = 'any_in_array';
+
+		if ($foreignRelationshipType === 'single') {
+			$type = 'in';
+		}
+
+		$query = [
+			'filter_query' => [
+				$foreignRelationshipField => [$type => $this->meta('page_uuid') ?? $this->page()->uuid()]
+			],
+		];
+
+		if ($components) {
+			$query = array_merge_recursive($query, [
+				'filter_query' => [
+					'component' => ['in' => $components],
+				]
+			]);
+		}
+
+		if ($options) {
+			$query = array_merge_recursive($query, $options);
+		}
+
+		$storyblokClient->getStories($query);
+
+		return [
+			'headers' => $storyblokClient->getHeaders(),
+			'stories' => $storyblokClient->getBody()['stories'],
+		];
 	}
 
 	public function getCasts() {
