@@ -41,7 +41,7 @@ abstract class Folder
 	/**
 	 * @var int number of items to return
 	 */
-	protected int $perPage;
+	protected int $perPage = 10;
 
 
 	/**
