@@ -12,23 +12,12 @@ abstract class Field
 	use HasMeta;
 
 	/**
-	 * @var array|string the content of the field
-	 */
-	protected $content;
-
-	/**
-	 * @var Block reference to the parent block
-	 */
-	protected $block;
-
-
-	/**
 	 * Key/value pairs of additional content you want the
 	 * field to have access to. Pass anything you like
 	 *
 	 * @var array
 	 */
-	public $with;
+	public array $with;
 
 	/**
 	 * Creates the new field taking it’s content and a reference
@@ -37,11 +26,8 @@ abstract class Field
 	 * @param $content
 	 * @param $block
 	 */
-	public function __construct($content, $block)
+	public function __construct(protected $content, protected $block)
 	{
-		$this->content = $content;
-		$this->block = $block;
-
 		if (method_exists($this, 'init')) {
 			$this->init();
 		}
@@ -52,7 +38,8 @@ abstract class Field
 	 *
 	 * @return array|string
 	 */
-	public function content() {
+	public function content(): array|string
+	{
 		return $this->content;
 	}
 
@@ -61,7 +48,8 @@ abstract class Field
 	 *
 	 * @return Block
 	 */
-	public function block() {
+	public function block(): Block
+	{
 		return $this->block;
 	}
 
@@ -71,7 +59,8 @@ abstract class Field
 	 * @param $key
 	 * @return bool
 	 */
-	public function has($key) {
+	public function has($key): bool
+	{
 		return array_key_exists($key, $this->content);
 	}
 
@@ -84,7 +73,8 @@ abstract class Field
 	 * @param $with
 	 * @return Field
 	 */
-	public function with($with) {
+	public function with($with): Field
+	{
 		$this->with = $with;
 
 		return $this;
@@ -120,5 +110,5 @@ abstract class Field
 	 *
 	 * @return string
 	 */
-	abstract public function __toString();
+	abstract public function __toString(): string;
 }

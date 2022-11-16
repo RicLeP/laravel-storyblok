@@ -6,6 +6,7 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Storyblok\ApiException;
 
 class RequestStory
 {
@@ -13,16 +14,17 @@ class RequestStory
 	 * @var array An array of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	private $resolveRelations;
+	protected array $resolveRelations;
 
 	/**
 	 * Caches the response if needed
 	 *
 	 * @param $slugOrUuid
 	 * @return mixed
-	 * @throws \Storyblok\ApiException
+	 * @throws ApiException
 	 */
-	public function get($slugOrUuid) {
+	public function get($slugOrUuid): mixed
+	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest($slugOrUuid);
 		} else {
@@ -46,7 +48,8 @@ class RequestStory
 	 *
 	 * @param $resolveRelations
 	 */
-	public function prepareRelations($resolveRelations) {
+	public function prepareRelations($resolveRelations): void
+	{
 		$this->resolveRelations = implode(',', $resolveRelations);
 	}
 
@@ -54,10 +57,11 @@ class RequestStory
 	 * Makes the API request
 	 *
 	 * @param $slugOrUuid
-	 * @return array|\Storyblok\stdClass
-	 * @throws \Storyblok\ApiException
+	 * @return array
+	 * @throws ApiException
 	 */
-	private function makeRequest($slugOrUuid) {
+	private function makeRequest($slugOrUuid): array
+	{
 		$storyblokClient = resolve('Storyblok\Client');
 
 		if ($this->resolveRelations) {

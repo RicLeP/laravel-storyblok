@@ -19,7 +19,8 @@ class FieldFactory
 	 * @param $key
 	 * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
 	 */
-	public function build($block, $field, $key) {
+	public function build($block, $field, $key): mixed
+	{
 		// does the Block assign any $_casts? This is key (field) => value (class)
 		if (array_key_exists($key, $block->getCasts())) {
 			$casts = $block->getCasts();
@@ -68,7 +69,8 @@ class FieldFactory
 	 * @param $key
 	 * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
 	 */
-	public function arrayField($block, $field, $key) {
+	public function arrayField($block, $field, $key): mixed
+	{
 		// match link fields
 		if (array_key_exists('linktype', $field)) {
 			$class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
@@ -166,7 +168,8 @@ class FieldFactory
 	 * @param  $filename
 	 * @return boolean
 	 */
-	public function isStringImageField($filename){
+	public function isStringImageField($filename): bool
+	{
 		$allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 
 		return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extentions);

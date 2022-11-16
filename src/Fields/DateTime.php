@@ -9,7 +9,7 @@ use Riclep\Storyblok\Field;
 
 class DateTime extends Field
 {
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->content->toDatetimeString();
 	}
@@ -17,7 +17,8 @@ class DateTime extends Field
 	/**
 	 * Converts the field to a carbon object
 	 */
-	protected function init() {
+	protected function init(): void
+	{
 		$this->content = $this->content ? Carbon::parse($this->content) : null;
 	}
 }

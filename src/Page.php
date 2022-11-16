@@ -20,22 +20,22 @@ class Page
 	/**
 	 * @var string[] this is the root of the path so includes the page
 	 */
-	public $_componentPath = ['page'];
+	public array $_componentPath = ['page'];
 
 	/**
 	 * @var Block root Block of the page’s content
 	 */
-	private $block;
+	private Block $block;
 
 	/**
 	 * @var array the JSON decoded array from Storyblok
 	 */
-	private $story;
+	private array $story;
 
 	/**
 	 * @var array holds all the fields indexed by UUID for the JS live bridge
 	 */
-	public $liveContent = [];
+	public array $liveContent = [];
 
 	/**
 	 * Page constructor.
@@ -64,7 +64,8 @@ class Page
 	 * @return View
 	 * @throws UnableToRenderException
 	 */
-	public function render($additionalContent = []) {
+	public function render($additionalContent = []): View
+	{
 		try {
 			return view()->first($this->views(), array_merge(['story' => $this], $additionalContent));
 		} catch (\Exception $exception) {
@@ -78,7 +79,8 @@ class Page
 	 *
 	 * @return array
 	 */
-	public function views() {
+	public function views(): array
+	{
 		$views = array_map(function($path) {
 			return config('storyblok.view_path') . 'pages.' . $path;
 		}, $this->block()->_componentPath);
@@ -91,7 +93,8 @@ class Page
 	 *
 	 * @return array
 	 */
-	public function story() {
+	public function story(): array
+	{
 		return $this->story;
 	}
 
@@ -100,7 +103,8 @@ class Page
 	 *
 	 * @return Carbon
 	 */
-	public function publishedAt() {
+	public function publishedAt(): Carbon
+	{
 		return Carbon::parse($this->story['first_published_at']);
 	}
 
@@ -109,7 +113,8 @@ class Page
 	 *
 	 * @return Carbon
 	 */
-	public function updatedAt() {
+	public function updatedAt(): Carbon
+	{
 		return Carbon::parse($this->story['published_at']);
 	}
 
@@ -118,17 +123,19 @@ class Page
 	 *
 	 * @return string
 	 */
-	public function slug() {
+	public function slug(): string
+	{
 		return $this->story['full_slug'];
 	}
 
 	/**
-	 * Returns all the tags, sorting them is so desired
+	 * Returns all the tags, sorting them if so desired
 	 *
 	 * @param bool $alphabetical
 	 * @return mixed
 	 */
-	public function tags($alphabetical = false) {
+	public function tags(bool $alphabetical = false): mixed
+	{
 		if ($alphabetical) {
 			sort($this->story['tag_list']);
 		}
@@ -142,7 +149,8 @@ class Page
 	 * @param $tag
 	 * @return bool
 	 */
-	public function hasTag($tag) {
+	public function hasTag($tag): bool
+	{
 		return in_array($tag, $this->tags());
 	}
 
@@ -152,7 +160,8 @@ class Page
 	 *
 	 * @return Block
 	 */
-	public function block() {
+	public function block(): Block
+	{
 		return $this->block;
 	}
 
@@ -181,10 +190,8 @@ class Page
 	 * Does a bit of housekeeping before processing the data
 	 * from Storyblok any further
 	 */
-	protected function preprocess() {
-		// TODO extract SEO plugin
-		//$this->story;
-
+	protected function preprocess(): void
+	{
 		$this->addMeta([
 			'_uid' => $this->story['uuid'],
 			'name' => $this->story['name'],
@@ -201,7 +208,8 @@ class Page
 	 * @param $content
 	 * @return mixed
 	 */
-	private function createBlock($content) {
+	private function createBlock($content): mixed
+	{
 		$class = $this->getChildClassName('Block', $content['component']);
 
 		return new $class($content, $this);

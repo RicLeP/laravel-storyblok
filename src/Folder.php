@@ -17,52 +17,57 @@ abstract class Folder
 	/**
 	 * @var int Current pagination page
 	 */
-	public $currentPage = 0;
+	public int $currentPage = 0;
 
 
 	/**
 	 * @var int the total number of stories matching the request
 	 */
-	public $totalStories;
+	public int $totalStories;
 
 
 	/**
 	 * @var null|Collection the collection of stories in the folder
 	 */
-	public $stories;
+	public ?Collection $stories;
 
 
 	/**
 	 * @var bool should we request the start / index page
 	 */
-	protected $startPage = false;
+	protected bool $startPage = false;
 
 
 	/**
 	 * @var int number of items to return
 	 */
-	protected $perPage;
+	protected int $perPage;
 
 
 	/**
 	 * @var string order to sort the returned stories
 	 */
-	protected $sortBy = 'content.date:desc';
+	protected string $sortBy = 'content.date:desc';
 
 
 	/**
 	 * @var string the slug to start te request from
 	 */
-	protected $slug;
+	protected string $slug;
 
 
 	/**
 	 * @var array additional settings for the request
 	 */
-	protected $settings = [];
+	protected array $settings = [];
 
 
-	public function paginate($page = null, $pageName = 'page')
+	/**
+	 * @param $page
+	 * @param string $pageName
+	 * @return LengthAwarePaginator
+	 */
+	public function paginate($page = null, string $pageName = 'page'): LengthAwarePaginator
 	{
 		$page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
 
@@ -84,7 +89,8 @@ abstract class Folder
 	 *
 	 * @return Folder
 	 */
-	public function read() {
+	public function read(): Folder
+	{
 		$stories = $this->get()->transform(function ($story) {
 			$blockClass = $this->getChildClassName('Page', $story['content']['component']);
 
@@ -102,7 +108,8 @@ abstract class Folder
 	 *
 	 * @param $slug
 	 */
-	public function slug($slug) {
+	public function slug($slug): void
+	{
 		$this->slug = $slug;
 	}
 
@@ -112,7 +119,8 @@ abstract class Folder
 	 *
 	 * @param $sortBy
 	 */
-	public function sort($sortBy) {
+	public function sort($sortBy): void
+	{
 		$this->sortBy = $sortBy;
 	}
 
@@ -122,7 +130,8 @@ abstract class Folder
 	 *
 	 * @param $settings
 	 */
-	public function settings($settings) {
+	public function settings($settings): void
+	{
 		$this->settings = $settings;
 	}
 
@@ -132,7 +141,8 @@ abstract class Folder
 	 *
 	 * @return int
 	 */
-	public function count() {
+	public function count(): int
+	{
 		return $this->stories->count() ?? 0;
 	}
 
@@ -141,9 +151,10 @@ abstract class Folder
 	 * Sets the number of items per page
 	 *
 	 * @param $perPage
-	 * @return $this
+	 * @return Folder
 	 */
-	public function perPage($perPage) {
+	public function perPage($perPage): Folder
+	{
 		$this->perPage = $perPage;
 
 		return $this;
@@ -178,7 +189,8 @@ abstract class Folder
 	 *
 	 * @return array
 	 */
-	protected function makeRequest() {
+	protected function makeRequest(): array
+	{
 		$storyblokClient = resolve('Storyblok\Client');
 
 		$storyblokClient =  $storyblokClient->getStories(array_merge([
