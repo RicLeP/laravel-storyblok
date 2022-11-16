@@ -37,7 +37,12 @@ class FieldFactory
 		}
 
 		// single item relations
-		if (Str::isUuid($field) && ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations))) {
+		if (Str::isUuid($field) && ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations) || array_key_exists($key, $block->_resolveRelations))) {
+
+			if (array_key_exists($key, $block->_resolveRelations)) {
+				return $block->getRelation(new RequestStory(), $field, $block->_resolveRelations[$key]);
+			}
+
 			return $block->getRelation(new RequestStory(), $field);
 		}
 
@@ -95,10 +100,18 @@ class FieldFactory
 		if (array_key_exists(0, $field)) {
 			// it’s an array of relations - request them if we’re auto or manual resolving
 			if (Str::isUuid($field[0])) {
-				if ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations)) {
-					$relations = collect($field)->transform(function ($relation) use ($block) {
-						return $block->getRelation(new RequestStory(), $relation);
-					});
+				if ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations) || array_key_exists($key, $block->_resolveRelations)) {
+
+					// they’re passing a custom class
+					if (array_key_exists($key, $block->_resolveRelations)) {
+						$relations = collect($field)->transform(function ($relation) use ($block, $key) {
+							return $block->getRelation(new RequestStory(), $relation, $block->_resolveRelations[$key]);
+						});
+					} else {
+						$relations = collect($field)->transform(function ($relation) use ($block) {
+							return $block->getRelation(new RequestStory(), $relation);
+						});
+					}
 
 					if ($block->_filterRelations) {
 						$relations = $relations->filter();

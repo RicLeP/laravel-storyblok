@@ -1,0 +1,38 @@
+{
+	"story": {
+		"name": "relation-custom",
+		"created_at": "2020-07-06T10:18:55.175Z",
+		"published_at": "2020-08-06T10:24:21.135Z",
+		"alternates": [],
+		"id": 14994141,
+		"uuid": "5bd0a07a-4806-458e-bc7a-88b8372683d8",
+		"slug": "relation",
+		"full_slug": "relation",
+		"default_full_slug": null,
+		"sort_by_date": null,
+		"position": -262695,
+		"tag_list":[
+			"tag2",
+			"tag1"
+		],
+		"is_startpage": false,
+		"parent_id": 0,
+		"meta_data": null,
+		"group_id": "bf2c9f6b-80c3-4118-ba30-da6da37da433",
+		"first_published_at": "2020-07-06T10:24:21.135Z",
+		"release_id": null,
+		"lang": "default",
+		"path": null,
+		"translated_slugs": [],
+		"content": {
+			"_uid": "835f25ba-7c20-423c-b375-2690df006382",
+			"component": "relation-custom",
+			"_editable": "\u003c!--#storyblok#{\"name\": \"relation\", \"space\": \"52681\", \"uid\": \"835f25ba-7c20-423c-b375-2690df006382\", \"id\": \"14994141\"}--\u003e",
+			"single_option_story":"aa2cd950-da3a-4d7e-9c51-5eaaf5e0af46",
+			"multi_options_stories": [
+				"aa2cd950-da3a-4d7e-9c51-5eaaf5e0af46",
+				"cb1bb01a-e414-49ed-85d0-03f63f35171f"
+			]
+		}
+	}
+}

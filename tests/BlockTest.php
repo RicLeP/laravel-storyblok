@@ -211,7 +211,25 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_load_single_relation_with_custom_class()
+	{
+		$page = $this->makePage('relation-custom.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\CustomTwo', $block->single_option_story);
+	}
+
+	/** @test */
 	public function can_load_multiple_relations()
+	{
+		$page = $this->makePage('relation-custom.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\CustomTwo', $block->multi_options_stories[0]);
+	}
+
+	/** @test */
+	public function can_load_multiple_relations_with_custom_class()
 	{
 		$page = $this->makePage('relation.json');
 		$block = $page->block();

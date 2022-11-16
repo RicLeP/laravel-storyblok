@@ -357,11 +357,24 @@ class Block implements \IteratorAggregate, \JsonSerializable
 		return $this->_fields;
 	}
 
-	public function getRelation(RequestStory $request, $relation) {
+	/**
+	 * @param RequestStory $request
+	 * @param $relation
+	 * @param $className
+	 * @return mixed|null
+	 */
+	public function getRelation(RequestStory $request, $relation, $className = null) {
 		try {
 			$response = $request->get($relation);
+			dd($response);
+			if (!$className) {
+				$class = $this->getChildClassName('Block', $response['content']['component']);
+			} else {
+				$class = $className;
+			}
 
-			$class = $this->getChildClassName('Block', $response['content']['component']);
+
+
 			$relationClass = new $class($response['content'], $this);
 
 			$relationClass->addMeta([

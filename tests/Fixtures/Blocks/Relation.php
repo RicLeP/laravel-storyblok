@@ -14,10 +14,15 @@ class Relation extends Block
 		'multi_options_stories'
 	];
 
-	public function getRelation(RequestStory $request, $relation) {
+	public function getRelation(RequestStory $request, $relation, $className = null) {
 		$response = json_decode(file_get_contents(__DIR__ . '/../' . $relation . '.json'), true)['story'];
 
-		$class = $this->getChildClassName('Block', $response['content']['component']);
+		if (!$className) {
+			$class = $this->getChildClassName('Block', $response['content']['component']);
+		} else {
+			$class = $className;
+		}
+
 		$relationClass = new $class($response['content'], $this);
 
 		$relationClass->addMeta([
