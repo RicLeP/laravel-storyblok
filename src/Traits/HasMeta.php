@@ -16,9 +16,9 @@ trait HasMeta
 	 *
 	 * @param null $key the key to return
 	 * @param null $default a default if the $key is missing
-	 * @return array
+	 * @return array|string|null
 	 */
-	public function meta($key = null, $default = null): array
+	public function meta($key = null, $default = null): array|string|null
 	{
 		if ($key) {
 			if (array_key_exists($key, $this->_meta)) {

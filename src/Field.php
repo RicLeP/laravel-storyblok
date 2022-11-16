@@ -38,7 +38,7 @@ abstract class Field
 	 *
 	 * @return array|string
 	 */
-	public function content(): array|string
+	public function content(): mixed
 	{
 		return $this->content;
 	}

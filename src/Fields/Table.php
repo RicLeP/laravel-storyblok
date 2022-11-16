@@ -12,23 +12,17 @@ class Table extends Field
 	/**
 	 * @var array|string caption for the table
 	 */
-	protected string|array $caption;
+	protected string|array $caption = '';
 
 	/**
 	 * @var string a class to apply to the <table> tag
 	 */
-	protected string $cssClass;
+	protected string $cssClass = '';
 
 	/**
 	 * @var array|int the column numbers to convert to headers
 	 */
-	protected array|int $headerColumns;
-
-
-	public function __toString(): string
-	{
-		return $this->toHtml($this->content);
-	}
+	protected array|int $headerColumns = [];
 
 	protected function toHtml($table): string
 	{
@@ -65,6 +59,11 @@ class Table extends Field
 		}
 
 		return $html . '</tbody></table>';
+	}
+
+	public function __toString(): string
+	{
+		return $this->toHtml($this->content);
 	}
 
 	public function caption($caption): self

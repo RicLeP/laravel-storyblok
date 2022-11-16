@@ -66,6 +66,8 @@ class FieldTest extends TestCase
 
 		config(['storyblok.view_path' => 'Fixtures.views.']);
 
+	//	dd($content);
+
 		$field = new RichText($content, new NullBlock([], null));
 
 		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[2]);
@@ -90,6 +92,7 @@ class FieldTest extends TestCase
 	public function can_convert_date_to_carbon()
 	{
 		$field = new DateTime($this->getFieldContents('datetime'), null);
+
 		$this->assertInstanceOf('Carbon\Carbon', $field->content());
 	}
 
@@ -275,13 +278,13 @@ class FieldTest extends TestCase
 	public function transparent_filled_images_have_correct_format()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->fitIn('transparent');
+		$field = $field->transform()->fitIn(10, 10, 'transparent');
 
 		$this->assertEquals('image/webp', $field->mime());
 
 
 		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->fitIn('transparent')->format('webp');
+		$field2 = $field2->transform()->fitIn(10, 10, 'transparent')->format('webp');
 
 		$this->assertEquals('image/webp', $field2->mime());
 	}
