@@ -14,7 +14,7 @@ class RequestStory
 	 * @var array An array of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	protected array $resolveRelations;
+	protected array $resolveRelations = [];
 
 	/**
 	 * Caches the response if needed
