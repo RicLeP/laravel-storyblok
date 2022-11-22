@@ -5,6 +5,9 @@ namespace Riclep\Storyblok\Fields;
 
 use Riclep\Storyblok\Support\ImageTransformation;
 
+/**
+ * @property boolean $focus
+ */
 class Image extends Asset
 {
 	/**

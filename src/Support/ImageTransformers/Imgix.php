@@ -79,7 +79,7 @@ class Imgix extends BaseTransformer
 				'fm' => $format,
 			]);
 
-			if ($quality) {
+			if ($quality !== null) {
 				$this->transformations = array_merge($this->transformations, [
 					'q' => $quality,
 				]);
@@ -111,10 +111,6 @@ class Imgix extends BaseTransformer
 	 */
 	public function buildUrl(): string
 	{
-		if ($this->transformations === 'svg') {
-			return $this->image->content()['filename'];
-		}
-
 		$builder = new UrlBuilder(config('storyblok.imgix_domain'));
 		$builder->setUseHttps(true);
 		$builder->setSignKey(config('storyblok.imgix_token'));

@@ -10,9 +10,9 @@ trait EmbedsMedia
 	/**
 	 * The Embed\Embed object.
 	 *
-	 * @var Embed\Embed
+	 * @var Embed
 	 */
-	private Embed\Embed $_embed;
+	private Embed $_embed;
 
 	/**
 	 * Initialises the Embed object.
@@ -58,9 +58,9 @@ trait EmbedsMedia
 	/**
 	 * Returns the Embed\Embed object.
 	 *
-	 * @return Embed\Embed
+	 * @return Embed
 	 */
-	public function embed(): Embed\Embed
+	public function embed(): Embed
 	{
 		return $this->_embed;
 	}

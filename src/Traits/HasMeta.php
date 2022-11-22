@@ -14,8 +14,8 @@ trait HasMeta
 	/**
 	 * Returns the meta items
 	 *
-	 * @param null $key the key to return
-	 * @param null $default a default if the $key is missing
+	 * @param string|null $key the key to return
+	 * @param string|null $default a default if the $key is missing
 	 * @return array|string|null
 	 */
 	public function meta($key = null, $default = null): array|string|null

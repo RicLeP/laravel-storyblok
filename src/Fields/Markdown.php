@@ -31,6 +31,6 @@ class Markdown extends Field
 
 		$converter = new MarkdownConverter($environment);
 
-		return (string) $converter->convertToHtml($this->content);
+		return (string) $converter->convert($this->content);
 	}
 }
