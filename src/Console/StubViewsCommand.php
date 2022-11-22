@@ -38,15 +38,9 @@ class StubViewsCommand extends Command
      */
     public function handle(): void
     {
-	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
-		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
-	    }
+	    $this->makeDirectories();
 
-	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
-		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
-	    }
-
-		$client = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+	    $client = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
 
 		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
 
@@ -61,34 +55,7 @@ class StubViewsCommand extends Command
 				$body = '';
 
 				foreach ($component['schema'] as $name => $field) {
-					switch ($field['type']) {
-						case 'bloks':
-							$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-							$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
-							$body .= "\t" . '@endforeach' . "\n";
-							break;
-						case 'datetime':
-						case 'number':
-						case 'text':
-							$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
-							break;
-						case 'multilink':
-							$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
-						break;
-						case 'options':
-							$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-							$body .= "\t\t\n";
-							$body .= "\t" . '@endforeach' . "\n";
-							break;
-						case 'textarea':
-						case 'richtext':
-							$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
-						break;
-						default:
-							$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
-					}
-
-					$body .= "\n";
+					$body = $this->writeBlade($field['type'], $name, $body);
 				}
 
 				$content = str_replace('#BODY#', $body, $content);
@@ -99,4 +66,57 @@ class StubViewsCommand extends Command
 			}
 		});
     }
+
+	/**
+	 * @return void
+	 */
+	protected function makeDirectories(): void
+	{
+		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
+			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
+		}
+
+		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
+			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
+		}
+	}
+
+	/**
+	 * @param $type
+	 * @param int|string $name
+	 * @param string $body
+	 * @return string
+	 */
+	protected function writeBlade($type, int|string $name, string $body): string
+	{
+		switch ($type) {
+			case 'bloks':
+				$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
+				$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
+				$body .= "\t" . '@endforeach' . "\n";
+				break;
+			case 'datetime':
+			case 'number':
+			case 'text':
+				$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
+				break;
+			case 'multilink':
+				$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
+				break;
+			case 'options':
+				$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
+				$body .= "\t\t\n";
+				$body .= "\t" . '@endforeach' . "\n";
+				break;
+			case 'textarea':
+			case 'richtext':
+				$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
+				break;
+			default:
+				$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
+		}
+
+		$body .= "\n";
+		return $body;
+	}
 }
