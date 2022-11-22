@@ -14,4 +14,8 @@ class Custom extends Block
 		'datetime' => DateTime::class,
 		'image' => HeroImage::class,
 	];
+
+	public function fieldsReady() {
+		$this->added = 'yes';
+	}
 }

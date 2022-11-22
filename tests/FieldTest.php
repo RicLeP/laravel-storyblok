@@ -382,6 +382,22 @@ PICTURE
 	}
 
 	/** @test */
+	public function can_create_transform_as_new_instance()
+	{
+		$field = new HeroImage($this->getFieldContents('hero'), null);
+
+		$newInstance = $field->setTransformations([
+			'mobile' => [
+				'src' => $field->transform()->resize(200, 200)->format('webp'),
+				'media' => '(min-width: 400px)',
+			]
+		], false);
+
+		$this->assertInstanceOf(HeroImage::class, $newInstance);
+		$this->assertNotEquals($newInstance, $field);
+	}
+
+	/** @test */
 	public function can_get_create_picture_element_with_custom_domains()
 	{
 		config()->set('storyblok.asset_domain', 'custom.asset.domain');

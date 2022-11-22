@@ -14,7 +14,7 @@ class Relation extends Block
 		'multi_options_stories'
 	];
 
-	public function getRelation(RequestStory $request, $relation, $className = null): mixed
+	public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
 	{
 		$response = json_decode(file_get_contents(__DIR__ . '/../' . $relation . '.json'), true)['story'];
 

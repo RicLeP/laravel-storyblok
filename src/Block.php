@@ -157,11 +157,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 */
 	public function render(array $with = []): View
 	{
-		try {
-			return view()->first($this->views(), array_merge(['block' => $this], $with));
-		} catch (\Exception $exception) {
-			throw new UnableToRenderException('None of the views in the given array exist.', $this);
-		}
+		return $this->renderUsing($this->views(), $with);
 	}
 
 	/**
@@ -370,15 +366,15 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * @param RequestStory $request
+	 * @param RequestStory $requestStory
 	 * @param $relation
 	 * @param $className
 	 * @return mixed|null
 	 */
-	public function getRelation(RequestStory $request, $relation, $className = null): mixed
+	public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
 	{
 		try {
-			$response = $request->get($relation);
+			$response = $requestStory->get($relation);
 
 			if (!$className) {
 				$class = $this->getChildClassName('Block', $response['content']['component']);

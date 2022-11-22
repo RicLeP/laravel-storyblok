@@ -359,4 +359,44 @@ class BlockTest extends TestCase
 
 		$this->assertEquals('', $page->block()->editorLink());
 	}
+
+	/** @test */
+	public function can_cast_block_to_string()
+	{
+		$page = $this->makePage('custom-page.json');
+		$block = $page->block();
+
+		$this->assertEquals('{"text":"text","image":{"transformations":{"desktop":{"src":{},"media":"(min-width: 1200px)"},"mobile":{"src":{},"media":"(min-width: 600px)"}}},"datetime":{},"blocks":[{"columns":[{"Name":{},"Surname":"surname","Text":"This is some text to test typography is applied 10x10 let\'s check","Html":{}}]}]}', (string) $block);
+	}
+
+	/** @test */
+	public function can_interate_over_fields()
+	{
+		$page = $this->makePage('custom-page2.json');
+		$block = $page->block();
+
+		foreach ($block as $key => $value) {
+			$this->assertEquals('text', $key);
+			$this->assertEquals('text', $value);
+		}
+	}
+
+	/** @test */
+	public function can_call_fields_ready()
+	{
+		$page = $this->makePage('custom-page.json');
+		$block = $page->block();
+
+		$this->assertEquals('yes', $block->added);
+	}
+
+	/** @test */
+	public function will_throw_exception_with_view_not_found()
+	{
+		$this->expectException(\Riclep\Storyblok\Exceptions\UnableToRenderException::class);
+		$this->expectExceptionMessage('None of the views in the given array exist.');
+		$page = $this->makePage('custom-page.json');
+
+		$page->block()->renderUsing('i-do-not-exist');
+	}
 }
