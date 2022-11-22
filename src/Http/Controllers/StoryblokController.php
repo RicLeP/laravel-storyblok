@@ -14,7 +14,7 @@ class StoryblokController
 	 * @return \Illuminate\View\View
 	 * @throws \Exception
 	 */
-	public function show($slug = 'home')
+	public function show($slug = 'home'): \Illuminate\View\View
 	{
 		return Storyblok::read($slug)->render();
 	}
@@ -22,7 +22,8 @@ class StoryblokController
 	/**
 	 * Deletes the cached API responses
 	 */
-	public function destroy() {
+	public function destroy(): void
+	{
 		if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
 			Cache::tags('storyblok')->flush();
 		} else {

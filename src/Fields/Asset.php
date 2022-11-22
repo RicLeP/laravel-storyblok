@@ -20,7 +20,7 @@ class Asset extends Field
         }
 	}
 
-	public function __toString()
+	public function __toString(): string
 	{
 		if ($this->content['filename']) {
 			return $this->content['filename'];
@@ -34,7 +34,8 @@ class Asset extends Field
 	 *
 	 * @return bool
 	 */
-	public function hasFile() {
+	public function hasFile(): bool
+	{
 		if (!array_key_exists('filename', $this->content)) {
 			return false;
 		}

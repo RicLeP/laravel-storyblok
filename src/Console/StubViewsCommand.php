@@ -34,9 +34,9 @@ class StubViewsCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
 	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
 		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));

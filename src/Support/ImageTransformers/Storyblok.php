@@ -13,7 +13,8 @@ class Storyblok extends BaseTransformer
 	 *
 	 * @return $this
 	 */
-	public function init() {
+	public function init(): self
+	{
 		$this->extractMetaDetails();
 
 		return $this;
@@ -24,10 +25,10 @@ class Storyblok extends BaseTransformer
 	 *
 	 * @param int $width
 	 * @param int $height
-	 * @param string $focus
+	 * @param string|null $focus
 	 * @return $this
 	 */
-	public function resize($width = 0, $height = 0, $focus = null)
+	public function resize(int $width = 0, int $height = 0, string $focus = null): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'width' => $width,
@@ -54,12 +55,12 @@ class Storyblok extends BaseTransformer
 	/**
 	 * Fits the image in the given width and height
 	 *
-	 * @param $width
-	 * @param $height
-	 * @param $fill
+	 * @param int $width
+	 * @param int $height
+	 * @param string $fill
 	 * @return $this
 	 */
-	public function fitIn($width = 0, $height = 0, $fill = 'transparent')
+	public function fitIn(int $width = 0, int $height = 0, string $fill = 'transparent'): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'width' => $width,
@@ -79,11 +80,11 @@ class Storyblok extends BaseTransformer
 	/**
 	 * Set the image format you want returned
 	 *
-	 * @param $format
-	 * @param $quality
+	 * @param string $format
+	 * @param int|null $quality
 	 * @return $this
 	 */
-	public function format($format, $quality = null)
+	public function format(string $format, int $quality = null): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'format' => $format,
@@ -105,7 +106,8 @@ class Storyblok extends BaseTransformer
 	 *
 	 * @return string
 	 */
-	public function buildUrl() {
+	public function buildUrl(): string
+	{
 		if ($this->transformations === 'svg') {
 			return $this->image->content()['filename'];
 		}
@@ -135,7 +137,8 @@ class Storyblok extends BaseTransformer
 	 *
 	 * @return string
 	 */
-	private function applyFilters() {
+	private function applyFilters(): string
+	{
 		$filters = '';
 
 		if (array_key_exists('format', $this->transformations)) {
@@ -165,9 +168,9 @@ class Storyblok extends BaseTransformer
 	 * Extracts meta details from the image. With Storyblok we can get a
 	 * few things from the URL
 	 *
-	 * @return void|null
+	 * @return void
 	 */
-	protected function extractMetaDetails()
+	protected function extractMetaDetails(): void
 	{
 		$path = $this->image->content()['filename'];
 
@@ -197,7 +200,8 @@ class Storyblok extends BaseTransformer
 	 *
 	 * @return bool
 	 */
-	private function hasFilters() {
+	private function hasFilters(): bool
+	{
 		return array_key_exists('format', $this->transformations) || array_key_exists('quality', $this->transformations) || array_key_exists('fill', $this->transformations) || (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point');
 	}
 

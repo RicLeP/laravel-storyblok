@@ -11,7 +11,7 @@ abstract class BaseTransformer
 	 *
 	 * @var
 	 */
-	protected $meta = [
+	protected array $meta = [
 		'height' => null,
 		'width' => null,
 		'extension' => null,
@@ -23,30 +23,27 @@ abstract class BaseTransformer
 	 *
 	 * @var array
 	 */
-	protected $transformations = [];
-
-	protected Image $image;
+	protected array $transformations = [];
 
 	/**
 	 * @return string The transformed image URL
 	 */
-	abstract public function buildUrl();
+	abstract public function buildUrl(): string;
 
 
 	/**
 	 * Extracts meta details for the current image such as width
 	 * and height, mime and anything else of use
 	 *
-	 * @return null
+	 * @return void
 	 */
-	abstract protected function extractMetaDetails();
+	abstract protected function extractMetaDetails(): void;
 
 
 	/**
 	 * @param Image $image
 	 */
-	public function __construct(Image $image) {
-		$this->image = $image;
+	public function __construct(protected Image $image) {
 
 		if (method_exists('preprocess', $this)) {
 			$this->preprocess();
@@ -57,15 +54,14 @@ abstract class BaseTransformer
 	 * Returns the width of the transformed image. Optionally you
 	 * can request the original width
 	 *
-	 * @param $original
+	 * @param bool $original
 	 * @return int
 	 */
-	public function width($original = false) {
+	public function width(bool $original = false): int
+	{
 		if ($original) {
 			return (int) $this->meta['width'];
 		}
-
-//		dd(empty($this->transformations));
 
 		// the width was not set so we need to compute it
 		if (array_key_exists('width', $this->transformations) && $this->transformations['width'] === 0) {
@@ -81,10 +77,11 @@ abstract class BaseTransformer
 	 * Returns the height of the transformed image. Optionally you
 	 * can request the original height
 	 *
-	 * @param $original
-	 * @return mixed
+	 * @param bool $original
+	 * @return int
 	 */
-	public function height($original = false) {
+	public function height(bool $original = false): ?int
+	{
 		if ($original) {
 			return (int) $this->meta['height'];
 		}
@@ -104,10 +101,11 @@ abstract class BaseTransformer
 	 * Returns the mime of the transformed image. Optionally you
 	 * can request the original mime
 	 *
-	 * @param $original
-	 * @return mixed
+	 * @param bool $original
+	 * @return string
 	 */
-	public function mime($original = false) {
+	public function mime(bool $original = false): ?string
+	{
 		if ($original) {
 			return $this->meta['mime'];
 		}
@@ -121,7 +119,8 @@ abstract class BaseTransformer
 	 * @param $extension
 	 * @return string
 	 */
-	protected function setMime($extension) {
+	protected function setMime($extension): string
+	{
 		return $extension === 'jpg' ? 'image/jpeg' : 'image/' . $extension;
 	}
 
@@ -131,7 +130,8 @@ abstract class BaseTransformer
 	 *
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string
+	{
 		return $this->buildUrl();
 	}
 }

@@ -17,7 +17,7 @@ class Markdown extends Field
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		$config = [
 			'html_input' => 'escape',

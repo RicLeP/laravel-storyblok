@@ -8,22 +8,12 @@ use Riclep\Storyblok\Events\PublishingEvent;
 class ClearCache
 {
 	/**
-	 * Create the event listener.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		//
-	}
-
-	/**
 	 * Handle the event.
 	 *
 	 * @param PublishingEvent $event
 	 * @return void
 	 */
-	public function handle(PublishingEvent $event)
+	public function handle(PublishingEvent $event): void
 	{
 		if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
 			Cache::tags('storyblok')->flush();

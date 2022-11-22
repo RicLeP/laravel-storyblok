@@ -6,23 +6,18 @@ use ArrayAccess;
 
 class ImageTransformation implements ArrayAccess
 {
-	/**
-	 * @var
-	 */
-	private array $transformation;
 
 	/**
 	 * @param array $transformation
 	 */
-	public function __construct(array $transformation) {
-		$this->transformation = $transformation;
+	public function __construct(protected array $transformation) {
 	}
 
 	/**
 	 * @param $offset
 	 * @return bool
 	 */
-	public function offsetExists($offset)
+	public function offsetExists($offset): bool
 	{
 		return isset($this->$transformation[$offset]);
 	}
@@ -31,7 +26,7 @@ class ImageTransformation implements ArrayAccess
 	 * @param $offset
 	 * @return mixed|null
 	 */
-	public function offsetGet($offset)
+	public function offsetGet($offset): mixed
 	{
 		return $this->transformation[$offset] ?? null;
 	}
@@ -41,7 +36,7 @@ class ImageTransformation implements ArrayAccess
 	 * @param $value
 	 * @return void
 	 */
-	public function offsetSet($offset, $value)
+	public function offsetSet($offset, $value): void
 	{
 		if (is_null($offset)) {
 			$this->transformation[] = $value;
@@ -54,7 +49,7 @@ class ImageTransformation implements ArrayAccess
 	 * @param $offset
 	 * @return void
 	 */
-	public function offsetUnset($offset)
+	public function offsetUnset($offset): void
 	{
 		unset($this->transformation[$offset]);
 	}
@@ -64,7 +59,8 @@ class ImageTransformation implements ArrayAccess
 	 *
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string
+	{
 		return (string) $this->transformation['src'];
 	}
 }

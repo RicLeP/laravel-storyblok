@@ -9,15 +9,21 @@ use Riclep\Storyblok\Tests\Fixtures\Block;
 
 class Relation extends Block
 {
-	public $_resolveRelations = [
+	public array $_resolveRelations = [
 		'single_option_story',
 		'multi_options_stories'
 	];
 
-	public function getRelation(RequestStory $request, $relation) {
+	public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
+	{
 		$response = json_decode(file_get_contents(__DIR__ . '/../' . $relation . '.json'), true)['story'];
 
-		$class = $this->getChildClassName('Block', $response['content']['component']);
+		if (!$className) {
+			$class = $this->getChildClassName('Block', $response['content']['component']);
+		} else {
+			$class = $className;
+		}
+
 		$relationClass = new $class($response['content'], $this);
 
 		$relationClass->addMeta([

@@ -11,7 +11,8 @@ trait SchemaOrg
 	/**
 	 * Automatically called to add a schema to the Page
 	 */
-	protected function initSchemaOrg() {
+	protected function initSchemaOrg(): void
+	{
 		if (method_exists($this, 'schemaOrg')) {
 			if ($this instanceof Page) {
 				$page = $this;
@@ -31,7 +32,8 @@ trait SchemaOrg
 	 *
 	 * @return string
 	 */
-	public function schemaOrgScript() {
+	public function schemaOrgScript(): string
+	{
 		$schemaJson = '';
 
 		foreach ($this->meta()['schema_org'] as $schema) {
@@ -46,7 +48,8 @@ trait SchemaOrg
 	 *
 	 * @param $page
 	 */
-	private function add($page) {
+	private function add($page): void
+	{
 		$currentSchemaOrg = $page->meta('schema_org');
 
 		$currentSchemaOrg[] = $this->schemaOrg();

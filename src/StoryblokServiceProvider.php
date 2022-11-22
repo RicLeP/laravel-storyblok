@@ -13,7 +13,7 @@ class StoryblokServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application services.
      */
-    public function boot()
+    public function boot(): void
     {
 		$this->loadRoutesFrom(__DIR__.'/routes/api.php');
 
@@ -39,7 +39,7 @@ class StoryblokServiceProvider extends ServiceProvider
     /**
      * Register the application services.
      */
-    public function register()
+    public function register(): void
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/storyblok.php', 'storyblok');

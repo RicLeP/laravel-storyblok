@@ -1,0 +1,48 @@
+{
+	"story": {
+		"name": "form test",
+		"created_at": "2022-07-15T10:32:54.701Z",
+		"published_at": "2022-06-16T12:51:40.423Z",
+		"id": 163795103,
+		"uuid": "847ef2f7-c110-40bf-b2e2-e6ea8f684ca7",
+		"content": {
+			"_uid": "51f17d81-9369-464e-942b-c97ff219ef8c",
+			"settings": [
+				{
+					"_uid": "8025358c-fc42-4b33-a296-b998815cf78e",
+					"source": "the_source",
+					"component": "lsf-linked-field",
+					"only_first": false,
+					"_editable": "\u003c!--#storyblok#{\"name\": \"lsf-linked-field\", \"space\": \"162134\", \"uid\": \"8025358c-fc42-4b33-a296-b998815cf78e\", \"id\": \"163795103\"}--\u003e"
+				},
+				{
+					"_uid": "13d70c0e-791d-4a24-a8dd-ef59b44da79f",
+					"commas": "quarter,half,full",
+					"component": "lsf-style",
+					"_editable": "\u003c!--#storyblok#{\"name\": \"lsf-style\", \"space\": \"162134\", \"uid\": \"13d70c0e-791d-4a24-a8dd-ef59b44da79f\", \"id\": \"163795103\"}--\u003e"
+				}
+			],
+			"component": "Custom",
+			"_editable": "\u003c!--#storyblok#{\"name\": \"lsf-form\", \"space\": \"162134\", \"uid\": \"51f17d81-9369-464e-942b-c97ff219ef8c\", \"id\": \"163795103\"}--\u003e"
+		},
+		"slug": "form-test",
+		"full_slug": "portal/forms/form-test",
+		"sort_by_date": null,
+		"position": -10,
+		"tag_list": [],
+		"is_startpage": false,
+		"parent_id": 150333820,
+		"meta_data": null,
+		"group_id": "bd2768f9-2bdb-44c6-a80c-a8f3330bbe9a",
+		"first_published_at": "2022-06-16T12:51:40.423Z",
+		"release_id": null,
+		"lang": "default",
+		"path": null,
+		"alternates": [],
+		"default_full_slug": null,
+		"translated_slugs": null
+	},
+	"cv": 1669124418,
+	"rels": [],
+	"links": []
+}

@@ -9,16 +9,17 @@ trait HasMeta
 	/**
 	 * @var array stores the meta items for this class
 	 */
-	protected $_meta = [];
+	protected array $_meta = [];
 
 	/**
 	 * Returns the meta items
 	 *
 	 * @param null $key the key to return
 	 * @param null $default a default if the $key is missing
-	 * @return array|string
+	 * @return array|string|null
 	 */
-	public function meta($key = null, $default = null) {
+	public function meta($key = null, $default = null): array|string|null
+	{
 		if ($key) {
 			if (array_key_exists($key, $this->_meta)) {
 				return $this->_meta[$key];
@@ -35,7 +36,8 @@ trait HasMeta
 	 *
 	 * @param $fields
 	 */
-	public function addMeta($fields, $replace = false) {
+	public function addMeta($fields, $replace = false): void
+	{
 		if ($replace) {
 			$this->_meta = array_merge($this->_meta, $fields);
 		}
@@ -48,7 +50,8 @@ trait HasMeta
 	 * @param $key
 	 * @param $value
 	 */
-	public function replaceMeta($key, $value) {
+	public function replaceMeta($key, $value): void
+	{
 		$this->_meta[$key] = $value;
 	}
 
@@ -56,7 +59,8 @@ trait HasMeta
 	 * Returns the UUID of the Block
 	 * @return string
 	 */
-	public function uuid() {
+	public function uuid(): string
+	{
 		return $this->meta('_uid');
 	}
 }

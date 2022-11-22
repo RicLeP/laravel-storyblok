@@ -1,13 +1,13 @@
 {
 	"story": {
-		"name": "all-fields",
+		"name": "custom-page",
 		"created_at": "2020-07-06T10:18:55.175Z",
 		"published_at": "2020-08-06T10:24:21.135Z",
 		"alternates": [],
 		"id": 14994141,
 		"uuid": "5bd0a07a-4806-458e-bc7a-88b8372683d8",
-		"slug": "all-fields",
-		"full_slug": "all-fields",
+		"slug": "custom-page",
+		"full_slug": "custom-page",
 		"default_full_slug": null,
 		"sort_by_date": null,
 		"position": -262695,
@@ -27,7 +27,7 @@
 		"content": {
 			"_uid": "835f25ba-7c20-423c-b375-2690df006382",
 			"component": "custom",
-			"_editable": "\u003c!--#storyblok#{\"name\": \"all-fields\", \"space\": \"52681\", \"uid\": \"835f25ba-7c20-423c-b375-2690df006382\", \"id\": \"14994141\"}--\u003e",
+			"_editable": "\u003c!--#storyblok#{\"name\": \"custom-page\", \"space\": \"52681\", \"uid\": \"835f25ba-7c20-423c-b375-2690df006382\", \"id\": \"14994141\"}--\u003e",
 
 			"text": "text",
 			"image": {

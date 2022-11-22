@@ -15,9 +15,10 @@ trait HasChildClasses
 	 *
 	 * @param $type
 	 * @param $name
-	 * @return string
+	 * @return string|null
 	 */
-	public function getChildClassName($type, $name) {
+	public function getChildClassName($type, $name): ?string
+	{
 		foreach (Arr::wrap(config('storyblok.component_class_namespace')) as $namespace) {
 			if (class_exists($namespace . Str::pluralStudly($type) . '\\' . Str::studly($name))) {
 				return $namespace . Str::pluralStudly($type) . '\\' . Str::studly($name);

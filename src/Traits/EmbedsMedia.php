@@ -12,12 +12,13 @@ trait EmbedsMedia
 	 *
 	 * @var Embed\Embed
 	 */
-	private $_embed;
+	private Embed\Embed $_embed;
 
 	/**
 	 * Initialises the Embed object.
 	 */
-	protected function init() {
+	protected function init(): void
+	{
 		$this->_embed = Embed::create($this->content);
 	}
 
@@ -27,7 +28,8 @@ trait EmbedsMedia
 	 *
 	 * @return string
 	 */
-	public function html() {
+	public function html(): string
+	{
 		if (method_exists($this, 'embedView')) {
 			$method = 'embedView';
 		} else {
@@ -48,7 +50,8 @@ trait EmbedsMedia
 	 *
 	 * @return string
 	 */
-	public function rawEmbed() {
+	public function rawEmbed(): string
+	{
 		return $this->_embed->code;
 	}
 
@@ -57,7 +60,8 @@ trait EmbedsMedia
 	 *
 	 * @return Embed\Embed
 	 */
-	public function embed() {
+	public function embed(): Embed\Embed
+	{
 		return $this->_embed;
 	}
 
@@ -67,7 +71,8 @@ trait EmbedsMedia
 	 *
 	 * @return false|string
 	 */
-	protected function baseEmbedView() {
+	protected function baseEmbedView(): bool|string
+	{
 		if (view()->exists(config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName))) {
 			return config('storyblok.view_path') . 'embeds.' . strtolower($this->_embed->providerName);
 		}
@@ -85,7 +90,7 @@ trait EmbedsMedia
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->html();
 	}
