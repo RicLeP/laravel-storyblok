@@ -11,13 +11,10 @@ use Riclep\Storyblok\Solutions\CreateMissingBlockSolution;
 
 class UnableToRenderException extends Exception implements ProvidesSolution
 {
-	protected $data;
 
-	public function __construct($message, $data)
+	public function __construct($message, protected $data)
 	{
 		parent::__construct($message);
-
-		$this->data = $data;
 	}
 
 	/** @return  \Spatie\Ignition\Contracts\Solution */

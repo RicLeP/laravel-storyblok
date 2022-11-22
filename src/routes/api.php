@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-use Riclep\Storyblok\Http\Controllers\LiveContentController;
 use Riclep\Storyblok\Http\Controllers\StoryblokController;
 use Riclep\Storyblok\Http\Controllers\WebhookController;
 

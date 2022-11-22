@@ -8,7 +8,16 @@ use Illuminate\Http\Request;
 
 class LiveContentController
 {
-    public function show(Request $request, $slug = '/') {
+	/**
+	 * Used for the live reloading on content in the visual editor. We extract the HTML inside the
+	 * live_element class and replace the existing DOM elements with the new ones
+	 *
+	 * @param Request $request
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function show(Request $request): string
+    {
 		config(['storyblok.edit_mode' => true]);
 
 		$page = Storyblok::setData($request->get('data')['story'])->render();

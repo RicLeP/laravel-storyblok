@@ -16,7 +16,7 @@ class WebhookController
 	 * @param Request $request
 	 * @return bool[]
 	 */
-	public function publish(Request $request)
+	public function publish(Request $request): array
 	{
 		if ($request->headers->get('webhook-signature') === null) {
 			throw new BadRequestHttpException('Header not set');

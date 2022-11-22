@@ -6,12 +6,12 @@ namespace Riclep\Storyblok\Support;
 
 class NullPage
 {
+	public array $_componentPath = ['page'];
+	public array $_meta = [];
 
-	public $_componentPath = ['page'];
-	public $_meta = [];
 
-
-	public function page() {
+	public function page(): NullPage
+	{
 		return $this;
 	}
 

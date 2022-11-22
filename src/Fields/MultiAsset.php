@@ -15,14 +15,14 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	/**
 	 * @var int used for iterating over the array of assets
 	 */
-	private $iteratorIndex = 0;
+	private int $iteratorIndex = 0;
 
 	/**
 	 * Returns a comma delimited list of filenames
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->content->map(function ($item) {
 			if (is_object($item) && $item->has('filename')) {
@@ -34,7 +34,8 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	/**
 	 * Attempts to determine the types of assets that have been linked
 	 */
-	public function init() {
+	public function init(): void
+	{
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
 				if (Str::endsWith($file['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
@@ -59,14 +60,16 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	 *
 	 * @return bool
 	 */
-	public function hasFiles() {
+	public function hasFiles(): bool
+	{
 		return (bool) $this->content();
 	}
 
 	/*
 	 * Methods for ArrayAccess Trait - allows us to dig straight down to the content collection when calling a key on the Object
 	 * */
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value): void
+	{
 		if (is_null($offset)) {
 			$this->content[] = $value;
 		} else {
@@ -74,15 +77,18 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 		}
 	}
 
-	public function offsetExists($offset) {
+	public function offsetExists($offset): bool
+	{
 		return isset($this->content[$offset]);
 	}
 
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset): void
+	{
 		unset($this->content[$offset]);
 	}
 
-	public function offsetGet($offset) {
+	public function offsetGet($offset): mixed
+	{
 		return isset($this->content[$offset]) ? $this->content[$offset] : null;
 	}
 
@@ -91,27 +97,27 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	 * Blocks and return their content. This makes accessing child content
 	 * in Blade much cleaner
 	 * */
-	public function current()
+	public function current(): mixed
 	{
 		return $this->content[$this->iteratorIndex];
 	}
 
-	public function next()
+	public function next(): void
 	{
 		$this->iteratorIndex++;
 	}
 
-	public function rewind()
+	public function rewind(): void
 	{
 		$this->iteratorIndex = 0;
 	}
 
-	public function key()
+	public function key(): int
 	{
 		return $this->iteratorIndex;
 	}
 
-	public function valid()
+	public function valid(): bool
 	{
 		return isset($this->content[$this->iteratorIndex]);
 	}
