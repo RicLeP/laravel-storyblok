@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok\Tests;
 
 
+use Illuminate\Support\Collection;
 use Riclep\Storyblok\RequestStory;
 
 class BlockTest extends TestCase
@@ -398,5 +399,33 @@ class BlockTest extends TestCase
 		$page = $this->makePage('custom-page.json');
 
 		$page->block()->renderUsing('i-do-not-exist');
+	}
+
+	/** @test */
+	public function block_can_have_settings()
+	{
+		$page = $this->makePage('has-settings.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf(Collection::class, $block->hasSetting('lsf_linked_field'));
+		$this->assertFalse($block->hasSetting('not_here'));
+	}
+
+	/** @test */
+	public function block_can_get_setting()
+	{
+		$page = $this->makePage('has-settings.json');
+		$block = $page->block();
+
+		$this->assertInstanceOf(Collection::class, $block->settings());
+	}
+
+	/** @test */
+	public function block_settings_can_process_comma_separated_list()
+	{
+		$page = $this->makePage('has-settings.json');
+		$block = $page->block();
+
+		$this->assertEquals(['quarter', 'half', 'full'], $block->settings('lsf_style')['commas']);
 	}
 }

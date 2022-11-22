@@ -76,16 +76,12 @@ trait HasSettings
 	 * @param $setting
 	 * @return false|mixed
 	 */
-	public function hasSettings($setting = null): mixed
+	public function hasSetting($setting): mixed
 	{
-		if ($setting) {
-			if ($this->_settings?->has($setting)) {
-				return $this->_settings[$setting];
-			}
-
-			return false;
+		if ($this->_settings?->has($setting)) {
+			return $this->_settings[$setting];
 		}
 
-		return $this->_settings;
+		return false;
 	}
 }
