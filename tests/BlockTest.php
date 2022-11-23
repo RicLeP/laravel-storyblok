@@ -407,6 +407,21 @@ class BlockTest extends TestCase
 		$page = $this->makePage('has-settings.json');
 		$block = $page->block();
 
+
+		$this->assertInstanceOf(Collection::class, $block->hasSettings());
+
+		$page2 = $this->makePage('custom-page.json');
+		$block2 = $page2->block();
+
+		$this->assertNull($block2->hasSettings());
+	}
+
+	/** @test */
+	public function block_can_have_setting()
+	{
+		$page = $this->makePage('has-settings.json');
+		$block = $page->block();
+
 		$this->assertInstanceOf(Collection::class, $block->hasSetting('lsf_linked_field'));
 		$this->assertFalse($block->hasSetting('not_here'));
 	}
