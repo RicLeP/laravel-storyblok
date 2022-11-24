@@ -5,6 +5,9 @@ namespace Riclep\Storyblok\Fields;
 
 use Riclep\Storyblok\Support\ImageTransformation;
 
+/**
+ * @property boolean $focus
+ */
 class Image extends Asset
 {
 	/**
@@ -12,21 +15,21 @@ class Image extends Asset
 	 *
 	 * @var array
 	 */
-	public $transformations = [];
+	public array $transformations = [];
 
 	/**
 	 * The transformer used for this image
 	 *
 	 * @var mixed
 	 */
-	protected $transformer;
+	protected mixed $transformer;
 
 	/**
 	 * The transformer class used for transformations
 	 *
 	 * @var mixed
 	 */
-	protected $transformerClass;
+	protected mixed $transformerClass;
 
 	/**
 	 * Constructs the image image field
@@ -60,30 +63,33 @@ class Image extends Asset
 	/**
 	 * Get the width of the image or transformed image
 	 *
-	 * @param $original
-	 * @return mixed
+	 * @param bool $original
+	 * @return int
 	 */
-	public function width($original = false) {
+	public function width(bool $original = false): int
+	{
 		return $this->transformer->width($original);
 	}
 
 	/**
 	 * Get the height of the image or transformed image
 	 *
-	 * @param $original
-	 * @return mixed
+	 * @param bool $original
+	 * @return int
 	 */
-	public function height($original = false) {
+	public function height(bool $original = false): int
+	{
 		return $this->transformer->height($original);
 	}
 
 	/**
 	 * Get the mime of the image or transformed image
 	 *
-	 * @param $original
-	 * @return mixed
+	 * @param bool $original
+	 * @return string
 	 */
-	public function mime($original = false) {
+	public function mime(bool $original = false): string
+	{
 		return $this->transformer->mime($original);
 	}
 
@@ -93,7 +99,8 @@ class Image extends Asset
 	 * @param $tranformation
 	 * @return mixed
 	 */
-	public function transform($tranformation = null) {
+	public function transform($tranformation = null): mixed
+	{
 		if ($tranformation) {
 			if (array_key_exists($tranformation, $this->transformations) ) {
 				return new ImageTransformation($this->transformations[$tranformation]);
@@ -117,7 +124,8 @@ class Image extends Asset
 	 * @param $transformer
 	 * @return mixed
 	 */
-	public function transformer($transformer) {
+	public function transformer($transformer): mixed
+	{
 		$this->transformerClass = $transformer;
 
 		return $this;
@@ -128,14 +136,15 @@ class Image extends Asset
 	 * Returns a picture element tag for this image and
 	 * ant transforms defined on the image class
 	 *
-	 * @param $alt
+	 * @param string $alt
 	 * @param $default
-	 * @param $attributes
-	 * @param $view
-	 * @param $reverse
+	 * @param array $attributes
+	 * @param string $view
+	 * @param bool $reverseTagOrder
 	 * @return string
 	 */
-	public function picture($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::picture-element', $reverse = false) {
+	public function picture(string $alt = '', $default = null, array $attributes = [], string $view = 'laravel-storyblok::picture-element', bool $reverseTagOrder = false): string
+	{
 		if ($default) {
 			$imgSrc = (string) $this->transformations[$default]['src'];
 		} else {
@@ -143,7 +152,7 @@ class Image extends Asset
 		}
 
 		// srcset seems to work the opposite way to picture elements when working out sizes
-		if ($reverse) {
+		if ($reverseTagOrder) {
 			$transformations = array_reverse($this->transformations);
 		} else {
 			$transformations = $this->transformations;
@@ -161,14 +170,15 @@ class Image extends Asset
 	/**
 	 * Returns an image tag with srcset attribute
 	 *
-	 * @param $alt
+	 * @param string $alt
 	 * @param $default
-	 * @param $attributes
-	 * @param $view
+	 * @param array $attributes
+	 * @param string $view
 	 * @return string
 	 */
-	public function srcset($alt = '', $default = null, $attributes = [], $view = 'laravel-storyblok::srcset') {
-		return $this->picture($alt, $default, $attributes, 'laravel-storyblok::srcset');
+	public function srcset(string $alt = '', $default = null, array $attributes = [], string $view = 'laravel-storyblok::srcset'): string
+	{
+		return $this->picture($alt, $default, $attributes, $view ?? 'laravel-storyblok::srcset');
 	}
 
 	/**
@@ -176,10 +186,11 @@ class Image extends Asset
 	 * return a new image so the original is not mutated
 	 *
 	 * @param $transformations
-	 * @param $mutate
+	 * @param bool $mutate
 	 * @return $this|Image
 	 */
-	public function setTransformations($transformations, $mutate = true) {
+	public function setTransformations($transformations, bool $mutate = true): Image|self
+	{
 		if ($mutate) {
 			$this->transformations = $transformations;
 
@@ -202,7 +213,8 @@ class Image extends Asset
 	 * @param $rigid
 	 * @return string
 	 */
-	public function focalPointAlignment($default = 'center', $rigid = false) {
+	public function focalPointAlignment($default = 'center', $rigid = false): string
+	{
 		if (!$this->focus) {
 			return $default;
 		}
@@ -241,7 +253,8 @@ class Image extends Asset
 	 * @param $content
 	 * @return void
 	 */
-	protected function upgradeStringFields($content) {
+	protected function upgradeStringFields($content): void
+	{
 		$this->content = [
 			'filename' => $content,
 			'alt' => null,

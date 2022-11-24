@@ -15,17 +15,17 @@ class BlockMakeCommand extends GeneratorCommand
 
 	protected $type = 'Block';
 
-	protected function getStub()
+	protected function getStub(): string
 	{
 		return file_exists(resource_path('stubs/storyblok/block.stub')) ? resource_path('stubs/storyblok/block.stub') : __DIR__ . '/stubs/block.stub';
 	}
 
-	protected function getDefaultNamespace($rootNamespace)
+	protected function getDefaultNamespace($rootNamespace): string
 	{
 		return $rootNamespace . '\Storyblok\Blocks';
 	}
 
-	public function handle()
+	public function handle(): void
 	{
 		parent::handle();
 
@@ -40,7 +40,7 @@ class BlockMakeCommand extends GeneratorCommand
 		}
 	}
 
-	protected function doOtherOperations()
+	protected function doOtherOperations(): void
 	{
 		$class = $this->qualifyClass($this->getNameInput());
 		$path = $this->getPath($class);
@@ -51,7 +51,8 @@ class BlockMakeCommand extends GeneratorCommand
 		$this->getComponentFields($this->getNameInput());
 	}
 
-	protected function createBlade() {
+	protected function createBlade(): void
+	{
 		$name = Str::kebab($this->getNameInput());
         $path = $this->viewPath( str_replace( '.' , '/' , config('storyblok.view_path') . 'blocks.' ) );
 		$stub = file_exists(resource_path('stubs/storyblok/block.blade.stub')) ? resource_path('stubs/storyblok/block.blade.stub') : __DIR__ . '/stubs/block.blade.stub';
@@ -75,7 +76,8 @@ class BlockMakeCommand extends GeneratorCommand
 		}
 	}
 
-	protected function createScss() {
+	protected function createScss(): void
+	{
 		$name = Str::kebab($this->getNameInput());
 		$path = resource_path('sass/blocks/');
 		$stub = file_exists(resource_path('stubs/storyblok/block.scss.stub')) ? resource_path('stubs/storyblok/block.scss.stub') : __DIR__ . '/stubs/block.scss.stub';
@@ -118,7 +120,8 @@ class BlockMakeCommand extends GeneratorCommand
 		file_put_contents(resource_path('sass/app.scss'), $appContent);
 	}
 
-	protected function getComponentFields($name) {
+	protected function getComponentFields($name): void
+	{
 		if (config('storyblok.oauth_token')) {
 			$this->call('ls:sync', [
 				'component' => Str::studly($name),
@@ -131,7 +134,7 @@ class BlockMakeCommand extends GeneratorCommand
 	 *
 	 * @return array
 	 */
-	protected function getOptions()
+	protected function getOptions(): array
 	{
 		return [
 			['blade', 'b', InputOption::VALUE_NONE, 'Create stub Blade view'],

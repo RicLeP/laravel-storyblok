@@ -19,7 +19,7 @@ class Storyblok
 	 * @return mixed
 	 * @throws \Storyblok\ApiException
 	 */
-	public function read($slug, $resolveRelations = null) {
+	public function read($slug, array $resolveRelations = null) {
 		$storyblokRequest = new RequestStory();
 
 		if ($resolveRelations) {
@@ -33,7 +33,12 @@ class Storyblok
 		return new $class($response);
 	}
 
-	public function setData($data) {
+	/**
+	 * @param $data
+	 * @return mixed
+	 */
+	public function setData($data): mixed
+	{
 		$response = $data;
 
 		$class = $this->getChildClassName('Page', $response['content']['component']);

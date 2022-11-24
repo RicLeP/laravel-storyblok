@@ -9,6 +9,7 @@ use Barryvdh\Reflection\DocBlock\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use Storyblok\ApiException;
 
 class BlockSyncCommand extends Command
 {
@@ -47,7 +48,7 @@ class BlockSyncCommand extends Command
 	 *
 	 * @return void
 	 */
-	public function handle()
+	public function handle(): void
 	{
 		$components = [];
 		if ($this->argument('component')) {
@@ -73,18 +74,16 @@ class BlockSyncCommand extends Command
 	/**
 	 * @return \Illuminate\Support\Collection
 	 */
-	protected function getAllComponents()
+	protected function getAllComponents(): \Illuminate\Support\Collection
 	{
 		$path = $this->option('path');
 
 		$files = collect($this->files->allFiles($path));
 
-		return $files->map(function ($file) {
-			return [
-				'class' => Str::of($file->getFilename())->replace('.php', ''),
-				'component' => Str::of($file->getFilename())->replace('.php', '')->kebab(),
-			];
-		});
+		return $files->map(fn($file) => [
+			'class' => Str::of($file->getFilename())->replace('.php', ''),
+			'component' => Str::of($file->getFilename())->replace('.php', '')->kebab(),
+		]);
 	}
 
 	private function updateComponent($component): void
@@ -140,7 +139,7 @@ class BlockSyncCommand extends Command
 		}
 	}
 
-	protected function getComponentFields($name)
+	protected function getComponentFields($name): array
 	{
 		if (config('storyblok.oauth_token')) {
 			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
@@ -175,6 +174,7 @@ class BlockSyncCommand extends Command
 	 * Create a new Storyblok component with given name
 	 *
 	 * @param  $component_name
+	 * @throws ApiException
 	 */
 	protected function createStoryblokCompontent($component_name){
         $managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
@@ -202,14 +202,12 @@ class BlockSyncCommand extends Command
 	 * @param $type
 	 * @return string
 	 */
-	protected function convertToPhpType($type)
+	protected function convertToPhpType($type): string
 	{
-		switch ($type) {
-			case "bloks":
-				return "array";
-			default:
-				return "string";
-		}
+		return match ($type) {
+			"bloks" => "array",
+			default => "string",
+		};
 	}
 
 	/**
@@ -219,7 +217,7 @@ class BlockSyncCommand extends Command
 	 * @param $type
 	 * @return bool
 	 */
-	protected function isIgnoredType($type)
+	protected function isIgnoredType($type): bool
 	{
 		$ignored = ['section'];
 

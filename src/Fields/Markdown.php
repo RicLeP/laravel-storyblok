@@ -17,7 +17,7 @@ class Markdown extends Field
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		$config = [
 			'html_input' => 'escape',
@@ -31,6 +31,6 @@ class Markdown extends Field
 
 		$converter = new MarkdownConverter($environment);
 
-		return (string) $converter->convertToHtml($this->content);
+		return (string) $converter->convert($this->content);
 	}
 }

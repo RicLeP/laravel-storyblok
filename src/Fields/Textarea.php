@@ -13,7 +13,7 @@ class Textarea extends Field
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->autoParagraph($this->content);
 	}
@@ -24,7 +24,8 @@ class Textarea extends Field
 	 * @param $text
 	 * @return string
 	 */
-	private function autoParagraph($text) {
+	private function autoParagraph($text): string
+	{
 		if ($text) {
 			$paragraphs = explode("\n", $text);
 			return '<p>' . implode('</p><p>', array_filter($paragraphs)) . '</p>';

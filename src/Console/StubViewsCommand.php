@@ -5,11 +5,12 @@ namespace Riclep\Storyblok\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Riclep\Storyblok\Traits\HasChildClasses;
+use Storyblok\ApiException;
+use Storyblok\ManagementClient;
 
 class StubViewsCommand extends Command
 {
 	use HasChildClasses;
-
 
     /**
      * The name and signature of the console command.
@@ -35,23 +36,17 @@ class StubViewsCommand extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+	/**
+	 * Execute the console command.
+	 *
+	 * @return void
+	 * @throws ApiException
+	 */
+    public function handle(): void
     {
+	    $this->makeDirectories();
 
-	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
-		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
-	    }
-
-	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
-		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
-	    }
-
-		$client = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+	    $client = new ManagementClient(config('storyblok.oauth_token'));
 
 		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
 
@@ -72,32 +67,7 @@ class StubViewsCommand extends Command
 				$body = '';
 
 				foreach ($component['schema'] as $name => $field) {
-					if (!str_starts_with($name, 'tab-')) {
-						switch ($field['type']) {
-							case 'options':
-							case 'bloks':
-								$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-								$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
-								$body .= "\t" . '@endforeach' . "\n";
-								break;
-							case 'datetime':
-							case 'number':
-							case 'text':
-								$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
-								break;
-							case 'multilink':
-								$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
-								break;
-							case 'textarea':
-							case 'richtext':
-								$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
-								break;
-							default:
-								$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
-						}
-
-						$body .= "\n";
-					}
+					$body = $this->writeBlade($field, $name, $body);
 				}
 
 				$content = str_replace('#BODY#', $body, $content);
@@ -108,4 +78,64 @@ class StubViewsCommand extends Command
 			}
 		});
     }
+
+	/**
+	 * @return void
+	 */
+	protected function makeDirectories(): void
+	{
+		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
+			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
+		}
+
+		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
+			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
+		}
+	}
+
+	/**
+	 * @param $field
+	 * @param int|string $name
+	 * @param string $body
+	 * @return string
+	 */
+	protected function writeBlade($field, int|string $name, string $body): string
+	{
+		if (!str_starts_with($name, 'tab-')) {
+			switch ($field['type']) {
+				case 'options':
+				case 'bloks':
+					$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
+					$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
+					$body .= "\t" . '@endforeach' . "\n";
+					break;
+				case 'datetime':
+				case 'number':
+				case 'text':
+					$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
+					break;
+				case 'multilink':
+					$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
+					break;
+				case 'textarea':
+				case 'richtext':
+					$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
+					break;
+				case 'asset':
+					if (in_array('images', $field['filetypes'], true)) {
+						$body .= "\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+					} else {
+						$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
+					}
+					break;
+				default:
+					$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
+			}
+
+			$body .= "\n";
+		}
+
+		$body .= "\n";
+		return $body;
+	}
 }

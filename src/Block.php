@@ -28,37 +28,37 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	/**
 	 * @var bool resolve UUID relations automatically
 	 */
-	public $_autoResolveRelations = false;
+	public bool $_autoResolveRelations = false;
 
 	/**
 	 * @var array list of field names containing relations to resolve
 	 */
-	public $_resolveRelations = [];
+	public array $_resolveRelations = [];
 
 	/**
 	 * @var bool Remove unresolved relations such as those that 404
 	 */
-	public $_filterRelations = true;
+	public bool $_filterRelations = true;
 
 	/**
 	 * @var array the path of nested components
 	 */
-	public $_componentPath = [];
+	public array $_componentPath = [];
 
 	/**
 	 * @var array the path of nested components
 	 */
-	protected $_casts = [];
+	protected array $_casts = [];
 
 	/**
 	 * @var Collection all the fields for the Block
 	 */
-	private $_fields;
+	private Collection $_fields;
 
 	/**
 	 * @var Page|Block reference to the parent Block or Page
 	 */
-	private $_parent;
+	private mixed $_parent;
 
 	/**
 	 * @var array default values for fields
@@ -98,7 +98,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return Collection
 	 */
-	public function content() {
+	public function content(): Collection
+	{
 		return $this->_fields;
 	}
 
@@ -108,7 +109,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $key
 	 * @return bool
 	 */
-	public function has($key) {
+	public function has($key): bool
+	{
 		return $this->_fields->has($key);
 	}
 
@@ -120,7 +122,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $component
 	 * @return boolean
 	 */
-	public function hasChildBlock($field, $component) {
+	public function hasChildBlock($field, $component): bool
+	{
 		return $this->content()[$field]->contains(function($item) use ($component) {
 			return $item->meta('component') === $component;
 		});
@@ -131,7 +134,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return Block
 	 */
-	public function parent() {
+	public function parent(): Block|Page|null
+	{
 		return $this->_parent;
 	}
 
@@ -140,7 +144,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return Block
 	 */
-	public function page() {
+	public function page(): Block|Page|null
+	{
 		if ($this->parent() instanceof Page) {
 			return $this->parent();
 		}
@@ -155,12 +160,9 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @return View
 	 * @throws UnableToRenderException
 	 */
-	public function render($with = []) {
-		try {
-			return view()->first($this->views(), array_merge(['block' => $this], $with));
-		} catch (\Exception $exception) {
-			throw new UnableToRenderException('None of the views in the given array exist.', $this);
-		}
+	public function render(array $with = []): View
+	{
+		return $this->renderUsing($this->views(), $with);
 	}
 
 	/**
@@ -171,7 +173,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @return View
 	 * @throws UnableToRenderException
 	 */
-	public function renderUsing($views, $with = []) {
+	public function renderUsing(array|string $views, array $with = []): View
+	{
 		try {
 			return view()->first(Arr::wrap($views), array_merge(['block' => $this], $with));
 		} catch (\Exception $exception) {
@@ -194,13 +197,14 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return array
 	 */
-	public function views() {
-		$compontentPath = $this->_componentPath;
-		array_pop($compontentPath);
+	public function views(): array
+	{
+		$componentPath = $this->_componentPath;
+		array_pop($componentPath);
 
 		$views = array_map(function($path) {
 			return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
-		}, $compontentPath);
+		}, $componentPath);
 
 		$views = array_reverse($views);
 
@@ -215,7 +219,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $generation int
 	 * @return mixed
 	 */
-	public function ancestorComponentName($generation)
+	public function ancestorComponentName(int $generation): mixed
 	{
 		return $this->_componentPath[count($this->_componentPath) - ($generation + 1)];
 	}
@@ -226,7 +230,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $parent string
 	 * @return bool
 	 */
-	public function isChildOf($parent)
+	public function isChildOf(string $parent): bool
 	{
 		return $this->_componentPath[count($this->_componentPath) - 2] === $parent;
 	}
@@ -237,9 +241,9 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param $parent string
 	 * @return bool
 	 */
-	public function isAncestorOf($parent)
+	public function isAncestorOf(string $parent): bool
 	{
-		return in_array($parent, $this->parent()->_componentPath);
+		return in_array($parent, $this->parent()->_componentPath, true);
 	}
 
 	/**
@@ -247,7 +251,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return string
 	 */
-	public function component() {
+	public function component(): string
+	{
 		return $this->_meta['component'];
 	}
 
@@ -259,7 +264,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return string
 	 */
-	public function editorLink() {
+	public function editorLink(): string
+	{
 		if (array_key_exists('_editable', $this->_meta) && config('storyblok.edit_mode')) {
 			return $this->_meta['_editable'];
 		}
@@ -299,17 +305,17 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string
+	{
 		return (string) $this->jsonSerialize();
 	}
 
 	/**
 	 * Loops over every field to get the ball rolling
 	 */
-	private function processFields() {
-		$this->_fields->transform(function ($field, $key) {
-			return $this->getFieldType($field, $key);
-		});
+	private function processFields(): void
+	{
+		$this->_fields->transform(fn($field, $key) => $this->getFieldType($field, $key));
 	}
 
 	/**
@@ -320,7 +326,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @return array|Collection|mixed|Asset|Image|MultiAsset|RichText|Table
 	 * @throws \Storyblok\ApiException
 	 */
-	private function getFieldType($field, $key) {
+	private function getFieldType($field, $key): mixed
+	{
 		return (new FieldFactory())->build($this, $field, $key);
 	}
 
@@ -330,7 +337,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 *
 	 * @param $content
 	 */
-	private function preprocess($content) {
+	private function preprocess($content): void
+	{
 		// run pre-process traits - methods matching preprocessTraitClassName()
 		foreach (class_uses_recursive($this) as $trait) {
 			if (method_exists($this, $method = 'preprocess' . class_basename($trait))) {
@@ -367,22 +375,21 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * @param RequestStory $request
+	 * @param RequestStory $requestStory
 	 * @param $relation
 	 * @param $className
 	 * @return mixed|null
 	 */
-	public function getRelation(RequestStory $request, $relation, $className = null) {
+	public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
+	{
 		try {
-			$response = $request->get($relation);
-			dd($response);
+			$response = $requestStory->get($relation);
+
 			if (!$className) {
 				$class = $this->getChildClassName('Block', $response['content']['component']);
 			} else {
 				$class = $className;
 			}
-
-
 
 			$relationClass = new $class($response['content'], $this);
 
@@ -403,13 +410,14 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * Returns an inverse relationship to the current Block. For example if Service has a Multi-Option field
 	 * relationship to People, on People you can request all the Services it has been related to
 	 *
-	 * @param $foreignRelationshipField
-	 * @param $foreignRelationshipType
-	 * @param $components
-	 * @param $options
+	 * @param string $foreignRelationshipField
+	 * @param string $foreignRelationshipType
+	 * @param array|null $components
+	 * @param array|null $options
 	 * @return array
 	 */
-	public function inverseRelation($foreignRelationshipField, $foreignRelationshipType = 'multi', $components = null, $options = null) {
+	public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null): array
+	{
 		$storyblokClient = resolve('Storyblok\Client');
 
 		$type = 'any_in_array';
@@ -444,7 +452,13 @@ class Block implements \IteratorAggregate, \JsonSerializable
 		];
 	}
 
-	public function getCasts() {
+	/**
+	 * Returns the casts on this Block
+	 *
+	 * @return array
+	 */
+	public function getCasts(): array
+	{
 		return $this->_casts;
 	}
 }

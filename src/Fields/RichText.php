@@ -12,7 +12,8 @@ class RichText extends Field
 {
 	use HasChildClasses;
 
-	public function init() {
+	public function init(): void
+	{
 		$richtextResolver = new Resolver();
 
 		$content = [];
@@ -41,7 +42,7 @@ class RichText extends Field
 	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		$html = "";
 

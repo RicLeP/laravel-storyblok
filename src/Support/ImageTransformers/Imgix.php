@@ -11,18 +11,16 @@ class Imgix extends BaseTransformer
 	/**
 	 * Resize the image to the given dimensions
 	 *
-	 * @param $width
-	 * @param $height
+	 * @param int $width
+	 * @param int $height
 	 * @return $this
 	 */
-	public function resize($width = 0, $height = 0)
+	public function resize(int $width = 0, int $height = 0): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'w' => $width,
 			'h' => $height,
 		]);
-
-		//dd($this);
 
 		return $this;
 	}
@@ -30,11 +28,11 @@ class Imgix extends BaseTransformer
 	/**
 	 * Fit the image in the given dimensions
 	 *
-	 * @param $mode
-	 * @param $options
+	 * @param string $mode
+	 * @param array $options
 	 * @return $this
 	 */
-	public function fit($mode, $options = [])
+	public function fit(string $mode, array $options = []): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'fit' => $mode
@@ -48,11 +46,11 @@ class Imgix extends BaseTransformer
 	/**
 	 * Specify the crop type to use for the image
 	 *
-	 * @param $mode
-	 * @param $options
+	 * @param string $mode
+	 * @param array $options
 	 * @return $this
 	 */
-	public function crop($mode, $options = [])
+	public function crop(string $mode, array $options = []): self
 	{
 		$this->transformations = array_merge($this->transformations, [
 			'crop' => $mode
@@ -66,11 +64,11 @@ class Imgix extends BaseTransformer
 	/**
 	 * Set the image format you want returned
 	 *
-	 * @param $format
-	 * @param $quality
+	 * @param string $format
+	 * @param int|null $quality
 	 * @return $this
 	 */
-	public function format($format, $quality = null)
+	public function format(string $format, int $quality = null): self
 	{
 		if ($format === 'auto') {
 			$this->transformations = array_merge($this->transformations, [
@@ -81,7 +79,7 @@ class Imgix extends BaseTransformer
 				'fm' => $format,
 			]);
 
-			if ($quality) {
+			if ($quality !== null) {
 				$this->transformations = array_merge($this->transformations, [
 					'q' => $quality,
 				]);
@@ -95,10 +93,10 @@ class Imgix extends BaseTransformer
 	 * Manually set any options you want for the transformation as
 	 * and array of key value pairs
 	 *
-	 * @param $options
+	 * @param array $options
 	 * @return $this
 	 */
-	public function options($options)
+	public function options(array $options): self
 	{
 		$this->transformations = array_merge($this->transformations, $options);
 
@@ -111,11 +109,8 @@ class Imgix extends BaseTransformer
 	 *
 	 * @return string
 	 */
-	public function buildUrl() {
-		if ($this->transformations === 'svg') {
-			return $this->image->content()['filename'];
-		}
-
+	public function buildUrl(): string
+	{
 		$builder = new UrlBuilder(config('storyblok.imgix_domain'));
 		$builder->setUseHttps(true);
 		$builder->setSignKey(config('storyblok.imgix_token'));
@@ -126,9 +121,10 @@ class Imgix extends BaseTransformer
 	/**
 	 * Gets the image meta from the given Storyblok URL
 	 *
-	 * @return void|null
+	 * @return void
 	 */
-	protected function extractMetaDetails() {
+	protected function extractMetaDetails(): void
+	{
 		$path = $this->image->content()['filename'];
 
 		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
