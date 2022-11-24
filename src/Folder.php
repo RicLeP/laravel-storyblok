@@ -61,6 +61,10 @@ abstract class Folder
 	 */
 	protected $settings = [];
 
+	/**
+	 * @var string key used for Laravel's cache
+	 */
+	protected string $cacheKey = 'folder-';
 
 	public function paginate($page = null, $pageName = 'page')
 	{
@@ -160,9 +164,9 @@ abstract class Folder
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest();
 		} else {
-			$unique_tag = md5(serialize( $this->settings ));
+			$uniqueTag = md5(serialize($this->settings));
 
-			$response = Cache::remember('folder-' . $this->slug . '-' . $unique_tag, config('storyblok.cache_duration') * 60, function () {
+			$response = Cache::remember($this->cacheKey . $this->slug . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
 			});
 		}

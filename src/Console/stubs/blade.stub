@@ -1,5 +1,5 @@
 <?php
-/* @var $block \App\Storyblok\Block */
+/* @var $block \#CLASS# */
 
 // ddd($block);
 ?>

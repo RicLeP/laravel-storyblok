@@ -8,7 +8,6 @@ use Barryvdh\Reflection\DocBlock\Serializer;
 use Barryvdh\Reflection\DocBlock\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class BlockSyncCommand extends Command

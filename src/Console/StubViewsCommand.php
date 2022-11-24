@@ -4,9 +4,13 @@ namespace Riclep\Storyblok\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Riclep\Storyblok\Traits\HasChildClasses;
 
 class StubViewsCommand extends Command
 {
+	use HasChildClasses;
+
+
     /**
      * The name and signature of the console command.
      *
@@ -38,6 +42,7 @@ class StubViewsCommand extends Command
      */
     public function handle()
     {
+
 	    if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')))) {
 		    File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.')));
 	    }
@@ -56,39 +61,43 @@ class StubViewsCommand extends Command
 
 			if ($this->option('overwrite') || !file_exists($path . $filename)) {
 				$content = file_get_contents(__DIR__ . '/stubs/blade.stub');
-				$content = str_replace('#NAME#', $component['name'], $content);
+				$content = str_replace([
+					'#NAME#',
+					'#CLASS#'
+				], [
+					$component['name'],
+					$this->getChildClassName('Block', $component['name'])
+				], $content);
 
 				$body = '';
 
 				foreach ($component['schema'] as $name => $field) {
-					switch ($field['type']) {
-						case 'bloks':
-							$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-							$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
-							$body .= "\t" . '@endforeach' . "\n";
-							break;
-						case 'datetime':
-						case 'number':
-						case 'text':
-							$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
-							break;
-						case 'multilink':
-							$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
-						break;
-						case 'options':
-							$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-							$body .= "\t\t\n";
-							$body .= "\t" . '@endforeach' . "\n";
-							break;
-						case 'textarea':
-						case 'richtext':
-							$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
-						break;
-						default:
-							$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
-					}
+					if (!str_starts_with($name, 'tab-')) {
+						switch ($field['type']) {
+							case 'options':
+							case 'bloks':
+								$body .= "\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
+								$body .= "\t\t" . '{{ $childBlock->render() }}' . "\n";
+								$body .= "\t" . '@endforeach' . "\n";
+								break;
+							case 'datetime':
+							case 'number':
+							case 'text':
+								$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
+								break;
+							case 'multilink':
+								$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
+								break;
+							case 'textarea':
+							case 'richtext':
+								$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
+								break;
+							default:
+								$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
+						}
 
-					$body .= "\n";
+						$body .= "\n";
+					}
 				}
 
 				$content = str_replace('#BODY#', $body, $content);
