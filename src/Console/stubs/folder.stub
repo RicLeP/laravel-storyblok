@@ -1,0 +1,12 @@
+<?php
+
+namespace DummyNamespace;
+
+use Riclep\Storyblok\Folder as BaseFolder;
+
+/**
+ */
+class DummyClass extends BaseFolder
+{
+    protected string $slug = 'DummySlug';
+}
