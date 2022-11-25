@@ -209,18 +209,10 @@ abstract class Folder
 	 */
 	protected function get()
 	{
-		$settings = array_merge([
-			'is_startpage' => $this->startPage,
-			'sort_by' => $this->sortBy . ':' . $this->sortOrder,
-			'starts_with' => $this->slug,
-			'page' => $this->currentPage,
-			'per_page' => $this->perPage,
-		], $this->settings);
-
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest();
 		} else {
-			$uniqueTag = md5(serialize($settings));
+			$uniqueTag = md5(serialize($this->getSettings()));
 
 			$response = Cache::remember($this->cacheKey . $this->slug . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
@@ -242,13 +234,7 @@ abstract class Folder
 	{
 		$storyblokClient = resolve('Storyblok\Client');
 
-		$storyblokClient =  $storyblokClient->getStories(array_merge([
-			'is_startpage' => $this->startPage,
-			'sort_by' => $this->sortBy . ':' . $this->sortOrder,
-			'starts_with' => $this->slug,
-			'page' => $this->currentPage,
-			'per_page' => $this->perPage,
-		], $this->settings));
+		$storyblokClient =  $storyblokClient->getStories($this->getSettings());
 
 		return [
 			'headers' => $storyblokClient->getHeaders(),
@@ -256,7 +242,28 @@ abstract class Folder
 		];
 	}
 
-	public function toArray()
+	/**
+	 * Returns the settings for the folder
+	 *
+	 * @return array
+	 */
+	protected function getSettings(): array
+	{
+		return array_merge([
+			'is_startpage' => $this->startPage,
+			'sort_by' => $this->sortBy . ':' . $this->sortOrder,
+			'starts_with' => $this->slug,
+			'page' => $this->currentPage,
+			'per_page' => $this->perPage,
+		], $this->settings);
+	}
+
+	/**
+	 * Returns the Stories as an array
+	 *
+	 * @return array
+	 */
+	public function toArray(): array
 	{
 		return $this->stories->toArray();
 	}
