@@ -110,6 +110,8 @@ class StubViewsCommand extends Command
 					$body .= "\t" . '@endforeach' . "\n";
 					break;
 				case 'datetime':
+					$body .= "\t" . '<time datetime="{{ $block->' . $name . '->content()->toIso8601String() }}">{{ $block->' . $name . ' }}</time>' . "\n";
+					break;
 				case 'number':
 				case 'text':
 					$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
@@ -123,7 +125,9 @@ class StubViewsCommand extends Command
 					break;
 				case 'asset':
 					if (in_array('images', $field['filetypes'], true)) {
-						$body .= "\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+						$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
+						$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+						$body .= "\t" . '@endif' . "\n";
 					} else {
 						$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
 					}
@@ -131,8 +135,6 @@ class StubViewsCommand extends Command
 				default:
 					$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
 			}
-
-			$body .= "\n";
 		}
 
 		$body .= "\n";
