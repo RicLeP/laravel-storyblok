@@ -59,7 +59,7 @@ abstract class Folder
 	/**
 	 * @var string the slug to start te request from
 	 */
-	protected string $slug;
+	protected string $slug = '';
 
 
 	/**

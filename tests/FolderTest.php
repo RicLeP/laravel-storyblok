@@ -54,5 +54,53 @@ class FolderTest extends TestCase
 
 		$this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $folder->paginate());
 	}
+
+	/** @test */
+	public function can_use_fluent_access() {
+		$folder = new Folder();
+		$folder->slug('services')->desc()->perPage(5);
+		$settings = $this::callMethod($folder, 'getSettings');
+
+		$this->assertEquals([
+			'is_startpage' => false,
+			'sort_by' => 'published_at:desc',
+			'starts_with' => 'services',
+			'page' => 0,
+			'per_page' => 5,
+		], $settings);
+
+
+		$folder2 = new Folder();
+		$folder2->slug('services')->sort('content.name')->asc();
+
+		$settings2 = $this::callMethod($folder2, 'getSettings');
+
+		$this->assertEquals([
+			'is_startpage' => false,
+			'sort_by' => 'content.name:asc',
+			'starts_with' => 'services',
+			'page' => 0,
+			'per_page' => 10,
+		], $settings2);
+	}
+
+	/** @test */
+	public function can_set_settings() {
+		$folder = new Folder();
+		$folder->settings([
+			'is_startpage' => false,
+			'starts_with' => 'services',
+			'per_page' => 7,
+		]);
+		$settings = $this::callMethod($folder, 'getSettings');
+
+		$this->assertEquals([
+			'is_startpage' => false,
+			'sort_by' => 'published_at:desc',
+			'starts_with' => 'services',
+			'page' => 0,
+			'per_page' => 7,
+		], $settings);
+	}
 }
 
