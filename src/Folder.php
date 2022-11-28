@@ -117,6 +117,7 @@ abstract class Folder
 	 * Sets the slug of the folder to request
 	 *
 	 * @param string $slug
+	 * @return Folder
 	 */
 	public function slug(string $slug): Folder
 	{
@@ -131,6 +132,7 @@ abstract class Folder
 	 *
 	 * @param string $sortBy
 	 * @param string|null $sortOrder
+	 * @return Folder
 	 */
 	public function sort(string $sortBy, string $sortOrder = null): Folder
 	{
