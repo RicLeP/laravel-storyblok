@@ -84,4 +84,12 @@ trait HasSettings
 
 		return false;
 	}
+
+	/**
+	 * @return false|mixed
+	 */
+	public function hasSettings(): mixed
+	{
+		return $this->_settings;
+	}
 }

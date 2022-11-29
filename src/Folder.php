@@ -45,15 +45,21 @@ abstract class Folder
 
 
 	/**
+	 * @var string the field to sort by
+	 */
+	protected string $sortBy = 'published_at';
+
+
+	/**
 	 * @var string order to sort the returned stories
 	 */
-	protected string $sortBy = 'content.date:desc';
+	protected string $sortOrder = 'desc';
 
 
 	/**
 	 * @var string the slug to start te request from
 	 */
-	protected string $slug;
+	protected string $slug = '';
 
 
 	/**
@@ -61,6 +67,10 @@ abstract class Folder
 	 */
 	protected array $settings = [];
 
+	/**
+	 * @var string key used for Laravel's cache
+	 */
+	protected string $cacheKey = 'folder-';
 
 	/**
 	 * @param $page
@@ -106,31 +116,64 @@ abstract class Folder
 	/**
 	 * Sets the slug of the folder to request
 	 *
-	 * @param $slug
+	 * @param string $slug
+	 * @return Folder
 	 */
-	public function slug($slug): void
+	public function slug(string $slug): Folder
 	{
 		$this->slug = $slug;
+
+		return $this;
 	}
 
 
 	/**
-	 * The order in which we want the items in the response to be returned
+	 * The field and order in which we want to sort the stories by
 	 *
-	 * @param $sortBy
+	 * @param string $sortBy
+	 * @param string|null $sortOrder
+	 * @return Folder
 	 */
-	public function sort($sortBy): void
+	public function sort(string $sortBy, string $sortOrder = null): Folder
 	{
 		$this->sortBy = $sortBy;
+
+		if ($sortOrder) {
+			$this->sortOrder = $sortOrder;
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * Sort ascending
+	 */
+	public function asc(): Folder
+	{
+		$this->sortOrder = 'asc';
+
+		return $this;
+	}
+
+
+	/**
+	 * Sort descending
+	 */
+	public function desc(): Folder
+	{
+		$this->sortOrder = 'desc';
+
+		return $this;
 	}
 
 
 	/**
 	 * Define the settings for the API call
 	 *
-	 * @param $settings
+	 * @param array $settings
 	 */
-	public function settings($settings): void
+	public function settings(array $settings): void
 	{
 		$this->settings = $settings;
 	}
@@ -171,9 +214,9 @@ abstract class Folder
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest();
 		} else {
-			$unique_tag = md5(serialize( $this->settings ));
+			$uniqueTag = md5(serialize($this->getSettings()));
 
-			$response = Cache::remember('folder-' . $this->slug . '-' . $unique_tag, config('storyblok.cache_duration') * 60, function () {
+			$response = Cache::remember($this->cacheKey . $this->slug . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
 			});
 		}
@@ -193,17 +236,37 @@ abstract class Folder
 	{
 		$storyblokClient = resolve('Storyblok\Client');
 
-		$storyblokClient =  $storyblokClient->getStories(array_merge([
-			'is_startpage' => $this->startPage,
-			'sort_by' => $this->sortBy,
-			'starts_with' => $this->slug,
-			'page' => $this->currentPage,
-			'per_page' => $this->perPage,
-		], $this->settings));
+		$storyblokClient =  $storyblokClient->getStories($this->getSettings());
 
 		return [
 			'headers' => $storyblokClient->getHeaders(),
 			'stories' => $storyblokClient->getBody()['stories'],
 		];
+	}
+
+	/**
+	 * Returns the settings for the folder
+	 *
+	 * @return array
+	 */
+	protected function getSettings(): array
+	{
+		return array_merge([
+			'is_startpage' => $this->startPage,
+			'sort_by' => $this->sortBy . ':' . $this->sortOrder,
+			'starts_with' => $this->slug,
+			'page' => $this->currentPage,
+			'per_page' => $this->perPage,
+		], $this->settings);
+	}
+
+	/**
+	 * Returns the Stories as an array
+	 *
+	 * @return array
+	 */
+	public function toArray(): array
+	{
+		return $this->stories->toArray();
 	}
 }

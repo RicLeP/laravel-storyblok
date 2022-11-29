@@ -21,24 +21,14 @@ class FieldFactory
 	 */
 	public function build($block, $field, $key): mixed
 	{
-		// does the Block assign any $_casts? This is key (field) => value (class)
-		if (array_key_exists($key, $block->getCasts())) {
-			$casts = $block->getCasts();
-			return new $casts[$key]($field, $block);
-		}
+		$isClassField = $this->classField($block, $field, $key);
 
-		// find Fields specific to this Block matching: BlockNameFieldName
-		if ($class = $block->getChildClassName('Field', $block->component() . '_' . $key)) {
-			return new $class($field, $block);
-		}
-
-		// auto-match Field classes
-		if ($class = $block->getChildClassName('Field', $key)) {
-			return new $class($field, $block);
+		if ($isClassField) {
+			return $isClassField;
 		}
 
 		// single item relations
-		if (Str::isUuid($field) && ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations) || array_key_exists($key, $block->_resolveRelations))) {
+		if (Str::isUuid($field) && ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations, true) || array_key_exists($key, $block->_resolveRelations))) {
 
 			if (array_key_exists($key, $block->_resolveRelations)) {
 				return $block->getRelation(new RequestStory(), $field, $block->_resolveRelations[$key]);
@@ -59,6 +49,33 @@ class FieldFactory
 
 		// strings or anything else - do nothing
 		return $field;
+	}
+
+	/**
+	 * @param $block
+	 * @param $field
+	 * @param $key
+	 * @return mixed
+	 */
+	protected function classField($block, $field, $key): mixed
+	{
+		// does the Block assign any $_casts? This is key (field) => value (class)
+		if (array_key_exists($key, $block->getCasts())) {
+			$casts = $block->getCasts();
+			return new $casts[$key]($field, $block);
+		}
+
+		// find Fields specific to this Block matching: BlockNameFieldName
+		if ($class = $block->getChildClassName('Field', $block->component() . '_' . $key)) {
+			return new $class($field, $block);
+		}
+
+		// auto-match Field classes
+		if ($class = $block->getChildClassName('Field', $key)) {
+			return new $class($field, $block);
+		}
+
+		return false;
 	}
 
 	/**

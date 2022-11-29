@@ -91,7 +91,7 @@ class Storyblok extends BaseTransformer
 			'mime' => $this->setMime($format),
 		]);
 
-		if ($quality) {
+		if ($quality !== null) {
 			$this->transformations = array_merge($this->transformations, [
 				'quality' => $quality,
 			]);

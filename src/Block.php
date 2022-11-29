@@ -61,6 +61,11 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	private mixed $_parent;
 
 	/**
+	 * @var array default values for fields
+	 */
+	protected array $_defaults = [];
+
+	/**
 	 * Takes the Block’s content and a reference to the parent
 	 * @param $content
 	 * @param $parent
@@ -286,6 +291,10 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
 		if ($this->has($key)) {
 			return $this->_fields[$key];
+		}
+
+		if (array_key_exists($key, $this->_defaults)) {
+			return $this->_defaults[$key];
 		}
 
 		return null;
