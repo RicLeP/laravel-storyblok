@@ -18,7 +18,7 @@ trait HasMeta
 	 * @param string|null $default a default if the $key is missing
 	 * @return array|string|null
 	 */
-	public function meta($key = null, $default = null): array|string|null
+	public function meta(string $key = null, string $default = null): mixed
 	{
 		if ($key) {
 			if (array_key_exists($key, $this->_meta)) {
