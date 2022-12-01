@@ -21,13 +21,13 @@ class RequestStory
 	 * @var string The language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
-	protected string $language;
+	protected ?string $language;
 
 	/**
 	 * @var string The fallback language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
-	protected string $fallbackLanguage;
+	protected ?string $fallbackLanguage;
 
 	/**
 	 * Caches the response if needed
@@ -69,7 +69,7 @@ class RequestStory
 	/**
 	 * Set the language and fallback language to use for this Story, will default to ‘default’
 	 *
-	 * @param string $language
+	 * @param string|null $language
 	 * @param string|null $fallbackLanguage
 	 */
 	public function language($language, $fallbackLanguage = null) {

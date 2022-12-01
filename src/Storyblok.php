@@ -29,7 +29,9 @@ class Storyblok
 			$storyblokRequest->resolveRelations($resolveRelations);
 		}
 
-		$storyblokRequest->language($language, $fallbackLanguage);
+		if ($language) {
+			$storyblokRequest->language($language, $fallbackLanguage);
+		}
 
 		$response = $storyblokRequest->get($slug);
 
