@@ -11,10 +11,23 @@ use Storyblok\ApiException;
 class RequestStory
 {
 	/**
-	 * @var array An array of relations to resolve matching: component_name.field_name
+	 * @var string|null A comma delimited string of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	protected array $resolveRelations = [];
+	protected ?string $resolveRelations = null;
+
+
+	/**
+	 * @var string|null The language version of the Story to load
+	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
+	 */
+	protected ?string $language = null;
+
+	/**
+	 * @var string|null The fallback language version of the Story to load
+	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
+	 */
+	protected ?string $fallbackLanguage = null;
 
 	/**
 	 * Caches the response if needed
@@ -48,9 +61,20 @@ class RequestStory
 	 *
 	 * @param $resolveRelations
 	 */
-	public function prepareRelations($resolveRelations): void
+	public function resolveRelations($resolveRelations): void
 	{
 		$this->resolveRelations = implode(',', $resolveRelations);
+	}
+
+	/**
+	 * Set the language and fallback language to use for this Story, will default to ‘default’
+	 *
+	 * @param string|null $language
+	 * @param string|null $fallbackLanguage
+	 */
+	public function language($language, $fallbackLanguage = null) {
+		$this->language = $language;
+		$this->fallbackLanguage = $fallbackLanguage;
 	}
 
 	/**
@@ -70,6 +94,14 @@ class RequestStory
 
 		if (config('storyblok.resolve_links')) {
 			$storyblokClient = $storyblokClient->resolveLinks(config('storyblok.resolve_links'));
+		}
+
+		if ($this->language) {
+			$storyblokClient = $storyblokClient->language($this->language);
+		}
+
+		if ($this->fallbackLanguage) {
+			$storyblokClient = $storyblokClient->fallbackLanguage($this->fallbackLanguage);
 		}
 
 		if (Str::isUuid($slugOrUuid)) {

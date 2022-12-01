@@ -28,7 +28,7 @@
 	    "ivopetkov/html5-dom-document-php": "2.*",
 	    "league/commonmark": "^2.0",
 	    "spatie/schema-org": "^3.3",
-	    "storyblok/php-client": "^2.2",
+	    "storyblok/php-client": "^2.3",
 	    "storyblok/richtext-resolver": "2.0.0"
     },
     "require-dev": {
