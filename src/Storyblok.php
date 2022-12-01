@@ -17,12 +17,13 @@ class Storyblok
 	 *
 	 * @param string $slug
 	 * @param array|null $resolveRelations
-	 * @param null $language
-	 * @param null $fallbackLanguage
-	 * @return mixed
+	 * @param string|null $language
+	 * @param string|null $fallbackLanguage
+	 * @return Page
 	 * @throws ApiException
 	 */
-	public function read(string $slug, array $resolveRelations = null, $language = null, $fallbackLanguage = null) {
+	public function read(string $slug, array $resolveRelations = null, string $language = null, string $fallbackLanguage = null): Page
+	{
 		$storyblokRequest = new RequestStory();
 
 		if ($resolveRelations) {
