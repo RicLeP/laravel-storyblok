@@ -11,20 +11,20 @@ use Storyblok\ApiException;
 class RequestStory
 {
 	/**
-	 * @var array An array of relations to resolve matching: component_name.field_name
+	 * @var string|null A comma delimited string of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
 	protected ?string $resolveRelations = null;
 
 
 	/**
-	 * @var string The language version of the Story to load
+	 * @var string|null The language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
 	protected ?string $language = null;
 
 	/**
-	 * @var string The fallback language version of the Story to load
+	 * @var string|null The fallback language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
 	protected ?string $fallbackLanguage = null;
