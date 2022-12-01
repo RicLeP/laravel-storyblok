@@ -14,20 +14,20 @@ class RequestStory
 	 * @var array An array of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	protected array $resolveRelations = [];
+	protected ?string $resolveRelations = null;
 
 
 	/**
 	 * @var string The language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
-	protected ?string $language;
+	protected ?string $language = null;
 
 	/**
 	 * @var string The fallback language version of the Story to load
 	 * @see https://www.storyblok.com/docs/guide/in-depth/internationalization
 	 */
-	protected ?string $fallbackLanguage;
+	protected ?string $fallbackLanguage = null;
 
 	/**
 	 * Caches the response if needed
@@ -61,7 +61,7 @@ class RequestStory
 	 *
 	 * @param $resolveRelations
 	 */
-	public function prepareRelations($resolveRelations): void
+	public function resolveRelations($resolveRelations): void
 	{
 		$this->resolveRelations = implode(',', $resolveRelations);
 	}
