@@ -5,6 +5,7 @@ namespace Riclep\Storyblok;
 
 
 use Riclep\Storyblok\Traits\HasChildClasses;
+use Storyblok\ApiException;
 
 class Storyblok
 {
@@ -14,17 +15,21 @@ class Storyblok
 	/**
 	 * Reads the requested story from the API
 	 *
-	 * @param $slug
+	 * @param string $slug
 	 * @param array|null $resolveRelations
+	 * @param null $language
+	 * @param null $fallbackLanguage
 	 * @return mixed
-	 * @throws \Storyblok\ApiException
+	 * @throws ApiException
 	 */
-	public function read($slug, array $resolveRelations = null) {
+	public function read(string $slug, array $resolveRelations = null, $language = null, $fallbackLanguage = null) {
 		$storyblokRequest = new RequestStory();
 
 		if ($resolveRelations) {
-			$storyblokRequest->prepareRelations($resolveRelations);
+			$storyblokRequest->resolveRelations($resolveRelations);
 		}
+
+		$storyblokRequest->language($language, $fallbackLanguage);
 
 		$response = $storyblokRequest->get($slug);
 
