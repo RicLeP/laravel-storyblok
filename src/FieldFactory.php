@@ -175,6 +175,8 @@ class FieldFactory
 				return new MultiAsset($field, $block);
 			}
 		}
+
+		return $field;
 	}
 
 	/**
