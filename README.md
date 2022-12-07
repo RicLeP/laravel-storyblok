@@ -30,17 +30,27 @@ This package allows you to use fantastic [Storyblok headless CMS](https://www.st
 
 [Contribute to the docs](https://github.com/RicLeP/laravel-storyblok-docs/)
 
-## Laravel Storyblok CLI
+## Other Packages
 
-After more useful Artisan commands to help manage your content? Check out my [Laravel Storyblok CLI package](https://github.com/RicLeP/laravel-storyblok-cli)
+### Laravel Storyblok Embed
 
-## Future plans
+Embed all types of media in your Storyblok site using only their URL. [Package](https://github.com/RicLeP/laravel-storyblok-embed) [Docs](https://ls.sirric.co.uk/docs/2.19/embedding-media)
 
-- More transformations of content
-- Better support for more components types
-- Better image transformation
-- Cache expensive transformations
-- And more…
+### Laravel Storyblok Typography
+
+Improve your content’s typography. [Package](https://github.com/RicLeP/laravel-storyblok-typography) [Docs](https://ls.sirric.co.uk/docs/2.19/typography)
+
+### Laravel Storyblok Layout & CSS
+
+Helpers for layout, block positioning and CSS class name generation. [Package](https://github.com/RicLeP/laravel-storyblok-css) [Docs](https://ls.sirric.co.uk/docs/2.19/css-classes)
+
+### Laravel Storyblok Form builder
+
+Build forms with Storyblok complete with Laravel’s validation. [Package](https://github.com/RicLeP/laravel-storyblok-forms) [Docs](https://ls.sirric.co.uk/docs/2.19/laravel-storyblok-forms)
+
+### Laravel Storyblok CLI
+
+Useful Artisan commands to help manage your content? Check out my [Laravel Storyblok CLI package](https://github.com/RicLeP/laravel-storyblok-cli)
 
 ### Testing
 
