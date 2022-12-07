@@ -16,7 +16,7 @@ trait HasMeta
 	 *
 	 * @param string|null $key the key to return
 	 * @param string|null $default a default if the $key is missing
-	 * @return array|string|null
+	 * @return mixed
 	 */
 	public function meta(string $key = null, string $default = null): mixed
 	{
