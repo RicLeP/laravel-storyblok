@@ -1,0 +1,28 @@
+{
+	"story": {
+		"name": "test",
+		"created_at": "2022-07-15T10:32:54.701Z",
+		"published_at": "2022-06-16T12:51:40.423Z",
+		"id": 163795103,
+		"uuid": "847ef2f7-c110-40bf-b2e2-e6ea8f684ca7",
+		"content": {
+			"_uid": "1515771c-3ec4-4922-8921-9607eda522e6",
+			"body": [
+				{
+					"_uid": "29914472-2a98-428d-868c-56c30207d608",
+					"component": "test-component",
+					"test_field": [
+						"20",
+						"10",
+						"30"
+					]
+				}
+			],
+			"component": "relation"
+		},
+		"tag_list": [],
+		"slug": "test",
+		"full_slug": "test/test",
+		"first_published_at": "2022-06-16T12:51:40.423Z"
+	}
+}
