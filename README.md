@@ -1,9 +1,14 @@
 # Use Storyblok’s amazing headless CMS in way that feels familiar to Laravel developers
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
+[![Total Downloads](https://img.shields.io/packagist/dt/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
+
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/riclep/laravel-storyblok/Tests)
+![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/riclep/laravel-storyblok/php)
+
 [![Build](https://img.shields.io/scrutinizer/build/g/riclep/laravel-storyblok?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
 [![Quality Score](https://img.shields.io/scrutinizer/g/riclep/laravel-storyblok.svg?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
-[![Total Downloads](https://img.shields.io/packagist/dt/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M2C42W6)
 [![Twitter](https://img.shields.io/twitter/follow/riclep.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=riclep)
 
@@ -44,7 +49,7 @@ Improve your content’s typography. [Package](https://github.com/RicLeP/laravel
 
 Helpers for layout, block positioning and CSS class name generation. [Package](https://github.com/RicLeP/laravel-storyblok-css) [Docs](https://ls.sirric.co.uk/docs/2.19/css-classes)
 
-### Laravel Storyblok Form builder
+### Laravel Storyblok Form builder (BETA)
 
 Build forms with Storyblok complete with Laravel’s validation. [Package](https://github.com/RicLeP/laravel-storyblok-forms) [Docs](https://ls.sirric.co.uk/docs/2.19/laravel-storyblok-forms)
 
@@ -70,9 +75,10 @@ If you discover any security related issues, please email ric@wearebwi.com inste
 
 ## Credits
 
-- Richard Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep)
-- [Storyblok](https://www.storyblok.com/)
-- [Laravel](https://laravel.com/)
+- Richard Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep) ![img](https://ls.sirric.co.uk/img/storyblok-ambassador-asset-vert-color.svg)
+- [The contributors](https://github.com/RicLeP/laravel-storyblok/graphs/contributors) 😍
+- [Storyblok](https://www.storyblok.com/) 😻
+- [Laravel](https://laravel.com/) 🥰
 
 ## License
 

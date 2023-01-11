@@ -443,4 +443,17 @@ class BlockTest extends TestCase
 
 		$this->assertEquals(['quarter', 'half', 'full'], $block->settings('lsf_style')['commas']);
 	}
+
+	/** @test */
+	public function will_return_mutli_self_fields()
+	{
+		$page = $this->makePage('multi-option-self.json');
+		$block = $page->block();
+
+		$this->assertEquals([
+			0 => '20',
+			1 => '10',
+			2 => '30',
+		], $block->body[0]->test_field);
+	}
 }

@@ -18,6 +18,7 @@ use Riclep\Storyblok\Fields\UrlLink;
 use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
 use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
+use Riclep\Storyblok\Tests\Fixtures\Fields\CustomDate;
 use Riclep\Storyblok\Tests\Fixtures\Fields\HeroImage;
 use Riclep\Storyblok\Tests\Fixtures\Fields\Imgix;
 use Riclep\Storyblok\Tests\Fixtures\Fields\WithImage;
@@ -97,10 +98,28 @@ class FieldTest extends TestCase
 	}
 
 	/** @test */
-	public function can_convert_date_to_string()
+	public function can_set_default_date_format()
 	{
 		$field = new DateTime($this->getFieldContents('datetime'), null);
-		$this->assertEquals('2020-07-01 20:57:00', (string) $field);
+
+		$this->assertEquals('20:57:00 1 July 2020', (string) $field);
+	}
+
+	/** @test */
+	public function can_set_date_format_with_property()
+	{
+		$field = new CustomDate($this->getFieldContents('datetime'), null);
+
+		$this->assertEquals('01/07/2020', (string) $field);
+	}
+
+	/** @test */
+	public function empty_dates_return_null()
+	{
+		$field = new DateTime('', null);
+
+		$this->assertNull($field->content());
+		$this->assertEquals('', (string) $field);
 	}
 
 	/** @test */

@@ -11,7 +11,15 @@ class DateTime extends Field
 {
 	public function __toString(): string
 	{
-		return $this->content->toDatetimeString();
+		if (!$this->content) {
+			return '';
+		}
+
+		if (property_exists($this, 'format')) {
+			return $this->content->format($this->format);
+		}
+
+		return config('storyblok.date_format') ? $this->content->format(config('storyblok.date_format')) : $this->content->toDatetimeString();
 	}
 
 	/**
