@@ -49,7 +49,7 @@ Improve your content’s typography. [Package](https://github.com/RicLeP/laravel
 
 Helpers for layout, block positioning and CSS class name generation. [Package](https://github.com/RicLeP/laravel-storyblok-css) [Docs](https://ls.sirric.co.uk/docs/2.19/css-classes)
 
-### Laravel Storyblok Form builder
+### Laravel Storyblok Form builder (BETA)
 
 Build forms with Storyblok complete with Laravel’s validation. [Package](https://github.com/RicLeP/laravel-storyblok-forms) [Docs](https://ls.sirric.co.uk/docs/2.19/laravel-storyblok-forms)
 
@@ -75,9 +75,10 @@ If you discover any security related issues, please email ric@wearebwi.com inste
 
 ## Credits
 
-- Richard Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep)
-- [Storyblok](https://www.storyblok.com/)
-- [Laravel](https://laravel.com/)
+- Richard Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep) ![img](https://ls.sirric.co.uk/img/storyblok-ambassador-asset-vert-color.svg)
+- [The contributors](https://github.com/RicLeP/laravel-storyblok/graphs/contributors) 😍
+- [Storyblok](https://www.storyblok.com/) 😻
+- [Laravel](https://laravel.com/) 🥰
 
 ## License
 

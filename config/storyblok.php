@@ -218,4 +218,14 @@ return [
     |
     */
     'settings_field' => 'settings',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default date format
+    |--------------------------------------------------------------------------
+    |
+    | Use any valid PHP date format, applied when casting DateTimes to string
+    |
+    */
+    'date_format' => 'H:i:s j F Y',
 ];

@@ -34,6 +34,7 @@ class StoryblokServiceProvider extends ServiceProvider
 			BlockMakeCommand::class,
 			BlockSyncCommand::class,
 			FolderMakeCommand::class,
+			PageMakeCommand::class,
 			StubViewsCommand::class
 		]);
     }

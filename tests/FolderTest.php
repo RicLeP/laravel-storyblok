@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Riclep\Storyblok\Page;
 use Riclep\Storyblok\Tests\Fixtures\Folders\Folder;
 use Riclep\Storyblok\Tests\Fixtures\Folders\EmptyFolder;
+use Riclep\Storyblok\Tests\Fixtures\Folders\SortedFolder;
 
 class FolderTest extends TestCase
 {
@@ -101,6 +102,38 @@ class FolderTest extends TestCase
 			'page' => 0,
 			'per_page' => 7,
 		], $settings);
+	}
+
+	/** @test */
+	public function can_add_settings_in_folder_constructor() {
+		$folder = new SortedFolder();
+		$settings = $this::callMethod($folder, 'getSettings');
+
+		$this->assertEquals([
+			'is_startpage' => false,
+			'sort_by' => 'content.date:desc',
+			'starts_with' => '',
+			'page' => 0,
+			'per_page' => 17,
+		], $settings);
+
+
+		$folder2 = new SortedFolder();
+
+		// calling settings overrides the settings in the constructor if the constructor uses
+		// a settings array
+		$folder2->settings([
+			'per_page' => 8,
+		]);
+		$settings2 = $this::callMethod($folder2, 'getSettings');
+
+		$this->assertEquals([
+			'is_startpage' => false,
+			'sort_by' => 'published_at:desc',
+			'starts_with' => '',
+			'page' => 0,
+			'per_page' => 8,
+		], $settings2);
 	}
 }
 

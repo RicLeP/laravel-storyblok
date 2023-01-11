@@ -1,0 +1,12 @@
+<?php
+
+namespace DummyNamespace;
+
+use Riclep\Storyblok\Page as BasePage;
+
+/**
+ */
+class DummyClass extends BasePage
+{
+    //
+}
