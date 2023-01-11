@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Riclep\Storyblok\Console\BlockMakeCommand;
 use Riclep\Storyblok\Console\BlockSyncCommand;
 use Riclep\Storyblok\Console\FolderMakeCommand;
+use Riclep\Storyblok\Console\PageMakeCommand;
 use Riclep\Storyblok\Console\StubViewsCommand;
 use Storyblok\Client;
 
