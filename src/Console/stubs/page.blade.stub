@@ -1,0 +1,25 @@
+<?php
+/* @var $story \App\Storyblok\Page */
+
+// This is dummy page to get you started, extend it in your own views, add sections
+// delete it or do whatever else you need to make it work for your project!
+
+// dd($story);
+?>
+
+
+@section('title')
+	{{ $story->meta('name') }}
+@stop
+
+
+<main>
+{{--
+	// assuming you have a field called ‘blocks’ in your story
+	// this will loop over and render them all for you
+
+	@foreach ($story->blocks as $childBlock)
+		{{ $childBlock->render() }}
+	@endforeach
+--}}
+</main>
