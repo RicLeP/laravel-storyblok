@@ -12,29 +12,29 @@ class StubViewsCommand extends Command
 {
 	use HasChildClasses;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ls:stub-views {--O|overwrite}';
+	/**
+	 * The name and signature of the console command.
+	 *
+	 * @var string
+	 */
+	protected $signature = 'ls:stub-views {--O|overwrite}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+	/**
+	 * The console command description.
+	 *
+	 * @var string
+	 */
+	protected $description = 'Command description';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+	/**
+	 * Create a new command instance.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
 
 	/**
 	 * Execute the console command.
@@ -42,11 +42,11 @@ class StubViewsCommand extends Command
 	 * @return void
 	 * @throws ApiException
 	 */
-    public function handle(): void
-    {
-	    $this->makeDirectories();
+	public function handle(): void
+	{
+		$this->makeDirectories();
 
-	    $client = new ManagementClient(config('storyblok.oauth_token'));
+		$client = new ManagementClient(config('storyblok.oauth_token'));
 
 		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
 
@@ -74,10 +74,18 @@ class StubViewsCommand extends Command
 
 				file_put_contents($path . $filename, $content);
 
-				$this->info('Created: '. $component['name'] . '.blade.php');
+				$this->info('Created Block: '. $component['name'] . '.blade.php');
 			}
 		});
-    }
+
+		if ($this->option('overwrite') || !file_exists(resource_path('views/storyblok/pages') . '/page.blade.php')) {
+			File::copy(__DIR__ . '/stubs/page.blade.stub', resource_path('views/storyblok/pages') . '/page.blade.php');
+
+			$this->info('Created Page: page.blade.php');
+
+			$this->info('Files created in your views' . DIRECTORY_SEPARATOR . 'storyblok folder.');
+		}
+	}
 
 	/**
 	 * @return void
@@ -90,6 +98,10 @@ class StubViewsCommand extends Command
 
 		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'))) {
 			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/blocks'));
+		}
+
+		if (!file_exists(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/pages'))) {
+			File::makeDirectory(resource_path('views/' . rtrim(config('storyblok.view_path'), '.') . '/pages'));
 		}
 	}
 
@@ -124,13 +136,23 @@ class StubViewsCommand extends Command
 					$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
 					break;
 				case 'asset':
-					if (in_array('images', $field['filetypes'], true)) {
+					if (array_key_exists('filetypes', $field) && in_array('images', $field['filetypes'], true)) {
 						$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
 						$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
 						$body .= "\t" . '@endif' . "\n";
 					} else {
-						$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
+						$body .= "\t" . '<a href="{{ $block->' . $name . ' }}">Download</a>' . "\n";
 					}
+					break;
+				case 'image':
+					$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
+					$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+					$body .= "\t" . '@endif' . "\n";
+					break;
+				case 'file':
+					$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
+					$body .= "\t\t" . '<a href="{{ $block->' . $name . ' }}">{{ $block->' . $name . '->filename }}</a>' . "\n";
+					$body .= "\t" . '@endif' . "\n";
 					break;
 				default:
 					$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
