@@ -38,7 +38,7 @@ class MultiAsset extends Field implements \ArrayAccess, \Iterator, \Countable
 	{
 		if ($this->hasFiles()) {
 			$this->content = collect($this->content())->transform(function ($file) {
-				if (Str::endsWith($file['filename'], ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
+				if (Str::endsWith(Str::lower($file['filename']), ['.jpg', '.jpeg', '.png', '.gif', '.webp'])) {
 					if ($class = $this->getChildClassName('Field', $this->block()->component() . 'Image')) {
 						return new $class($file, $this->block());
 					}
