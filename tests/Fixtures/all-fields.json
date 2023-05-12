@@ -285,7 +285,9 @@
 					}
 				],
 				"fieldtype": "table"
-			}
+			},
+			"filled_default": "",
+			"default": "remote value"
 		}
 	}
 }

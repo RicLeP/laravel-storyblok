@@ -53,12 +53,12 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	/**
 	 * @var Collection all the fields for the Block
 	 */
-	private Collection $_fields;
+	protected Collection $_fields;
 
 	/**
 	 * @var Page|Block reference to the parent Block or Page
 	 */
-	private mixed $_parent;
+	protected mixed $_parent;
 
 	/**
 	 * @var array default values for fields
@@ -94,13 +94,21 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * Returns the containing every field of content
+	 * Returns the every field of content
 	 *
 	 * @return Collection
 	 */
 	public function content(): Collection
 	{
-		return $this->_fields;
+		$fields = $this->_fields;
+
+		foreach ($fields as $key => $field) {
+			if ($field === null) {
+				$fields[$key] = $this->_defaults[$key] ?? null;
+			}
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -289,12 +297,12 @@ class Block implements \IteratorAggregate, \JsonSerializable
 			return $this->$accessor();
 		}
 
-		if ($this->has($key)) {
-			return $this->_fields[$key];
+		if (array_key_exists($key, $this->_defaults) && $this->has($key) && !$this->_fields[$key]) {
+			return $this->_defaults[$key];
 		}
 
-		if (array_key_exists($key, $this->_defaults)) {
-			return $this->_defaults[$key];
+		if ($this->has($key)) {
+			return $this->_fields[$key];
 		}
 
 		return null;
