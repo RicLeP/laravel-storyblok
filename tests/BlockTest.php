@@ -120,6 +120,16 @@ class BlockTest extends TestCase
 	}
 
 	/** @test */
+	public function can_read_default_value()
+	{
+		$page = $this->makePage();
+		$block = $page->block();
+
+		$this->assertEquals('default from class', $block->filled_default);
+		$this->assertEquals('remote value', $block->default);
+	}
+
+	/** @test */
 	public function can_identify_custom_blocks_using_block_field_name()
 	{
 		$page = $this->makePage();
