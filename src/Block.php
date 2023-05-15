@@ -191,17 +191,24 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	}
 
 	/**
-	 * Returns an array of possible views for the current Block based on
-	 * it’s $componentPath match the component prefixed by each of it’s
-	 * ancestors in turn, starting with the closest, for example:
+	 * Returns an array of views for the Block based on page’s content type and
+	 * block’s $componentPath. First are page specific views starting with the
+	 * page’s content type followed by those using the block’s component path
 	 *
-	 * $componentPath = ['page', 'parent', 'child', 'this_block'];
+	 * Example:
 	 *
-	 * Becomes a list of possible views like so:
-	 * ['child.this_block', 'parent.this_block', 'page.this_block'];
+	 * $componentPath = ['page', 'product', 'heroes', 'hero'];
 	 *
-	 * Override this method with your custom implementation for
-	 * ultimate control
+	 * [
+	 *	"storyblok.pages.product.blocks.heroes.hero"
+	 *	"storyblok.pages.product.blocks.hero"
+	 *	"storyblok.blocks.heroes.hero"
+	 *	"storyblok.blocks.product.hero"
+	 *	"storyblok.blocks.hero"
+	 * ]
+	 *
+	 * It is recommended to start with the most generic view and create more
+	 * specific ones as and when required
 	 *
 	 * @return array
 	 */
@@ -210,15 +217,30 @@ class Block implements \IteratorAggregate, \JsonSerializable
 		$componentPath = $this->_componentPath;
 		array_pop($componentPath);
 
-		$views = array_map(function($path) {
-			return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
-		}, $componentPath);
+		$views = array_filter(array_map(function($path) {
+			if ($path !== 'page') {
+				return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
+			}
+
+			return null;
+		}, $componentPath));
 
 		$views = array_reverse($views);
 
 		$views[] = config('storyblok.view_path') . 'blocks.' . $this->component();
 
-		return $views;
+		$themeViews = $views;
+
+		$themeViews = array_filter(array_map(function($view) {
+			$theme = $this->page()->block()->component();
+			if (!strpos($view, $theme)) {
+				return str_replace('blocks.', 'pages.' . $theme . '.blocks.', $view);
+			}
+
+			return null;
+		}, $themeViews));
+
+		return array_merge($themeViews, $views);
 	}
 
 	/**
