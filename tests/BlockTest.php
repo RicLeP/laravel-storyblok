@@ -350,7 +350,15 @@ class BlockTest extends TestCase
 	{
 		$page = $this->makePage('ep16.json');
 
-		$this->assertEquals(['blocks.layout_2-sections.text--titled', 'blocks.feature.text--titled', 'blocks.episode.text--titled', 'blocks.page.text--titled', 'blocks.text--titled'], $page->block()->features[0]->body[3]->section_1[0]->views());
+		$this->assertEquals([
+			'pages.episode.blocks.layout_2-sections.text--titled',
+			'pages.episode.blocks.feature.text--titled',
+			'pages.episode.blocks.text--titled',
+			'blocks.layout_2-sections.text--titled',
+			'blocks.feature.text--titled',
+			'blocks.episode.text--titled',
+			'blocks.text--titled'
+		], $page->block()->features[0]->body[3]->section_1[0]->views());
 	}
 
 	/** @test */

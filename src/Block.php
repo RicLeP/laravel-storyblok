@@ -232,7 +232,8 @@ class Block implements \IteratorAggregate, \JsonSerializable
 		$themeViews = $views;
 
 		$themeViews = array_filter(array_map(function($view) {
-			$theme = $this->page()->block()->component();
+			$theme = $this->page()?->block()->component();
+
 			if (!strpos($view, $theme)) {
 				return str_replace('blocks.', 'pages.' . $theme . '.blocks.', $view);
 			}
