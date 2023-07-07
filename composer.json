@@ -29,7 +29,7 @@
 	    "league/commonmark": "^2.0",
 	    "spatie/schema-org": "^3.3",
 	    "storyblok/php-client": "^2.3",
-	    "storyblok/richtext-resolver": "2.1.0"
+	    "storyblok/richtext-resolver": "2.2.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",
