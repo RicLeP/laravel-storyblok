@@ -15,7 +15,6 @@ use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
-use Riclep\Storyblok\Traits\HasSettings;
 use Storyblok\ApiException;
 
 
@@ -23,7 +22,6 @@ class Block implements \IteratorAggregate, \JsonSerializable
 {
 	use HasChildClasses;
 	use HasMeta;
-	use HasSettings;
 
 	/**
 	 * @var bool resolve UUID relations automatically

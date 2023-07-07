@@ -45,16 +45,6 @@ return [
     */
     'use_ssl' => true,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Specify which Storyblok API region to use
-    |--------------------------------------------------------------------------
-    |
-    | Defaults to null which should be the original EU region
-    |
-    */
-	'api_region' => null,
-
 	/*
     |--------------------------------------------------------------------------
     | Storyblok draft mode
