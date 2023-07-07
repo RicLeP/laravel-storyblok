@@ -32,4 +32,8 @@
         <log type="coverage-text" target="build/coverage.txt"/>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
     </logging>
+    <php>
+    <env name="STORYBLOK_PREVIEW_API_KEY" value="testing"/>
+    <env name="STORYBLOK_PUBLIC_API_KEY" value="testing"/>
+    </php>
 </phpunit>
