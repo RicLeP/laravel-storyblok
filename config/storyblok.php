@@ -12,7 +12,7 @@ return [
     | in the editor or when debug mode is enabled.
     |
     */
-    'api_preview_key' => env('STORYBLOK_PREVIEW_API_KEY'),
+    'api_preview_key' => env('STORYBLOK_PREVIEW_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return [
     | This key is used when your website is live and debug is off.
     |
     */
-    'api_public_key' => env('STORYBLOK_PUBLIC_API_KEY'),
+    'api_public_key' => env('STORYBLOK_PUBLIC_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
