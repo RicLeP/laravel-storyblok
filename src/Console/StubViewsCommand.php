@@ -74,7 +74,7 @@ class StubViewsCommand extends Command
 
 				file_put_contents($path . $filename, $content);
 
-				$this->info('Created Block: '. $component['name'] . '.blade.php');
+				$this->info('Created View: '. $component['name'] . '.blade.php');
 			}
 		});
 
