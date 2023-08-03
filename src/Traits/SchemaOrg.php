@@ -36,11 +36,14 @@ trait SchemaOrg
 	{
 		$schemaJson = '';
 
-		foreach ($this->meta()['schema_org'] as $schema) {
-			$schemaJson .= $schema->toScript();
-		}
+        if (array_key_exists('schema_org', $this->meta())) {
+            foreach ($this->meta()['schema_org'] as $schema) {
+                $schemaJson .= $schema->toScript();
+            }
+        }
 
-		return $schemaJson;
+        return $schemaJson;
+
 	}
 
 	/**
