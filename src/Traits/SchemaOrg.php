@@ -20,8 +20,8 @@ trait SchemaOrg
 				$page = $this->page();
 			}
 
-			if ($page) {
-				$this->add($page);
+			if ($page && count($this->_componentPath) <= config('storyblok.schema_org_depth')) {
+				$this->addschemaOrg($page);
 			}
 		}
 
@@ -36,11 +36,14 @@ trait SchemaOrg
 	{
 		$schemaJson = '';
 
-		foreach ($this->meta()['schema_org'] as $schema) {
-			$schemaJson .= $schema->toScript();
-		}
+        if (array_key_exists('schema_org', $this->meta())) {
+            foreach ($this->meta()['schema_org'] as $schema) {
+                $schemaJson .= $schema->toScript();
+            }
+        }
 
-		return $schemaJson;
+        return $schemaJson;
+
 	}
 
 	/**
@@ -48,11 +51,13 @@ trait SchemaOrg
 	 *
 	 * @param $page
 	 */
-	private function add($page): void
+	protected function addschemaOrg($page): void
 	{
 		$currentSchemaOrg = $page->meta('schema_org');
 
-		$currentSchemaOrg[] = $this->schemaOrg();
+        if ($schema = $this->schemaOrg()) {
+            $currentSchemaOrg[] = $schema;
+        }
 
 		$page->replaceMeta('schema_org', $currentSchemaOrg ?? []);
 	}
