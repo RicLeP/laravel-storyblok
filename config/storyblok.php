@@ -218,4 +218,15 @@ return [
     |
     */
     'date_format' => 'H:i:s j F Y',
+
+    /*
+    |--------------------------------------------------------------------------
+    | How deep to go when creating page schema.org data
+    |--------------------------------------------------------------------------
+    |
+    | As you may be nesting many blocks and linking to other stories, this
+    | you may want to limit the depth of the schema.org data returned
+    |
+    */
+    'schema_org_depth' => 5,
 ];
