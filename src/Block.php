@@ -291,11 +291,16 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * Storyblok’s visual editor. Don’t forget to set comments to true in
 	 * your Vue.js app configuration.
 	 *
+     * @param $attribute bool return a data-* attribute or comment for editor link
 	 * @return string
 	 */
-	public function editorLink(): string
+	public function editorLink($attribute = false): string
 	{
 		if (array_key_exists('_editable', $this->_meta) && config('storyblok.edit_mode')) {
+            if ($attribute) {
+                return 'data-blok-c=\'' . str_replace(['<!--#storyblok#', '-->'], '', $this->_meta['_editable']) . '\'';
+            }
+
 			return $this->_meta['_editable'];
 		}
 
