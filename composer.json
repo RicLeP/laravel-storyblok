@@ -34,7 +34,7 @@
     "require-dev": {
         "mockery/mockery": "^1.2",
         "orchestra/testbench": "7.0.*|^8.0",
-        "phpunit/phpunit": "^9.0",
+        "phpunit/phpunit": "^10.0",
 	    "spatie/laravel-ignition": "^1.6|^2.0"
     },
     "autoload": {
