@@ -1,4 +1,4 @@
-# Use Storyblok’s amazing headless CMS in way that feels familiar to Laravel developers
+# Use Storyblok’s amazing headless CMS with Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
 [![Total Downloads](https://img.shields.io/packagist/dt/riclep/laravel-storyblok.svg?style=flat-square)](https://packagist.org/packages/riclep/laravel-storyblok)
@@ -18,14 +18,14 @@ This package allows you to use fantastic [Storyblok headless CMS](https://www.st
 ### Key Features
 
 - Pages from Storyblok mapped to PHP Pages classes giving access to the nested content (Blocks) and meta data for SEO, OpenGraph and more.
+- Quickly and easily resolve relations and inverse relations between content.
 - Each Storyblok component is automatically transformed into a PHP class using a simple naming convention - just match your class and component names.
-- NEW! All fields in your components are converted to a Field PHP class allowing you to manipulate their data. The package automatically detects common types like rich text fields, assets and markdown.
-- Asset fields are converted to Assets classes allowing you to manipulate them as required.
+- Fields in your components are converted to a Field PHP class allowing you to manipulate their data. The package automatically detects common types like richtext fields, assets and markdown. Easily cast fields to classes.
+- Asset fields are converted to Assets and Image classes allowing you to manipulate them as required. Images can be easily transformed using Storyblok’s Asset CDN or external services like Imgix.
 - Blocks and fields know where they sit in relation to their ancestors and [CSS classes](https://github.com/RicLeP/laravel-storyblok-css) can be created to help your styling.
 - The structure of the JSON data is preserved but super powered making it simple to loop over in your views.
-- It’s simple to link to the Storyblok visual composer by including one view and calling a method for each block in your Blade.
-- Request ‘Folders’ of content such as a list of articles or a team of people complete with pagination.
-- Feels like Laravel - use date casting and accessors exactly as you would with models.
+- It’s simple to link to the Storyblok visual composer by including one view and printing a string in a Block’s Blade template.
+- Request ‘Folders’ of content such as a list of articles or a team of people complete with support for pagination.
 - Richer Typography using a [supporting package](https://github.com/RicLeP/laravel-storyblok-typography) utilising PHP Typography.
 
 
@@ -67,18 +67,21 @@ The tests are mostly up-to-date and cover the majority of the code. A few areas 
 
 ## Contributing
 
-Please feel free to help expand and improve this project. The package uses Git Flow but you can submit a pull request to be merged to the develop branch.
+Please feel free to help expand and improve this project.
 
 ### Security
 
-If you discover any security related issues, please email ric@wearebwi.com instead of using the issue tracker.
+If you discover any security related issues, please email ric@sirric.co.uk instead of using the issue tracker.
 
 ## Credits
 
-- Richard Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep) ![img](https://ls.sirric.co.uk/img/storyblok-ambassador-asset-vert-color.svg)
+![img](https://ls.sirric.co.uk/img/storyblok-ambassador-asset-vert-color.svg)
+
+- Ric Le Poidevin [GitHub](https://github.com/riclep) / [Twitter](https://twitter.com/riclep) 
 - [The contributors](https://github.com/RicLeP/laravel-storyblok/graphs/contributors) 😍
 - [Storyblok](https://www.storyblok.com/) 😻
 - [Laravel](https://laravel.com/) 🥰
+- [Built and developed at U&US](https://uandus.co.uk) 💕
 
 ## License
 
