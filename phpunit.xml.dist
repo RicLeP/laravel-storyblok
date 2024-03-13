@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" backupStaticAttributes="false" colors="true" verbose="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage>
-    <include>
-      <directory suffix=".php">src/Fields</directory>
-      <directory suffix=".php">src/Support</directory>
-      <directory suffix=".php">src/Traits</directory>
-      <file>src/Block.php</file>
-      <file>src/Field.php</file>
-      <file>src/FieldFactory.php</file>
-      <file>src/Folder.php</file>
-      <file>src/Page.php</file>
-    </include>
-  </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" colors="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
   <testsuites>
     <testsuite name="Test Suite">
       <directory>tests</directory>
@@ -24,4 +12,16 @@
     <env name="STORYBLOK_PREVIEW_API_KEY" value="testing"/>
     <env name="STORYBLOK_PUBLIC_API_KEY" value="testing"/>
   </php>
+  <source>
+    <include>
+      <directory suffix=".php">src/Fields</directory>
+      <directory suffix=".php">src/Support</directory>
+      <directory suffix=".php">src/Traits</directory>
+      <file>src/Block.php</file>
+      <file>src/Field.php</file>
+      <file>src/FieldFactory.php</file>
+      <file>src/Folder.php</file>
+      <file>src/Page.php</file>
+    </include>
+  </source>
 </phpunit>
