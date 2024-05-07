@@ -5,6 +5,7 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Riclep\Storyblok\Exceptions\UnableToRenderException;
@@ -450,41 +451,65 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param array|null $options
 	 * @return array
 	 */
-	public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null): array
-	{
-		$storyblokClient = resolve('Storyblok\Client');
+    public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null): array
+    {
+        $storyblokClient = resolve('Storyblok\Client');
 
-		$type = 'any_in_array';
+        $type = 'any_in_array';
 
-		if ($foreignRelationshipType === 'single') {
-			$type = 'in';
-		}
+        if ($foreignRelationshipType === 'single') {
+            $type = 'in';
+        }
 
-		$query = [
-			'filter_query' => [
-				$foreignRelationshipField => [$type => $this->meta('page_uuid') ?? $this->page()->uuid()]
-			],
-		];
+        $query = [
+            'filter_query' => [
+                $foreignRelationshipField => [$type => $this->meta('page_uuid') ?? $this->page()->uuid()]
+            ],
+        ];
 
-		if ($components) {
-			$query = array_merge_recursive($query, [
-				'filter_query' => [
-					'component' => ['in' => $components],
-				]
-			]);
-		}
+        if ($components) {
+            $query = array_merge_recursive($query, [
+                'filter_query' => [
+                    'component' => ['in' => $components],
+                ]
+            ]);
+        }
 
-		if ($options) {
-			$query = array_merge_recursive($query, $options);
-		}
+        if ($options) {
+            $query = array_merge_recursive($query, $options);
+        }
 
-		$storyblokClient->getStories($query);
+        if (request()->has('_storyblok') || !config('storyblok.cache')) {
+            $storyblokClient->getStories($query);
 
-		return [
-			'headers' => $storyblokClient->getHeaders(),
-			'stories' => $storyblokClient->getBody()['stories'],
-		];
-	}
+            $response = [
+                'headers' => $storyblokClient->getHeaders(),
+                'stories' => $storyblokClient->getBody()['stories'],
+            ];
+        } else {
+            $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key')); // unique id for multitenancy applications
+
+            $uniqueTag = md5(serialize($query));
+
+            $response = Cache::remember($foreignRelationshipField . '-' . $foreignRelationshipType . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () use ($storyblokClient, $query) {
+                $storyblokClient->getStories($query);
+
+                return [
+                    'headers' => $storyblokClient->getHeaders(),
+                    'stories' => $storyblokClient->getBody()['stories'],
+                ];
+            });
+        }
+
+        return [
+            'headers' => $response['headers'],
+            'stories' => collect($response['stories'])->transform(function ($story) {
+                $blockClass = $this->getChildClassName('Page', $story['content']['component']);
+
+                return new $blockClass($story);
+            }),
+        ];
+    }
 
 	/**
 	 * Returns the casts on this Block
