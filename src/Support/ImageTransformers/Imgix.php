@@ -132,8 +132,8 @@ class Imgix extends BaseTransformer
 		if ($dimensions) {
 			if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
 				$this->meta = [
-					'height' => false,
-					'width' => false,
+                    'height' => $dimensions[0]['height'],
+                    'width' => $dimensions[0]['width'],
 					'extension' => 'svg',
 					'mime' => 'image/svg+xml',
 				];

@@ -17,8 +17,8 @@ class StoryblokSvg extends BaseTransformer
         preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
         $this->meta = [
-            'height' => null,
-            'width' => null,
+            'height' => $dimensions[0]['height'],
+            'width' => $dimensions[0]['width'],
             'extension' => 'svg',
             'mime' => 'image/svg+xml',
         ];
