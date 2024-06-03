@@ -462,6 +462,60 @@ SRCSET
 	}
 
 
+    /** @test */
+    public function  can_apply_grayscale_filter()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->grayscale();
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:grayscale()', (string) $field3);
+    }
+
+    /** @test */
+    public function  can_apply_rotate_filter()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->rotate(90);
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:rotate(90)', (string) $field3);
+    }
+
+    /** @test */
+    public function  can_apply_blur_filter()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->blur(20);
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:blur(20)', (string) $field3);
+    }
+
+    /** @test */
+    public function  can_apply_brightness_filter()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->brightness(20);
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:brightness(20)', (string) $field3);
+    }
+
+    /** @test */
+    public function  can_apply_many_filters()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->brightness(20)->blur(20)->rotate(90)->grayscale();
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:blur(20):brightness(20):rotate(90):grayscale()', (string) $field3);
+    }
+
+    /** @test */
+    public function  can_apply_many_filters_and_resize()
+    {
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->resize(200, 200)->brightness(20)->blur(20)->rotate(90)->grayscale();
+
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/200x200/filters:blur(20):brightness(20):rotate(90):grayscale()', (string) $field3);
+    }
+
 
 	/** @test */
 	public function can_use_imgix_driver()
