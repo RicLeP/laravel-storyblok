@@ -20,7 +20,7 @@ class PageMakeCommand extends GeneratorCommand
 
 	protected function getDefaultNamespace($rootNamespace): string
 	{
-		return $rootNamespace . '\Storyblok\Page';
+		return $rootNamespace . '\Storyblok\Pages';
 	}
 
 	public function handle(): void
