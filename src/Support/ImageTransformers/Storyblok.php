@@ -167,6 +167,48 @@ class Storyblok extends BaseTransformer
     }
 
     /**
+     * Zooms and crops an image based on focal point. If there is no focal point it will use the center of the image
+     *
+     * @param int $zoomLevel
+     * @param int $width
+     * @param int $height
+     * @return string
+     */
+    public function zoomCrop(int $zoomLevel, int $width, int $height): string
+    {
+        if ($this->transformations === 'svg') {
+            return $this->assetDomain($this->image->content()['filename']);
+        }
+
+        if ($this->width() >= $this->height()) {
+            $cropBuffer = $this->width() * 100 / $zoomLevel;
+        } else {
+            $cropBuffer = $this->height() * 100 / $zoomLevel;
+        }
+
+        if ($this->image->focus) {
+            $focalPointCoords = explode('x', explode(':', $this->image->focus)[0]);
+            $focalPoint = [$focalPointCoords[0], $focalPointCoords[1]];
+        } else {
+            $focalPoint = [$this->width() / 2, $this->height() / 2];
+        }
+
+        $cropLeft = max(round($focalPoint[0] - $cropBuffer / 2), 0);
+        $cropTop = max(round($focalPoint[1] - $cropBuffer / 2), 0);
+        $cropRight = min(round($cropLeft + $cropBuffer), $this->width());
+        $cropBottom = min(round($cropTop + $cropBuffer), $this->height());
+
+        $croppedUrl = '/' . $cropLeft . "x" . $cropTop . ":" . $cropRight . "x" . $cropBottom . "/" . $width . "x" . $height;
+
+
+        if ($this->hasFilters()) {
+            $croppedUrl .= $this->applyFilters();
+        }
+
+        return $this->assetDomain($croppedUrl);
+    }
+
+    /**
      * Creates the Storyblok image service URL
      *
      * @return string
@@ -174,7 +216,7 @@ class Storyblok extends BaseTransformer
     public function buildUrl(): string
     {
         if ($this->transformations === 'svg') {
-            return $this->image->content()['filename'];
+            return $this->assetDomain($this->image->content()['filename']);
         }
 
         $transforms = '';
@@ -312,6 +354,10 @@ class Storyblok extends BaseTransformer
     {
         $resource = str_replace(config('storyblok.asset_domain'), config('storyblok.image_service_domain'), $this->image->content()['filename']);
 
-        return $resource . '/m' . $options;
+        if ($options) {
+            return $resource . '/m' . $options;
+        }
+
+        return $resource;
     }
 }
