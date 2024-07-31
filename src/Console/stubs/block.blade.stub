@@ -3,7 +3,6 @@
 // dd($block);
 ?>
 
-{!! $block->editorLink() !!}
-<div class="DummyCssClass">
+<div class="DummyCssClass" {!! $block->editorLink(true) !!}>
 
 </div>

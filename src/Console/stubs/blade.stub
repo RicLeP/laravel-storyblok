@@ -5,7 +5,6 @@
 ?>
 
 
-{!! $block->editorLink() !!}
-<div class="#NAME#">
+<div class="#NAME#" {!! $block->editorLink(true) !!}>
 #BODY#
 </div>
