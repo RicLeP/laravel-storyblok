@@ -46,7 +46,11 @@ class StubViewsCommand extends Command
 	{
 		$this->makeDirectories();
 
-		$client = new ManagementClient(config('storyblok.oauth_token'));
+		$client = new ManagementClient(
+            apiKey:config('storyblok.oauth_token'),
+            apiEndpoint: config('storyblok.management_api_base_url'),
+            ssl: config('storyblok.use_ssl'),
+        );
 
 		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
 
