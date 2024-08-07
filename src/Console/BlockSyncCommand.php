@@ -142,7 +142,11 @@ class BlockSyncCommand extends Command
 	protected function getComponentFields($name): array
 	{
 		if (config('storyblok.oauth_token')) {
-			$managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+			$managementClient = new \Storyblok\ManagementClient(
+                apiKey:config('storyblok.oauth_token'),
+                apiEndpoint: config('storyblok.management_api_base_url'),
+                ssl: config('storyblok.use_ssl'),
+            );
 
 			$components = collect($managementClient->get('spaces/'.config('storyblok.space_id').'/components')->getBody()['components']);
 
@@ -177,7 +181,11 @@ class BlockSyncCommand extends Command
 	 * @throws ApiException
 	 */
 	protected function createStoryblokCompontent($component_name){
-        $managementClient = new \Storyblok\ManagementClient(config('storyblok.oauth_token'));
+        $managementClient = new \Storyblok\ManagementClient(
+            apiKey:config('storyblok.oauth_token'),
+            apiEndpoint: config('storyblok.management_api_base_url'),
+            ssl: config('storyblok.use_ssl'),
+        );
 
         $payload = [
 			"component" =>  [
