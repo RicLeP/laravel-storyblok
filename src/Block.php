@@ -449,9 +449,10 @@ class Block implements \IteratorAggregate, \JsonSerializable
 	 * @param string $foreignRelationshipType
 	 * @param array|null $components
 	 * @param array|null $options
+     * @param array|null $resolveRelations
 	 * @return array
 	 */
-    public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null): array
+    public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null, array $resolveRelations = null): array
     {
         $storyblokClient = resolve('Storyblok\Client');
 
@@ -477,6 +478,10 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
         if ($options) {
             $query = array_merge_recursive($query, $options);
+        }
+
+        if ($resolveRelations) {
+            $storyblokClient->resolveRelations(implode(',', $resolveRelations));
         }
 
         if (request()->has('_storyblok') || !config('storyblok.cache')) {
