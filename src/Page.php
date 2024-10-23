@@ -85,8 +85,8 @@ class Page
 			return config('storyblok.view_path') . 'pages.' . $path;
 		}, $this->block()->_componentPath);
 
-		return array_reverse($views);
-	}
+        return array_reverse(array_unique($views));
+    }
 
 	/**
 	 * Returns the story for this Page
