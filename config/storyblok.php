@@ -37,6 +37,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Specify which Content Delivery API region-specific base URL to use
+    |--------------------------------------------------------------------------
+    |
+    | Defaults to api.storyblok.com which should be the original EU region
+    |
+    */
+    'delivery_api_base_url' => 'api.storyblok.com',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Specify which Management API region-specific base URL to use
+    |--------------------------------------------------------------------------
+    |
+    | Defaults to mapi.storyblok.com which should be the original EU region
+    |
+    */
+    'management_api_base_url' => 'mapi.storyblok.com',
+
+    /*
+    |--------------------------------------------------------------------------
     | Use SSL when calling the Storyblok API
     |--------------------------------------------------------------------------
     |
