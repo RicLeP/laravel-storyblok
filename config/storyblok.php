@@ -130,7 +130,7 @@ return [
     | Enable caching
     |--------------------------------------------------------------------------
     |
-    | Enable caching the Storyblok API response.
+    | Set the cache driver.
     |
     */
     'cache_driver' => env('STORYBLOK_CACHE_DRIVER', 'file'),
@@ -140,7 +140,7 @@ return [
     | Enable caching
     |--------------------------------------------------------------------------
     |
-    | Enable caching the Storyblok API response.
+    | Set the cache path (optional)
     |
     */
     'cache_path' => env('STORYBLOK_CACHE_PATH', storage_path('framework/cache/data')),
