@@ -74,7 +74,10 @@ class StoryblokServiceProvider extends ServiceProvider
 	    $client->editMode(config('storyblok.draft'));
 
         // the client's cache needs to be set or else the client's private isCache() will always return false
-        $client->setCache(config('storyblok.cache_driver'), ['path' => config('storyblok.cache_path')]);
+        $client->setCache(config('storyblok.sb_cache_driver'), [
+            'path' => config('storyblok.sb_cache_path'),
+            'default_lifetime' => config('storyblok.sb_cache_lifetime'),
+        ]);
 
 	    // This singleton allows to retrieve the driver set has default from the manager
 	    $this->app->singleton('image-transformer.driver', function ($app) {
