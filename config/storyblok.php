@@ -123,7 +123,7 @@ return [
     | Specifies how many minutes to cache responses from Storkyblok for.
     |
     */
-    'cache_duration' => env('STORYBLOK_DURATION','60'),
+    'cache_duration' => env('STORYBLOK_DURATION',60),
 
     /*
     |--------------------------------------------------------------------------
