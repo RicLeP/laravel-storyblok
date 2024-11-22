@@ -123,7 +123,37 @@ return [
     | Specifies how many minutes to cache responses from Storkyblok for.
     |
     */
-    'cache_duration' => env('STORYBLOK_DURATION','60'),
+    'cache_duration' => env('STORYBLOK_DURATION',60),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Storyblok client caching
+    |--------------------------------------------------------------------------
+    |
+    | Set the cache driver for the Storyblok client.
+    |
+    */
+    'sb_cache_driver' => env('STORYBLOK_SB_CACHE_DRIVER', 'file'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Set Storyblok client cache path
+    |--------------------------------------------------------------------------
+    |
+    | Set the cache path for the Storyblok client (optional)
+    |
+    */
+    'sb_cache_path' => env('STORYBLOK_SB_CACHE_PATH', storage_path('framework/cache/data')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Set Storyblok client cache duration
+    |--------------------------------------------------------------------------
+    |
+    | Set the cache duration for the Storyblok client
+    |
+    */
+    'sb_cache_lifetime' => env('STORYBLOK_SB_CACHE_LIFETIME', 3600),
 
     /*
     |--------------------------------------------------------------------------
