@@ -22,7 +22,7 @@
 			// save the new request for cancellation
 			source = axios.CancelToken.source();
 
-			axios.post('{{ url()->current() }}', {
+			axios.post(@js(request()->getRequestUri()), {
 				data: event
 			}, {
 				cancelToken: source.token
