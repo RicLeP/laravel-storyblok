@@ -29,7 +29,7 @@ class LiveContentController
 
 		$page = Storyblok::setData($data['story'])->render();
 		$dom = new HTML5DOMDocument();
-		$dom->loadHTML($page);
+        $dom->loadHTML($page, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
 
 		return $dom->querySelector(config('storyblok.live_element'))->innerHTML;
 	}
