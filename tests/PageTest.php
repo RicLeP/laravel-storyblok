@@ -105,7 +105,7 @@ class PageTest extends TestCase
 	{
 		$page = $this->makePage('custom-page.json');
 
-		$this->assertEquals('<script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"Person","givenName":"In the Person block","email":"ric@sirric.co.uk"}</script><script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"LocalBusiness","name":"On the page","email":"ric@sirric.co.uk","contactPoint":{"@type":"ContactPoint","areaServed":"Worldwide"}}</script>', $page->schemaOrgScript());
+		$this->assertEquals('<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","givenName":"In the Person block","email":"ric@sirric.co.uk"}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"On the page","email":"ric@sirric.co.uk","contactPoint":{"@type":"ContactPoint","areaServed":"Worldwide"}}</script>', $page->schemaOrgScript());
 	}
 
 	/** @test */

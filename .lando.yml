@@ -1,5 +1,0 @@
-name: laravel-storyblok
-recipe: laravel
-config:
-  webroot: .
-  php: '8.0'
