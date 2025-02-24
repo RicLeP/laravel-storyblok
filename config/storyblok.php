@@ -251,6 +251,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allow live preview links
+    |--------------------------------------------------------------------------
+    |
+    | Links in the visual editor will be clickable and navigate to the page
+    | with the Storyblok editing query string appended
+    |
+    */
+    'live_links' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Name of the field to be used for settings
     |--------------------------------------------------------------------------
     |
