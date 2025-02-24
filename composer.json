@@ -27,7 +27,7 @@
 	    "imgix/imgix-php": "^3.3|^4.0",
 	    "ivopetkov/html5-dom-document-php": "2.*",
 	    "league/commonmark": "^2.0",
-        "spatie/laravel-ignition": "^2.8",
+      "spatie/laravel-ignition": "^2.8",
 	    "spatie/schema-org": "^3.3",
 	    "storyblok/php-client": "^2.6",
 	    "storyblok/richtext-resolver": "^2.2"
@@ -35,7 +35,7 @@
     "require-dev": {
         "mockery/mockery": "^1.2",
         "orchestra/testbench": "^8.0|^9.0|^10.0",
-        "phpunit/phpunit": "^10"
+        "phpunit/phpunit": "^10|^11.5.3"
     },
     "autoload": {
         "psr-4": {
