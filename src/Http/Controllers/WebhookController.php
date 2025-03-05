@@ -22,7 +22,7 @@ class WebhookController
         $requestSignature = $request->header("webhook-signature");
 
         // Check if the header is neccessary and if it is set
-        if (empty($webhookSecret) && $requestSignature === null) {
+        if (!empty($webhookSecret) && $requestSignature === null) {
             throw new BadRequestHttpException("Header not set");
         }
 
