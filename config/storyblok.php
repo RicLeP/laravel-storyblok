@@ -290,4 +290,22 @@ return [
     |
     */
     'schema_org_depth' => 5,
+
+    /*
+    |--------------------------------------------------------------------------
+    | URL Denylist
+    |--------------------------------------------------------------------------
+    |
+    | URLs that should not be processed by Storyblok. Can be exact matches or
+    | regular expressions (must be wrapped in forward slashes). This is only
+    | used when using the packages built-in controller.
+    |
+    */
+        'denylist' => [
+            '/^\.well-known\/.*$/', // Blocks any URL starting with ".well-known/"
+            // 'another-bad-slug',
+            // '/^admin\/.*$/', // Blocks any URL starting with "admin/"
+            // '/^user\/\d+\/edit$/', // Blocks URLs like "user/123/edit"
+            // '/\.(php|sql|exe)$/', // Blocks URLs ending with .php, .sql, or .exe
+        ],
 ];
