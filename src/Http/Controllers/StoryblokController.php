@@ -30,9 +30,9 @@ class StoryblokController
     public function destroy(): void
     {
         if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
-            Cache::tags('storyblok')->flush();
+            Cache::store(config('storyblok.sb_cache_driver'))->tags('storyblok')->flush();
         } else {
-            Cache::flush();
+            Cache::store(config('storyblok.sb_cache_driver'))->flush();
         }
     }
 
