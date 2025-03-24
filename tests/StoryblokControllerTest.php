@@ -114,6 +114,7 @@ class StoryblokControllerTest extends TestCase
     public function it_flushes_cache_when_destroying()
     {
         // Mock the Cache facade
+        Cache::shouldReceive('store')->andReturnSelf();
         Cache::shouldReceive('getStore')->andReturn(new class {
             public function __instanceof($class) {
                 return $class === \Illuminate\Cache\TaggableStore::class;

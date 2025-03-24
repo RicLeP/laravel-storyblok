@@ -217,7 +217,7 @@ abstract class Folder
 			$apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key')); // unique id for multitenancy applications
             $uniqueTag = md5(serialize($this->getSettings()));
 
-			$response = Cache::remember($this->cacheKey . $this->slug . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
+			$response = Cache::store(config('storyblok.sb_cache_driver'))->remember($this->cacheKey . $this->slug . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
 				return $this->makeRequest();
 			});
 		}

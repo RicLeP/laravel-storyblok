@@ -496,7 +496,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
             $uniqueTag = md5(serialize($query));
 
-            $response = Cache::remember($foreignRelationshipField . '-' . $foreignRelationshipType . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () use ($storyblokClient, $query) {
+            $response = Cache::store(config('storyblok.sb_cache_driver'))->remember($foreignRelationshipField . '-' . $foreignRelationshipType . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () use ($storyblokClient, $query) {
                 $storyblokClient->getStories($query);
 
                 return [

@@ -301,11 +301,11 @@ return [
     | used when using the packages built-in controller.
     |
     */
-        'denylist' => [
-            '/^\.well-known\/.*$/', // Blocks any URL starting with ".well-known/"
-            // 'another-bad-slug',
-            // '/^admin\/.*$/', // Blocks any URL starting with "admin/"
-            // '/^user\/\d+\/edit$/', // Blocks URLs like "user/123/edit"
-            // '/\.(php|sql|exe)$/', // Blocks URLs ending with .php, .sql, or .exe
-        ],
+    'denylist' => [
+        '/^\.well-known\/.*$/', // Blocks any URL starting with ".well-known/"
+        // 'another-bad-slug',
+        // '/^admin\/.*$/', // Blocks any URL starting with "admin/"
+        // '/^user\/\d+\/edit$/', // Blocks URLs like "user/123/edit"
+        // '/\.(php|sql|exe)$/', // Blocks URLs ending with .php, .sql, or .exe
+    ],
 ];

@@ -3,7 +3,6 @@
 namespace Riclep\Storyblok\Console;
 
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputOption;
 
