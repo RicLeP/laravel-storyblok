@@ -56,7 +56,7 @@ class FieldTest extends TestCase
 	{
 		$field = new RichText($this->getFieldContents('richtext'), null);
 
-		$this->assertEquals('<p><b>textarea</b></p><p>richtext</p>', (string) $field);
+		$this->assertEquals('<p><strong>textarea</strong></p><p>richtext</p>', (string) $field);
 	}
 
 	/** @test */
@@ -86,7 +86,7 @@ class FieldTest extends TestCase
 
 		$field = new RichText($content, new NullBlock([], null));
 
-		$this->assertEquals('<p>hello some copy</p><p><b>and here </b></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+		$this->assertEquals('<p>hello some copy</p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
 	}
 
 	/** @test */
