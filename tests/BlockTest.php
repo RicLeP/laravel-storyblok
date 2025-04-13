@@ -171,7 +171,7 @@ class BlockTest extends TestCase
 		$page = $this->makePage();
 		$block = $page->block();
 
-		$this->assertEquals('<p><b>textarea</b></p><p>richtext</p>', $block->richtext);
+		$this->assertEquals('<p><strong>textarea</strong></p><p>richtext</p>', $block->richtext);
 	}
 
 	/** @test */

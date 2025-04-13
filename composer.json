@@ -30,7 +30,7 @@
       "spatie/laravel-ignition": "^2.8",
 	    "spatie/schema-org": "^3.3",
 	    "storyblok/php-client": "^2.6",
-	    "storyblok/richtext-resolver": "^2.2"
+	    "storyblok/php-tiptap-extension": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",

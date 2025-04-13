@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Riclep\Storyblok\Fields;
-
 
 use Riclep\Storyblok\Field;
 use Riclep\Storyblok\Traits\HasChildClasses;
-use Storyblok\RichtextRender\Resolver;
+use Tiptap\Editor;
+use Storyblok\Tiptap\Extension\Storyblok;
 
 class RichText extends Field
 {
@@ -14,7 +13,11 @@ class RichText extends Field
 
 	public function init(): void
 	{
-		$richtextResolver = new Resolver();
+		$editor = new Editor([
+			'extensions' => [
+				new Storyblok(),
+			],
+		]);
 
 		$content = [];
 
@@ -29,7 +32,8 @@ class RichText extends Field
 					$content[] = $block;
 				}
 			} else {
-				$content[] = $richtextResolver->render(["content" => [$node]]);
+				$editor->setContent(['type' => 'doc', 'content' => [$node]]);
+				$content[] = $editor->getHTML();
 			}
 		}
 
