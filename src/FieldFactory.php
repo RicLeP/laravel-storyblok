@@ -192,9 +192,9 @@ class FieldFactory
      */
     public function isStringImageField($filename): bool
     {
-        $allowed_extentions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        $allowed_extensions = config('storyblok.image_extensions');
 
-        return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extentions);
+        return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extensions);
     }
 
     /**
@@ -205,8 +205,8 @@ class FieldFactory
      */
     public function isSvgImageField($filename): bool
     {
-        $allowed_extentions = ['.svg', '.svgz'];
+        $allowed_extensions = ['.svg', '.svgz'];
 
-        return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extentions);
+        return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extensions);
     }
 }

@@ -220,6 +220,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Raster image extensions
+    |--------------------------------------------------------------------------
+    |
+    | Used to determine if the image field content is a raster image, do not
+    | include SVGs or other vector formats here. This is used to determine
+    | if the image should be transformed or not.
+    |
+    */
+    'image_extensions' => ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.heic', '.avif'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Resolve story links in content
     |--------------------------------------------------------------------------
     |
