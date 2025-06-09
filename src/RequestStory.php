@@ -41,7 +41,7 @@ class RequestStory
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest($slugOrUuid);
 		} else {
-            $cache = Cache::store(config('storyblok.sb_cache_driver'))->getStore();
+            $cache = Cache::store(config('storyblok.sb_cache_driver'));
 
             if ($cache instanceof Illuminate\Cache\TaggableStore) {
                 $cache = $cache->tags('storyblok');
