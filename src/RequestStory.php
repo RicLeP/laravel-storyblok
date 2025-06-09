@@ -49,7 +49,7 @@ class RequestStory
 
             $api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
 
-            return $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
+            $response = $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
                 return $this->makeRequest($slugOrUuid);
             });
 		}
