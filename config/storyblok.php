@@ -277,11 +277,12 @@ return [
     | Fix spaces in live preview using preg_replace
     |--------------------------------------------------------------------------
     |
-    | Spaces are removed in the live preview in Storyblok due to an issue with HTMLDom5
-    | Using the live_html_tags_spaces array to add spaces around those tags. Leave an empty array to skip preg_replace
+    | Spaces are removed in the live preview in Storyblok due to an issue with
+    | HTMLDom5 Using the live_html_tags_spaces array to add spaces around those
+    | tags. Leave an empty array to skip preg_replace
     |
     */
-    'live_html_tags_spaces' => ['a', 'b', 'i', 'strike', 'u'],
+    'live_html_tags_spaces' => ['a', 'b', 'i', 'strike', 'u', 'strong', 'em'],
 
     /*
     |--------------------------------------------------------------------------

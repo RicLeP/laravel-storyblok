@@ -30,7 +30,7 @@ class LiveContentController
 		$page = Storyblok::setData($data['story'])->render();
 
         // fix space removal from tags like <b>, <i> until a suitable replacement for HTML5dom has been found
-        $htmlTags = config('storyblok.live_html_tags_spaces', ['a', 'b', 'i', 'strike', 'u']);
+        $htmlTags = config('storyblok.live_html_tags_spaces', ['a', 'b', 'i', 'strike', 'u', 'strong', 'em']);
         if (is_array($htmlTags)) {
             foreach ($htmlTags as $tag) {
                 // Add space before the opening tag if not already preceded by a space
