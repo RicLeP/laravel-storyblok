@@ -23,7 +23,7 @@
                 source = axios.CancelToken.source();
 
                 axios.post(@js(request()->getRequestUri()), {
-                    data: event
+                    sbLiveData: event
                 }, {
                     cancelToken: source.token
                 }).then((response) => {
