@@ -28,7 +28,7 @@ class Storyblok extends BaseTransformer
      * @param string|null $focus
      * @return $this
      */
-    public function resize(int $width = 0, int $height = 0, string $focus = null): self
+    public function resize(int $width = 0, int $height = 0, ?string $focus = null): self
     {
         $this->transformations = array_merge($this->transformations, [
             'width' => $width,
@@ -84,7 +84,7 @@ class Storyblok extends BaseTransformer
      * @param int|null $quality
      * @return $this
      */
-    public function format(string $format, int $quality = null): self
+    public function format(string $format, ?int $quality = null): self
     {
         $this->transformations = array_merge($this->transformations, [
             'format' => $format,

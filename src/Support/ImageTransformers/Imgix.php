@@ -68,7 +68,7 @@ class Imgix extends BaseTransformer
 	 * @param int|null $quality
 	 * @return $this
 	 */
-	public function format(string $format, int $quality = null): self
+	public function format(string $format, ?int $quality = null): self
 	{
 		if ($format === 'auto') {
 			$this->transformations = array_merge($this->transformations, [

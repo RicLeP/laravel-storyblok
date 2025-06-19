@@ -134,7 +134,7 @@ abstract class Folder
 	 * @param string|null $sortOrder
 	 * @return Folder
 	 */
-	public function sort(string $sortBy, string $sortOrder = null): Folder
+	public function sort(string $sortBy, ?string $sortOrder = null): Folder
 	{
 		$this->sortBy = $sortBy;
 
