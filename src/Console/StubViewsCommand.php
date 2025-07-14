@@ -142,7 +142,7 @@ class StubViewsCommand extends Command
 				case 'asset':
 					if (array_key_exists('filetypes', $field) && in_array('images', $field['filetypes'], true)) {
 						$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
-						$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+						$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" width="{{ $block->' . $name . '->width() }}" height="{{ $block->' . $name . '->height() }}" alt="{{ $block->' . $name . '->alt() }}">' . "\n";
 						$body .= "\t" . '@endif' . "\n";
 					} else {
 						$body .= "\t" . '<a href="{{ $block->' . $name . ' }}">Download</a>' . "\n";
@@ -150,7 +150,7 @@ class StubViewsCommand extends Command
 					break;
 				case 'image':
 					$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
-					$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" alt>' . "\n";
+					$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" width="{{ $block->' . $name . '->width() }}" height="{{ $block->' . $name . '->height() }}" alt="{{ $block->' . $name . '->alt() }}">' . "\n";
 					$body .= "\t" . '@endif' . "\n";
 					break;
 				case 'file':
