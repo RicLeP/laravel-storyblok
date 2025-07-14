@@ -93,6 +93,65 @@ class Image extends Asset
 		return $this->transformer->mime($original);
 	}
 
+    /**
+     * Get the alt text of the image. If none is set, return the default
+     *
+     * @param string $default
+     * @return string
+     */
+    public function alt(string $default = ''): string
+    {
+        return $this->content()['alt'] ?: $default;
+    }
+
+    /**
+     * Get the copyright text of the image. If none is set, return the default
+     *
+     *
+     * @param string $default
+     * @return string
+     */
+    public function copyright(string $default = ''): string
+    {
+        return $this->content()['copyright'] ?: $default;
+    }
+
+    /**
+     * Get the name (called description in the editor) of the image. If none is set, return the default
+     *
+     *
+     * @param string $default
+     * @return string
+     */
+    public function name(string $default = ''): string
+    {
+        return $this->content()['name'] ?: $default;
+    }
+
+    /**
+     * Get the source of the image. If none is set, return the default
+     *
+     *
+     * @param string $default
+     * @return string
+     */
+    public function source(string $default = ''): string
+    {
+        return $this->content()['source'] ?: $default;
+    }
+
+    /**
+     * Get the title of the image. If none is set, return the default
+     *
+     *
+     * @param string $default
+     * @return string
+     */
+    public function title(string $default = ''): string
+    {
+        return $this->content()['title'] ?: $default;
+    }
+
 	/**
 	 * Create a new or get a transformation of the image
 	 *
