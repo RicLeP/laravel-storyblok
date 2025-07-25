@@ -41,16 +41,17 @@ class RequestStory
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
 			$response = $this->makeRequest($slugOrUuid);
 		} else {
-			$cache = Cache::getFacadeRoot();
+            $cache = Cache::store(config('storyblok.sb_cache_driver'));
 
-			if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
-				$cache = $cache->tags('storyblok');
-			}
+            if ($cache instanceof Illuminate\Cache\TaggableStore) {
+                $cache = $cache->tags('storyblok');
+            }
 
-			$api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
-			$response = $cache->store(config('storyblok.sb_cache_driver'))->remember($slugOrUuid . '_' . $api_hash , config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
-				return $this->makeRequest($slugOrUuid);
-			});
+            $api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
+
+            $response = $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
+                return $this->makeRequest($slugOrUuid);
+            });
 		}
 
 		return $response['story'];

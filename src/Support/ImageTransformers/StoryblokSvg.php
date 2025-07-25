@@ -24,7 +24,7 @@ class StoryblokSvg extends BaseTransformer
         ];
     }
 
-    public function resize(int $width, int $height = null): static
+    public function resize(int $width, ?int $height = null): static
     {
         return $this;
     }
@@ -34,7 +34,7 @@ class StoryblokSvg extends BaseTransformer
         return $this;
     }
 
-    public function format(string $format, int $quality = null): static
+    public function format(string $format, ?int $quality = null): static
     {
         return $this;
     }

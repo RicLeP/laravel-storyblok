@@ -294,6 +294,27 @@ class FieldTest extends TestCase
 	}
 
 	/** @test */
+	public function can_get_image_meta()
+	{
+		$field = new Image($this->getFieldContents('hero'), null);
+
+        $this->assertEquals('Alt', $field->alt());
+        $this->assertEquals('Copyright', $field->copyright());
+        $this->assertEquals('Name', $field->name());
+        $this->assertEquals('Source', $field->source());
+        $this->assertEquals('Title', $field->title());
+
+
+        $field2 = new Image($this->getFieldContents('asset'), null);
+
+        $this->assertEquals('Default', $field2->alt('Default'));
+        $this->assertEquals('Default', $field2->copyright('Default'));
+        $this->assertEquals('Default', $field2->name('Default'));
+        $this->assertEquals('Default', $field2->source('Default'));
+        $this->assertEquals('Default', $field2->title('Default'));
+    }
+
+	/** @test */
 	public function transparent_filled_images_have_correct_format()
 	{
 		$field = new Image($this->getFieldContents('hero'), null);

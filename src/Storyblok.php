@@ -22,7 +22,7 @@ class Storyblok
 	 * @return Page
 	 * @throws ApiException
 	 */
-	public function read(string $slug, array $resolveRelations = null, string $language = null, string $fallbackLanguage = null): Page
+	public function read(string $slug, ?array $resolveRelations = null, ?string $language = null, ?string $fallbackLanguage = null): Page
 	{
 		$storyblokRequest = new RequestStory();
 

@@ -18,8 +18,7 @@ class LiveContentController
 	 */
 	public function show(Request $request): string
     {
-
-        $data = $request->input('data');
+        $data = $request->input('sbLiveData');
 
         if (!isset($data['story'])) {
             throw new \Illuminate\Http\Exceptions\HttpResponseException(response()->json(['message' => 'Story not found'], 404));
@@ -28,6 +27,7 @@ class LiveContentController
         config(['storyblok.edit_mode' => true]);
 
 		$page = Storyblok::setData($data['story'])->render();
+
 		$dom = new HTML5DOMDocument();
         $dom->loadHTML($page, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
 

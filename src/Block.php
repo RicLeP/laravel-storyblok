@@ -452,7 +452,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
      * @param array|null $resolveRelations
 	 * @return array
 	 */
-    public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', array $components = null, array $options = null, array $resolveRelations = null): array
+    public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', ?array $components = null, ?array $options = null, ?array $resolveRelations = null): array
     {
         $storyblokClient = resolve('Storyblok\Client');
 
