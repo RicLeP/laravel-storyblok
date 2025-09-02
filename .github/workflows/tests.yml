@@ -2,23 +2,41 @@ name: Tests
 
 on:
   push:
-    branches: [ develop, feature/** ]
+    branches: [ master ]
   pull_request:
-    branches: [ develop ]
+    branches: [ master ]
 
 jobs:
   tests:
-    name: Tests
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
+      matrix:
+        php: [8.3, 8.4]
+        laravel: [10.*, 11.*, 12.*]
+        exclude:
+          # Exclude incompatible PHP/Laravel combinations if needed
+          # - php: 8.3
+          #   laravel: X.*
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: php-actions/composer@v6
-      - uses: php-actions/phpunit@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          configuration: phpunit.xml.dist
-          args: --coverage-text
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, json
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: |
+          composer require "illuminate/support:${{ matrix.laravel }}" --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit --coverage-text
