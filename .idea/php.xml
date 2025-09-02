@@ -174,14 +174,15 @@
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="c88c70df-8195-450f-b972-97059020fe8a" name="DDEV" home="docker-compose://DATA" auto="false" debugger_id="php.debugger.XDebug">
-        <remote_data INTERPRETER_PATH="php8.3" HELPERS_PATH="/opt/.phpstorm_helpers" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DOCKER_ACCOUNT_NAME="Docker" DOCKER_COMPOSE_SERVICE_NAME="web" DOCKER_REMOTE_PROJECT_PATH="/opt/project">
+      <interpreter id="c88c70df-8195-450f-b972-97059020fe8a" name="laravel-storyblok" home="docker-compose://DATA" auto="false" debugger_id="php.debugger.XDebug">
+        <remote_data INTERPRETER_PATH="php8.4" HELPERS_PATH="/opt/.phpstorm_helpers" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DOCKER_ACCOUNT_NAME="Docker" DOCKER_COMPOSE_SERVICE_NAME="web" DOCKER_REMOTE_PROJECT_PATH="/opt/project">
           <PathMappingSettings>
             <option name="pathMappings">
               <list>
                 <mapping local-root="$PROJECT_DIR$" remote-root="/var/www/html" />
-                <mapping local-root="$PROJECT_DIR$/.ddev" remote-root="/mnt/ddev_config" />
-                <mapping local-root="$PROJECT_DIR$/.ddev/xhprof" remote-root="/usr/local/bin/xhprof" />
+                <mapping local-root="/home/riclep/www/packages/laravel-storyblok" remote-root="/var/www/html" />
+                <mapping local-root="/home/riclep/www/packages/laravel-storyblok/.ddev" remote-root="/mnt/ddev_config" />
+                <mapping local-root="/home/riclep/www/packages/laravel-storyblok/.ddev/xhprof" remote-root="/usr/local/bin/xhprof" />
                 <mapping local-root="$APPLICATION_CONFIG_DIR$/scratches" remote-root="/opt/scratches" />
               </list>
             </option>
@@ -278,7 +279,7 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.3">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStan">
