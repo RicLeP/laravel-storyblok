@@ -17,10 +17,6 @@ jobs:
       matrix:
         php: [8.3, 8.4]
         laravel: [10.*, 11.*, 12.*]
-        exclude:
-          # Exclude incompatible PHP/Laravel combinations if needed
-          # - php: 8.3
-          #   laravel: X.*
 
     steps:
       - name: Checkout code
