@@ -228,7 +228,31 @@ return [
     | if the image should be transformed or not.
     |
     */
-    'image_extensions' => ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.heic', '.avif'],
+    'image_extensions' => ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.heic', '.avif'],/*
+
+    |--------------------------------------------------------------------------
+    | TipTap settings for the RichText field
+    |--------------------------------------------------------------------------
+    |
+    | Load extensions for RichText fields. TipTapFigure overrides the default
+    | rendering of images, wrapping them in <figure> tags and displaying a
+    | caption when a title is added in the image meta.
+    |
+    | Figures can use the Storyblok image service for resizing and
+    | transformations
+    |
+    */
+    'tiptap' => [
+        'extensions' => [
+            new \Storyblok\Tiptap\Extension\Storyblok(),
+//            new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+        ],
+//        'figure-transformation' => [
+//            'width' => 100,
+//            'height' => 100, // set to null to preserve ratio height when scaling
+//            'filters' => 'filters:quality(80)', // see: https://www.storyblok.com/docs/api/image-service
+//        ]
+    ],
 
     /*
     |--------------------------------------------------------------------------

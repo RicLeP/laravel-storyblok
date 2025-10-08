@@ -23,6 +23,42 @@
 					{
 						"type": "paragraph",
 						"content": [
+                            {
+                                "type": "image",
+                                "attrs": {
+                                    "id": 99278805122563,
+                                    "alt": "alt",
+                                    "src": "https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg",
+                                    "title": "Caption",
+                                    "source": "",
+                                    "copyright": "",
+                                    "meta_data": {
+                                        "alt": "alt",
+                                        "title": "Caption",
+                                        "source": "",
+                                        "copyright": ""
+                                    }
+                                }
+                            },
+                            {
+                                "type": "image",
+                                "attrs": {
+                                    "id": 98970569414972,
+                                    "alt": "",
+                                    "src": "https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg",
+                                    "title": "",
+                                    "source": "",
+                                    "copyright": "",
+                                    "meta_data": {
+
+                                    }
+                                }
+                            }
+						]
+					},
+					{
+						"type": "paragraph",
+						"content": [
 							{
 								"text": "and here ",
 								"type": "text",

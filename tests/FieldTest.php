@@ -71,9 +71,9 @@ class FieldTest extends TestCase
 
 		$field = new RichText($content, new NullBlock([], null));
 
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[2]);
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $field->content()[3]);
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[4]);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[3]);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $field->content()[4]);
+		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[5]);
 	}
 
 	/** @test */
@@ -86,7 +86,56 @@ class FieldTest extends TestCase
 
 		$field = new RichText($content, new NullBlock([], null));
 
-		$this->assertEquals('<p>hello some copy</p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+		$this->assertEquals('<p>hello some copy</p><p><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption"><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg"></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+	}
+
+	/** @test */
+	public function can_use_tiptap_figure_in_rich_text()
+	{
+		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
+		$content =  $story['story']['content']['body'];
+
+        config(['storyblok.view_path' => 'Fixtures.views.']);
+
+        app()['config']->set('storyblok.tiptap',
+            [
+                'extensions' => [
+                    new \Storyblok\Tiptap\Extension\Storyblok(),
+                    new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+                ],
+            ]
+        );
+
+		$field = new RichText($content, new NullBlock([], null));
+
+		$this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption" width="800" height="534"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg" width="1728" height="1018"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+	}
+
+	/** @test */
+	public function can_use_tiptap_figure_in_rich_text_with_transforms()
+	{
+		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
+		$content =  $story['story']['content']['body'];
+
+        config(['storyblok.view_path' => 'Fixtures.views.']);
+
+        app()['config']->set('storyblok.tiptap',
+            [
+                'extensions' => [
+                    new \Storyblok\Tiptap\Extension\Storyblok(),
+                    new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+                ],
+                'figure-transformation' => [
+                    'width' => 100,
+                    'height' => 100, // set to null to preserve ratio height when scaling
+                    'filters' => 'filters:quality(80)', // see: https://www.storyblok.com/docs/api/image-service
+                ]
+            ]
+        );
+
+		$field = new RichText($content, new NullBlock([], null));
+
+		$this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg/m/100x100/filters:quality(80)" alt="alt" title="Caption" width="100" height="100"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg/m/100x100/filters:quality(80)" width="100" height="100"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
 	}
 
 	/** @test */
