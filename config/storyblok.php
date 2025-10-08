@@ -244,8 +244,17 @@ return [
     */
     'tiptap' => [
         'extensions' => [
-            new \Storyblok\Tiptap\Extension\Storyblok(),
-//            new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+            // configure in a service provider
+            /*
+            $this->app->booted(function () {
+                config([
+                    'storyblok.tiptap.extensions' => [
+                        new \Storyblok\Tiptap\Extension\Storyblok(),
+                        new \Riclep\Storyblok\Support\TipTapFigure(), // optional
+                    ]
+                ]);
+            });
+            */
         ],
 //        'figure-transformation' => [
 //            'width' => 100,

@@ -13,7 +13,17 @@ class RichText extends Field
 
 	public function init(): void
 	{
-        $editor = new Editor(config('storyblok.tiptap'));
+        if (config('storyblok.tiptap.extensions')) {
+            $editor = new Editor(config('storyblok.tiptap'));
+        } else {
+            $editor = new Editor(
+                [
+                    'extensions' => [
+                        new Storyblok(),
+                    ]
+                ]
+            );
+        }
 
 		$content = [];
 
