@@ -9,9 +9,12 @@ use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\SvgImage;
 use Riclep\Storyblok\Fields\Table;
+use Riclep\Storyblok\Traits\HasChildClasses;
 
 class FieldFactory
 {
+    use HasChildClasses;
+
     /**
      * Works out what class should be used for the given block’s content
      *
@@ -91,6 +94,10 @@ class FieldFactory
     {
         // match link fields
         if (array_key_exists('linktype', $field)) {
+            if ($class = $this->getChildClassName('Field', Str::studly($field['linktype']) . 'Link')) {
+                return new $class($field, $block);
+            }
+
             $class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
 
             return new $class($field, $block);
@@ -98,6 +105,10 @@ class FieldFactory
 
         // match rich-text fields
         if (array_key_exists('type', $field) && $field['type'] === 'doc') {
+            if ($class = $this->getChildClassName('Field', 'RichText')) {
+                return new $class($field, $block);
+            }
+
             return new RichText($field, $block);
         }
 
@@ -105,11 +116,23 @@ class FieldFactory
         if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
             // legacy and string image fields
             if ($this->isStringImageField($field['filename'])) {
+                if ($class = $this->getChildClassName('Field', 'Image')) {
+                    return new $class($field, $block);
+                }
+
                 return new Image($field, $block);
             }
 
             if ($this->isSvgImageField($field['filename'])) {
+                if ($class = $this->getChildClassName('Field', 'SvgImage')) {
+                    return new $class($field, $block);
+                }
+
                 return new SvgImage($field, $block);
+            }
+
+            if ($class = $this->getChildClassName('Field', 'Asset')) {
+                return new $class($field, $block);
             }
 
             return new Asset($field, $block);
@@ -117,6 +140,10 @@ class FieldFactory
 
         // match table fields
         if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
+            if ($class = $this->getChildClassName('Field', 'Table')) {
+                return new $class($field, $block);
+            }
+
             return new Table($field, $block);
         }
 

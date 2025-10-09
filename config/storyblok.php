@@ -246,14 +246,16 @@ return [
         'extensions' => [
             // configure in a service provider
             /*
-            $this->app->booted(function () {
-                config([
-                    'storyblok.tiptap.extensions' => [
-                        new \Storyblok\Tiptap\Extension\Storyblok(),
-                        new \Riclep\Storyblok\Support\TipTapFigure(), // optional
-                    ]
-                ]);
-            });
+            if (!app()->runningInConsole()) {
+                $this->app->booted(function () {
+                    config([
+                        'storyblok.tiptap.extensions' => [
+                            new \Storyblok\Tiptap\Extension\Storyblok(),
+                            new \Riclep\Storyblok\Support\TipTapFigure(),
+                        ]
+                    ]);
+                });
+            }
             */
         ],
 //        'figure-transformation' => [
