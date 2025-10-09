@@ -222,7 +222,7 @@ abstract class Folder
 			});
 		}
 
-		$this->totalStories = $response['headers']['Total'][0];
+        $this->totalStories = $response['headers']['Total'][0] ?? $response['headers']['total'][0];
 
 		return collect($response['stories']);
 	}
