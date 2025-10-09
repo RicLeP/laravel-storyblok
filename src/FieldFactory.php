@@ -2,6 +2,7 @@
 
 namespace Riclep\Storyblok;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Image;
@@ -9,12 +10,9 @@ use Riclep\Storyblok\Fields\MultiAsset;
 use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\SvgImage;
 use Riclep\Storyblok\Fields\Table;
-use Riclep\Storyblok\Traits\HasChildClasses;
 
 class FieldFactory
 {
-    use HasChildClasses;
-
     /**
      * Works out what class should be used for the given block’s content
      *
@@ -94,7 +92,7 @@ class FieldFactory
     {
         // match link fields
         if (array_key_exists('linktype', $field)) {
-            if ($class = $this->getChildClassName('Field', Str::studly($field['linktype']) . 'Link')) {
+            if ($class = $this->getDefaultOverrideClassName(Str::studly($field['linktype']) . 'Link')) {
                 return new $class($field, $block);
             }
 
@@ -105,7 +103,7 @@ class FieldFactory
 
         // match rich-text fields
         if (array_key_exists('type', $field) && $field['type'] === 'doc') {
-            if ($class = $this->getChildClassName('Field', 'RichText')) {
+            if ($class = $this->getDefaultOverrideClassName('RichText')) {
                 return new $class($field, $block);
             }
 
@@ -116,7 +114,7 @@ class FieldFactory
         if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'asset') {
             // legacy and string image fields
             if ($this->isStringImageField($field['filename'])) {
-                if ($class = $this->getChildClassName('Field', 'Image')) {
+                if ($class = $this->getDefaultOverrideClassName('Image')) {
                     return new $class($field, $block);
                 }
 
@@ -124,14 +122,14 @@ class FieldFactory
             }
 
             if ($this->isSvgImageField($field['filename'])) {
-                if ($class = $this->getChildClassName('Field', 'SvgImage')) {
+                if ($class = $this->getDefaultOverrideClassName('SvgImage')) {
                     return new $class($field, $block);
                 }
 
                 return new SvgImage($field, $block);
             }
 
-            if ($class = $this->getChildClassName('Field', 'Asset')) {
+            if ($class = $this->getDefaultOverrideClassName('Asset')) {
                 return new $class($field, $block);
             }
 
@@ -140,7 +138,7 @@ class FieldFactory
 
         // match table fields
         if (array_key_exists('fieldtype', $field) && $field['fieldtype'] === 'table') {
-            if ($class = $this->getChildClassName('Field', 'Table')) {
+            if ($class = $this->getDefaultOverrideClassName('Table')) {
                 return new $class($field, $block);
             }
 
@@ -235,5 +233,22 @@ class FieldFactory
         $allowed_extensions = ['.svg', '.svgz'];
 
         return is_string($filename) && Str::of($filename)->lower()->endsWith($allowed_extensions);
+    }
+
+    /**
+     * Checks for the existence of classes to override the default field types
+     *
+     * @param  $name
+     * @return string|null
+     */
+    public function getDefaultOverrideClassName($name): ?string
+    {
+        foreach (Arr::wrap(config('storyblok.component_class_namespace')) as $namespace) {
+            if (class_exists($namespace . 'Fields\\Default\\' . Str::studly($name))) {
+                return $namespace . 'Fields\\Default\\' . Str::studly($name);
+            }
+        }
+
+        return null;
     }
 }
