@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok\Fields;
 
 use Riclep\Storyblok\Field;
+use Riclep\Storyblok\Support\HardBreak;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Tiptap\Editor;
 use Storyblok\Tiptap\Extension\Storyblok;
@@ -20,6 +21,7 @@ class RichText extends Field
                 [
                     'extensions' => [
                         new Storyblok(),
+                        new HardBreak() // support hard_break in TipTap json
                     ]
                 ]
             );
