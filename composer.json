@@ -29,7 +29,7 @@
 	    "league/commonmark": "^2.0",
         "riclep/storyblok-php-client": "^2.9",
         "spatie/laravel-ignition": "^2.8",
-	    "spatie/schema-org": "^3.3",
+	    "spatie/schema-org": "^4.0",
 	    "storyblok/php-tiptap-extension": "^1.0"
     },
     "require-dev": {
