@@ -19,23 +19,23 @@
         }
     ],
     "require": {
-	    "php": "^8.3|^8.4",
-	    "ext-json": "*",
-	    "barryvdh/reflection-docblock": "^2.0",
-	    "embed/embed": "^3.4|^4",
-	    "illuminate/support": "^10.0|^11.0|^12.0",
-	    "imgix/imgix-php": "^3.3|^4.0",
-	    "ivopetkov/html5-dom-document-php": "2.*",
-	    "league/commonmark": "^2.0",
+        "php": "^8.3|^8.4",
+        "ext-json": "*",
+        "barryvdh/reflection-docblock": "^2.0",
+        "embed/embed": "^3.4|^4",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+        "imgix/imgix-php": "^3.3|^4.0",
+        "ivopetkov/html5-dom-document-php": "2.*",
+        "league/commonmark": "^2.0",
         "riclep/storyblok-php-client": "^2.9",
         "spatie/laravel-ignition": "^2.8",
-	    "spatie/schema-org": "^3.3",
-	    "storyblok/php-tiptap-extension": "^1.0"
+        "spatie/schema-org": "^3.3|^4.0",
+        "storyblok/php-tiptap-extension": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.2",
-        "orchestra/testbench": "^8.0|^9.0|^10.0",
-        "phpunit/phpunit": "^10|^11.5.3"
+        "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^10|^11.5.3|^12.5.12"
     },
     "autoload": {
         "psr-4": {
