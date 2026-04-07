@@ -246,9 +246,9 @@ class Image extends Asset
 	 *
 	 * @param $transformations
 	 * @param bool $mutate
-	 * @return $this|Image
+	 * @return static
 	 */
-	public function setTransformations($transformations, bool $mutate = true): Image|self
+	public function setTransformations($transformations, bool $mutate = true): static
 	{
 		if ($mutate) {
 			$this->transformations = $transformations;
