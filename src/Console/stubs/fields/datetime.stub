@@ -1,0 +1,1 @@
+<time datetime="{{ $block->#NAME#->content()->toIso8601String() }}">{{ $block->#NAME# }}</time>

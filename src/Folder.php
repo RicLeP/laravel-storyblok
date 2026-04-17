@@ -8,6 +8,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Riclep\Storyblok\Traits\HasChildClasses;
+use Storyblok\Api\Domain\Value\Dto\Pagination;
+use Storyblok\Api\Domain\Value\Dto\SortBy;
+use Storyblok\Api\Domain\Value\Dto\Version;
+use Storyblok\Api\Domain\Value\Slug\Slug;
+use Storyblok\Api\Request\StoriesRequest;
+use Storyblok\Api\StoriesApi;
 
 abstract class Folder
 {
@@ -235,14 +241,25 @@ abstract class Folder
 	 */
 	protected function makeRequest(): array
 	{
-		$storyblokClient = resolve('Storyblok\Client');
+		$storyblokClient = resolve('Storyblok\Api\StoryblokClient');
+		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
 
-		$storyblokClient =  $storyblokClient->getStories($this->getSettings());
+		$sortBy = null;
+		if ($this->sortBy) {
+			$sortBy = SortBy::from( \sprintf('%s:%s', $this->sortBy, $this->sortOrder));
+		}
 
-		return [
-			'headers' => $storyblokClient->getHeaders(),
-			'stories' => $storyblokClient->getBody()['stories'],
-		];
+		$request = new StoriesRequest(
+			pagination: new Pagination(page: $this->currentPage ?: 1, perPage: $this->perPage),
+			sortBy: $sortBy,
+			version: config('storyblok.draft') ? Version::Draft : Version::Published,
+			startsWith: $this->slug ? new Slug($this->slug) : null,
+			isStartpage: $this->startPage,
+		);
+
+		$response = $storiesApi->all($request);
+
+		return $response->toArray();
 	}
 
 	/**

@@ -6,7 +6,13 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Storyblok\ApiException;
+use Storyblok\Api\Domain\Value\Dto\Version;
+use Storyblok\Api\Domain\Value\Resolver\Relation;
+use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
+use Storyblok\Api\Domain\Value\Resolver\ResolveLinks;
+use Storyblok\Api\Domain\Value\Uuid;
+use Storyblok\Api\Request\StoryRequest;
+use Storyblok\Api\StoriesApi;
 
 class RequestStory
 {
@@ -34,7 +40,6 @@ class RequestStory
 	 *
 	 * @param $slugOrUuid
 	 * @return mixed
-	 * @throws ApiException
 	 */
 	public function get($slugOrUuid): mixed
 	{
@@ -83,34 +88,37 @@ class RequestStory
 	 *
 	 * @param $slugOrUuid
 	 * @return array
-	 * @throws ApiException
 	 */
 	private function makeRequest($slugOrUuid): array
 	{
-		$storyblokClient = resolve('Storyblok\Client');
+		$storyblokClient = resolve('Storyblok\Api\StoryblokClient');
+		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
 
+		$withRelations = new RelationCollection();
 		if ($this->resolveRelations) {
-			$storyblokClient = $storyblokClient->resolveRelations($this->resolveRelations);
+			foreach (explode(',', $this->resolveRelations) as $relation) {
+				$withRelations->add(new Relation($relation));
+			}
 		}
 
+		$resolveLinks = new ResolveLinks();
 		if (config('storyblok.resolve_links')) {
-			$storyblokClient = $storyblokClient->resolveLinks(config('storyblok.resolve_links'));
+			$resolveLinks = ResolveLinks::from(config('storyblok.resolve_links'));
 		}
 
-		if ($this->language) {
-			$storyblokClient = $storyblokClient->language($this->language);
-		}
-
-		if ($this->fallbackLanguage) {
-			$storyblokClient = $storyblokClient->fallbackLanguage($this->fallbackLanguage);
-		}
+		$request = new StoryRequest(
+			language: $this->language ?: 'default',
+			version: config('storyblok.draft') ? Version::Draft : Version::Published,
+			withRelations: $withRelations,
+			resolveLinks: $resolveLinks,
+		);
 
 		if (Str::isUuid($slugOrUuid)) {
-			$storyblokClient =  $storyblokClient->getStoryByUuid($slugOrUuid);
+			$response = $storiesApi->byUuid(new Uuid($slugOrUuid), $request);
 		} else {
-			$storyblokClient =  $storyblokClient->getStoryBySlug($slugOrUuid);
+			$response = $storiesApi->bySlug($slugOrUuid, $request);
 		}
 
-		return $storyblokClient->getBody();
+		return $response->toArray();
 	}
 }

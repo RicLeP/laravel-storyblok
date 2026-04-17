@@ -5,7 +5,10 @@ namespace Riclep\Storyblok;
 
 
 use Riclep\Storyblok\Traits\HasChildClasses;
-use Storyblok\ApiException;
+use Storyblok\Api\Domain\Value\Dto\Version;
+use Storyblok\Api\Domain\Value\Id;
+use Storyblok\Api\Domain\Value\Uuid;
+use Storyblok\Api\StoriesApi;
 
 class Storyblok
 {
@@ -20,7 +23,6 @@ class Storyblok
 	 * @param string|null $language
 	 * @param string|null $fallbackLanguage
 	 * @return Page
-	 * @throws ApiException
 	 */
 	public function read(string $slug, ?array $resolveRelations = null, ?string $language = null, ?string $fallbackLanguage = null): Page
 	{

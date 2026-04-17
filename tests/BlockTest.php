@@ -6,10 +6,11 @@ namespace Riclep\Storyblok\Tests;
 use Illuminate\Support\Collection;
 use Riclep\Storyblok\RequestStory;
 
+use PHPUnit\Framework\Attributes\Test;
+
 class BlockTest extends TestCase
 {
-	/** @test */
-	public function can_extract_content()
+	public function test_can_extract_content()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -18,8 +19,7 @@ class BlockTest extends TestCase
 		$this->assertFalse($block->content()->has('_editable'));
 	}
 
-	/** @test */
-	public function can_extract_meta()
+	public function test_can_extract_meta()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -29,8 +29,7 @@ class BlockTest extends TestCase
 		$this->assertTrue(array_key_exists('_editable', $block->meta()));
 	}
 
-	/** @test */
-	public function can_get_uuid_from_meta()
+	public function test_can_get_uuid_from_meta()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -38,8 +37,7 @@ class BlockTest extends TestCase
 		$this->assertEquals('835f25ba-7c20-423c-b375-2690df006382', $block->uuid());
 	}
 
-	/** @test */
-	public function can_identify_rich_text_field()
+	public function test_can_identify_rich_text_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -47,8 +45,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\RichText', $block->richtext);
 	}
 
-	/** @test */
-	public function can_identify_asset_link_field()
+	public function test_can_identify_asset_link_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -56,8 +53,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\AssetLink', $block->link_asset);
 	}
 
-	/** @test */
-	public function can_identify_email_link_field()
+	public function test_can_identify_email_link_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -65,8 +61,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\EmailLink', $block->link_email);
 	}
 
-	/** @test */
-	public function can_identify_story_link_field()
+	public function test_can_identify_story_link_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -74,8 +69,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\StoryLink', $block->link_story);
 	}
 
-	/** @test */
-	public function can_identify_url_link_field()
+	public function test_can_identify_url_link_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -83,8 +77,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\UrlLink', $block->link_url);
 	}
 
-	/** @test */
-	public function can_identify_link_field()
+	public function test_can_identify_link_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -92,8 +85,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\UrlLink', $block->link_url);
 	}
 
-	/** @test */
-	public function can_identify_asset_field()
+	public function test_can_identify_asset_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
@@ -101,8 +93,7 @@ class BlockTest extends TestCase
 		$this->assertInstanceOf('Riclep\Storyblok\Fields\Asset', $block->asset);
 	}
 
-	/** @test */
-	public function can_identify_image_field()
+	public function test_can_identify_image_field()
 	{
 		$page = $this->makePage();
 		$block = $page->block();
