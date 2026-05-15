@@ -26,8 +26,7 @@ class Storyblok
 	 */
 	public function read(string $slug, ?array $resolveRelations = null, ?string $language = null, ?string $fallbackLanguage = null): Page
 	{
-		$storyblokRequest = new RequestStory();
-
+        $storyblokRequest = new RequestStory();
 		if ($resolveRelations) {
 			$storyblokRequest->resolveRelations($resolveRelations);
 		}

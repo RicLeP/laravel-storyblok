@@ -1,290 +1,400 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Riclep\Storyblok;
-
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Riclep\Storyblok\Traits\HasChildClasses;
+use Storyblok\Api\Domain\Value\Dto\Direction;
 use Storyblok\Api\Domain\Value\Dto\Pagination;
 use Storyblok\Api\Domain\Value\Dto\SortBy;
+use Storyblok\Api\Domain\Value\Dto\StoryLevel;
 use Storyblok\Api\Domain\Value\Dto\Version;
+use Storyblok\Api\Domain\Value\Field\FieldCollection;
+use Storyblok\Api\Domain\Value\Filter\FilterCollection;
+use Storyblok\Api\Domain\Value\IdCollection;
+use Storyblok\Api\Domain\Value\QueryParameter\FirstPublishedAtGt;
+use Storyblok\Api\Domain\Value\QueryParameter\FirstPublishedAtLt;
+use Storyblok\Api\Domain\Value\QueryParameter\PublishedAtGt;
+use Storyblok\Api\Domain\Value\QueryParameter\PublishedAtLt;
+use Storyblok\Api\Domain\Value\QueryParameter\UpdatedAtGt;
+use Storyblok\Api\Domain\Value\QueryParameter\UpdatedAtLt;
+use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
+use Storyblok\Api\Domain\Value\Resolver\ResolveLinks;
 use Storyblok\Api\Domain\Value\Slug\Slug;
+use Storyblok\Api\Domain\Value\Slug\SlugCollection;
+use Storyblok\Api\Domain\Value\Tag\TagCollection;
 use Storyblok\Api\Request\StoriesRequest;
+use Storyblok\Api\Response\StoriesResponse;
 use Storyblok\Api\StoriesApi;
 
 abstract class Folder
 {
-	use HasChildClasses;
+    use HasChildClasses;
 
+    public int $currentPage = 0;
+    public int $totalStories = 0;
+    public ?Collection $stories = null;
 
-	/**
-	 * @var int Current pagination page
-	 */
-	public int $currentPage = 0;
+    protected bool $startPage = false;
+    protected string $language = 'default';
+    protected int $page = 1;
+    protected int $perPage = 10;
+    protected ?SortBy $sortBy = null;
+    protected ?Slug $startsWith = null;
+    protected ?string $contentType = null;
+    protected ?Version $version = null;
+    protected ?string $searchTerm = null;
+    protected Pagination $pagination;
+    protected FilterCollection $filters;
+    protected FieldCollection $excludeFields;
+    protected TagCollection $withTags;
+    protected IdCollection $excludeIds;
+    protected RelationCollection $withRelations;
+    protected ResolveLinks $resolveLinks;
+    protected SlugCollection $excludeSlugs;
+    protected ?PublishedAtGt $publishedAtGt = null;
+    protected ?PublishedAtLt $publishedAtLt = null;
+    protected ?FirstPublishedAtGt $firstPublishedAtGt = null;
+    protected ?FirstPublishedAtLt $firstPublishedAtLt = null;
+    protected ?UpdatedAtGt $updatedAtGt = null;
+    protected ?UpdatedAtLt $updatedAtLt = null;
+    protected SlugCollection $bySlugs;
+    protected ?StoryLevel $level = null;
+    protected ?bool $isStartpage = null;
 
+    protected string $cacheKey = 'folder-';
 
-	/**
-	 * @var int the total number of stories matching the request
-	 */
-	public int $totalStories;
+    public function __construct()
+    {
+        $this->filters = new FilterCollection();
+        $this->excludeFields = new FieldCollection();
+        $this->withTags = new TagCollection();
+        $this->excludeIds = new IdCollection();
+        $this->withRelations = new RelationCollection();
+        $this->resolveLinks = new ResolveLinks();
+        $this->excludeSlugs = new SlugCollection();
+        $this->bySlugs = new SlugCollection();
 
+        $this->pagination = new Pagination(page: $this->page, perPage: $this->perPage);
 
-	/**
-	 * @var null|Collection the collection of stories in the folder
-	 */
-	public ?Collection $stories;
+        $this->setDefaults();
+    }
 
+    protected function setDefaults(): void
+    {
+        // Intentionally empty.
+        // Override in child classes to set default slug/content type/sort/etc.
+    }
 
-	/**
-	 * @var bool should we request the start / index page
-	 */
-	protected bool $startPage = false;
+    public function language(string $language): static
+    {
+        $this->language = $language;
 
+        return $this;
+    }
 
-	/**
-	 * @var int number of items to return
-	 */
-	protected int $perPage = 10;
+    public function pagination(Pagination $pagination): static
+    {
+        $this->pagination = $pagination;
+        $this->page = $pagination->page;
+        $this->perPage = $pagination->perPage;
 
+        return $this;
+    }
 
-	/**
-	 * @var string the field to sort by
-	 */
-	protected string $sortBy = 'published_at';
+    public function page(int $page): static
+    {
+        $this->page = $page;
+        $this->pagination = new Pagination(page: $page, perPage: $this->perPage);
 
+        return $this;
+    }
 
-	/**
-	 * @var string order to sort the returned stories
-	 */
-	protected string $sortOrder = 'desc';
+    public function perPage(int $perPage): static
+    {
+        $this->perPage = $perPage;
+        $this->pagination = new Pagination(page: $this->page, perPage: $perPage);
 
+        return $this;
+    }
 
-	/**
-	 * @var string the slug to start te request from
-	 */
-	protected string $slug = '';
+    public function sortBy(?SortBy $sortBy): static
+    {
+        $this->sortBy = $sortBy;
 
+        return $this;
+    }
 
-	/**
-	 * @var array additional settings for the request
-	 */
-	protected array $settings = [];
+    public function sort(string $sortBy, Direction $sortOrder): static
+    {
+        $this->sortBy = new SortBy($sortBy, $sortOrder);
 
-	/**
-	 * @var string key used for Laravel's cache
-	 */
-	protected string $cacheKey = 'folder-';
+        return $this;
+    }
 
-	/**
-	 * @param $page
-	 * @param string $pageName
-	 * @return LengthAwarePaginator
-	 */
-	public function paginate($page = null, string $pageName = 'page'): LengthAwarePaginator
-	{
-		$page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+    public function asc(string $sortBy = 'published_at'): static
+    {
+        return $this->sort($sortBy, Direction::Asc);
+    }
 
-		return new LengthAwarePaginator(
-			$this->stories,
-			$this->totalStories,
-			$this->perPage,
-			$page,
-			[
-				'path' => LengthAwarePaginator::resolveCurrentPath(),
-				'pageName' => $pageName,
-			]
-		);
-	}
+    public function desc(string $sortBy = 'published_at'): static
+    {
+        return $this->sort($sortBy, Direction::Desc);
+    }
 
+    public function startsWith(?Slug $startsWith): static
+    {
+        $this->startsWith = $startsWith;
 
-	/**
-	 * Reads a content of the returned stories, processing each one
-	 *
-	 * @return Folder
-	 */
-	public function read(): Folder
-	{
-		$stories = $this->get()->transform(function ($story) {
-			$blockClass = $this->getChildClassName('Page', $story['content']['component']);
+        return $this;
+    }
 
-			return new $blockClass($story);
-		});
+    public function slug(string $slug): static
+    {
+        return $this->startsWith(new Slug($slug));
+    }
 
-		$this->stories = $stories;
+    public function contentType(?string $contentType): static
+    {
+        $this->contentType = $contentType;
 
-		return $this;
-	}
+        return $this;
+    }
 
+    public function startPage(?bool $startPage = true): static
+    {
+        $this->startPage = $startPage ?? false;
+        $this->isStartpage = $this->startPage;
 
-	/**
-	 * Sets the slug of the folder to request
-	 *
-	 * @param string $slug
-	 * @return Folder
-	 */
-	public function slug(string $slug): Folder
-	{
-		$this->slug = $slug;
+        return $this;
+    }
 
-		return $this;
-	}
+    public function isStartpage(?bool $isStartpage): static
+    {
+        $this->isStartpage = $isStartpage;
+        $this->startPage = $isStartpage ?? false;
 
+        return $this;
+    }
 
-	/**
-	 * The field and order in which we want to sort the stories by
-	 *
-	 * @param string $sortBy
-	 * @param string|null $sortOrder
-	 * @return Folder
-	 */
-	public function sort(string $sortBy, ?string $sortOrder = null): Folder
-	{
-		$this->sortBy = $sortBy;
+    public function filters(FilterCollection $filters): static
+    {
+        $this->filters = $filters;
 
-		if ($sortOrder) {
-			$this->sortOrder = $sortOrder;
-		}
+        return $this;
+    }
 
-		return $this;
-	}
+    public function excludeFields(FieldCollection $excludeFields): static
+    {
+        $this->excludeFields = $excludeFields;
 
+        return $this;
+    }
 
-	/**
-	 * Sort ascending
-	 */
-	public function asc(): Folder
-	{
-		$this->sortOrder = 'asc';
+    public function withTags(TagCollection $withTags): static
+    {
+        $this->withTags = $withTags;
 
-		return $this;
-	}
+        return $this;
+    }
 
+    public function excludeIds(IdCollection $excludeIds): static
+    {
+        $this->excludeIds = $excludeIds;
 
-	/**
-	 * Sort descending
-	 */
-	public function desc(): Folder
-	{
-		$this->sortOrder = 'desc';
+        return $this;
+    }
 
-		return $this;
-	}
+    public function withRelations(RelationCollection $withRelations): static
+    {
+        $this->withRelations = $withRelations;
 
+        return $this;
+    }
 
-	/**
-	 * Define the settings for the API call
-	 *
-	 * @param array $settings
-	 */
-	public function settings(array $settings): void
-	{
-		$this->settings = $settings;
-	}
+    public function version(?Version $version): static
+    {
+        $this->version = $version;
 
+        return $this;
+    }
 
-	/**
-	 * Returns the total number of stories for this page
-	 *
-	 * @return int
-	 */
-	public function count(): int
-	{
-		return $this->stories->count() ?? 0;
-	}
+    public function searchTerm(?string $searchTerm): static
+    {
+        $this->searchTerm = $searchTerm;
 
+        return $this;
+    }
 
-	/**
-	 * Sets the number of items per page
-	 *
-	 * @param $perPage
-	 * @return Folder
-	 */
-	public function perPage($perPage): Folder
-	{
-		$this->perPage = $perPage;
+    public function resolveLinks(ResolveLinks $resolveLinks): static
+    {
+        $this->resolveLinks = $resolveLinks;
 
-		return $this;
-	}
+        return $this;
+    }
 
+    public function excludeSlugs(SlugCollection $excludeSlugs): static
+    {
+        $this->excludeSlugs = $excludeSlugs;
 
-	/**
-	 * Caches the response and returns just the bit we want
-	 *
-	 * @return Collection
-	 */
-	protected function get()
-	{
-		if (request()->has('_storyblok') || !config('storyblok.cache')) {
-			$response = $this->makeRequest();
-		} else {
-			$apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key')); // unique id for multitenancy applications
-            $uniqueTag = md5(serialize($this->getSettings()));
+        return $this;
+    }
 
-			$response = Cache::store(config('storyblok.sb_cache_driver'))->remember($this->cacheKey . $this->slug . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () {
-				return $this->makeRequest();
-			});
-		}
+    public function publishedAtGt(?PublishedAtGt $value): static
+    {
+        $this->publishedAtGt = $value;
 
-        $this->totalStories = $response['headers']['Total'][0] ?? $response['headers']['total'][0];
+        return $this;
+    }
 
-		return collect($response['stories']);
-	}
+    public function publishedAtLt(?PublishedAtLt $value): static
+    {
+        $this->publishedAtLt = $value;
 
+        return $this;
+    }
 
-	/**
-	 * Makes the actual request
-	 *
-	 * @return array
-	 */
-	protected function makeRequest(): array
-	{
-		$storyblokClient = resolve('Storyblok\Api\StoryblokClient');
-		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
+    public function firstPublishedAtGt(?FirstPublishedAtGt $value): static
+    {
+        $this->firstPublishedAtGt = $value;
 
-		$sortBy = null;
-		if ($this->sortBy) {
-			$sortBy = SortBy::from( \sprintf('%s:%s', $this->sortBy, $this->sortOrder));
-		}
+        return $this;
+    }
 
-		$request = new StoriesRequest(
-			pagination: new Pagination(page: $this->currentPage ?: 1, perPage: $this->perPage),
-			sortBy: $sortBy,
-			version: config('storyblok.draft') ? Version::Draft : Version::Published,
-			startsWith: $this->slug ? new Slug($this->slug) : null,
-			isStartpage: $this->startPage,
-		);
+    public function firstPublishedAtLt(?FirstPublishedAtLt $value): static
+    {
+        $this->firstPublishedAtLt = $value;
 
-		$response = $storiesApi->all($request);
+        return $this;
+    }
 
-		return $response->toArray();
-	}
+    public function updatedAtGt(?UpdatedAtGt $value): static
+    {
+        $this->updatedAtGt = $value;
 
-	/**
-	 * Returns the settings for the folder
-	 *
-	 * @return array
-	 */
-	protected function getSettings(): array
-	{
-		return array_merge([
-			'is_startpage' => $this->startPage,
-			'sort_by' => $this->sortBy . ':' . $this->sortOrder,
-			'starts_with' => $this->slug,
-			'page' => $this->currentPage,
-			'per_page' => $this->perPage,
-		], $this->settings);
-	}
+        return $this;
+    }
 
-	/**
-	 * Returns the Stories as an array
-	 *
-	 * @return array
-	 */
-	public function toArray(): array
-	{
-		return $this->stories->toArray();
-	}
+    public function updatedAtLt(?UpdatedAtLt $value): static
+    {
+        $this->updatedAtLt = $value;
+
+        return $this;
+    }
+
+    public function bySlugs(SlugCollection $bySlugs): static
+    {
+        $this->bySlugs = $bySlugs;
+
+        return $this;
+    }
+
+    public function level(?StoryLevel $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function makeRequest(): StoriesRequest
+    {
+        return new StoriesRequest(
+            language: $this->language,
+            pagination: $this->pagination,
+            sortBy: $this->sortBy,
+            filters: $this->filters,
+            excludeFields: $this->excludeFields,
+            withTags: $this->withTags,
+            excludeIds: $this->excludeIds,
+            withRelations: $this->withRelations,
+            version: $this->version,
+            searchTerm: $this->searchTerm,
+            resolveLinks: $this->resolveLinks,
+            excludeSlugs: $this->excludeSlugs,
+            startsWith: $this->startsWith,
+            publishedAtGt: $this->publishedAtGt,
+            publishedAtLt: $this->publishedAtLt,
+            firstPublishedAtGt: $this->firstPublishedAtGt,
+            firstPublishedAtLt: $this->firstPublishedAtLt,
+            updatedAtGt: $this->updatedAtGt,
+            updatedAtLt: $this->updatedAtLt,
+            bySlugs: $this->bySlugs,
+            level: $this->level,
+            isStartpage: $this->isStartpage,
+            contentType: $this->contentType,
+        );
+    }
+
+    protected function get()
+    {
+        if (request()->has('_storyblok') || !config('storyblok.cache')) {
+            $response = $this->doRequest();
+        } else {
+            $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
+            $uniqueTag = md5($this->perPage . $this->currentPage . ($this->sortBy?->toString() ?? ''));
+
+            $response = Cache::store(config('storyblok.sb_cache_driver'))->remember(
+                $this->cacheKey . ($this->startsWith?->value ?? '') . '-' . $apiHash . '-' . $uniqueTag,
+                config('storyblok.cache_duration') * 60,
+                function () {
+                    return $this->doRequest();
+                }
+            );
+        }
+
+        $this->totalStories = $response->total->value;
+
+        return collect($response->stories);
+    }
+
+    protected function doRequest(): StoriesResponse
+    {
+        $storyblokClient = resolve('Storyblok\Api\StoryblokClient');
+        $storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
+
+        return $storiesApi->all($this->makeRequest());
+    }
+
+    public function paginate($page = null, string $pageName = 'page'): LengthAwarePaginator
+    {
+        $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+        return new LengthAwarePaginator(
+            $this->stories,
+            $this->totalStories,
+            $this->perPage,
+            $page,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]
+        );
+    }
+
+    public function read(): static
+    {
+        $stories = $this->get()->transform(function ($story) {
+            $blockClass = $this->getChildClassName('Page', $story['content']['component']);
+
+            return new $blockClass($story);
+        });
+
+        $this->stories = $stories;
+
+        return $this;
+    }
+
+    public function count(): int
+    {
+        return $this->stories?->count() ?? 0;
+    }
+
+    public function toArray(): array
+    {
+        return $this->stories?->toArray() ?? [];
+    }
 }

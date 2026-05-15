@@ -12,15 +12,16 @@ use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
 use Storyblok\Api\Domain\Value\Resolver\ResolveLinks;
 use Storyblok\Api\Domain\Value\Uuid;
 use Storyblok\Api\Request\StoryRequest;
+use Storyblok\Api\Response\StoryResponse;
 use Storyblok\Api\StoriesApi;
 
 class RequestStory
 {
 	/**
-	 * @var string|null A comma delimited string of relations to resolve matching: component_name.field_name
+	 * @var array|null A comma delimited string of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	protected ?string $resolveRelations = null;
+	protected ?array $resolveRelations = null;
 
 
 	/**
@@ -59,7 +60,7 @@ class RequestStory
             });
 		}
 
-		return $response['story'];
+		return $response->story;
 	}
 
 	/**
@@ -69,7 +70,7 @@ class RequestStory
 	 */
 	public function resolveRelations($resolveRelations): void
 	{
-		$this->resolveRelations = implode(',', $resolveRelations);
+		$this->resolveRelations = $resolveRelations;
 	}
 
 	/**
@@ -87,22 +88,23 @@ class RequestStory
 	 * Makes the API request
 	 *
 	 * @param $slugOrUuid
-	 * @return array
+	 * @return StoryResponse
 	 */
-	private function makeRequest($slugOrUuid): array
+	private function makeRequest($slugOrUuid): StoryResponse
 	{
 		$storyblokClient = resolve('Storyblok\Api\StoryblokClient');
 		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
 
 		$withRelations = new RelationCollection();
 		if ($this->resolveRelations) {
-			foreach (explode(',', $this->resolveRelations) as $relation) {
+			foreach ($this->resolveRelations as $relation) {
 				$withRelations->add(new Relation($relation));
 			}
 		}
 
 		$resolveLinks = new ResolveLinks();
 		if (config('storyblok.resolve_links')) {
+            // TODO broken
 			$resolveLinks = ResolveLinks::from(config('storyblok.resolve_links'));
 		}
 
@@ -119,6 +121,6 @@ class RequestStory
 			$response = $storiesApi->bySlug($slugOrUuid, $request);
 		}
 
-		return $response->toArray();
+		return $response;
 	}
 }
