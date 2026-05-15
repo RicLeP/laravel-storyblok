@@ -468,7 +468,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
         if ($foreignRelationshipType === 'single') {
 			$filter = new InFilter($foreignRelationshipField, $pageUuid);
         } else {
-			$filter = new AnyInArrayFilter($foreignRelationshipField, $pageUuid);
+			$filter = new AnyInArrayFilter($foreignRelationshipField, [$pageUuid]);
 		}
 
 		$request = new StoriesRequest(
@@ -510,7 +510,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
                 $response = $storiesApi->all($request);
 
                 return [
-                    'headers' => $response->total->headers,
+                    'headers' => $response->total->value,
                     'stories' => $response->stories,
                 ];
             });
