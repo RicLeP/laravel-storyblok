@@ -35,7 +35,6 @@ abstract class Folder
 {
     use HasChildClasses;
 
-    public int $currentPage = 0;
     public int $totalStories = 0;
     public ?Collection $stories = null;
 
@@ -335,7 +334,7 @@ abstract class Folder
             $response = $this->doRequest();
         } else {
             $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
-            $uniqueTag = md5($this->perPage . $this->currentPage . ($this->sortBy?->toString() ?? ''));
+            $uniqueTag = md5($this->perPage . $this->page . ($this->sortBy?->toString() ?? ''));
 
             $response = Cache::store(config('storyblok.sb_cache_driver'))->remember(
                 $this->cacheKey . ($this->startsWith?->value ?? '') . '-' . $apiHash . '-' . $uniqueTag,
@@ -362,6 +361,10 @@ abstract class Folder
     public function paginate($page = null, string $pageName = 'page'): LengthAwarePaginator
     {
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+        if ($this->stories === null || $this->page !== $page) {
+            $this->page($page)->read();
+        }
 
         return new LengthAwarePaginator(
             $this->stories,
