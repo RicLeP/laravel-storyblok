@@ -8,3 +8,6 @@ build/
 .idea/
 /.phpunit.cache
 .idea/laravel-storyblok.iml
+.junie/
+.ai/
+.ddev/
