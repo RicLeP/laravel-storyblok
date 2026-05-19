@@ -115,12 +115,47 @@ class RequestStory
 			resolveLinks: $resolveLinks,
 		);
 
-		if (Str::isUuid($slugOrUuid)) {
-			$response = $storiesApi->byUuid(new Uuid($slugOrUuid), $request);
-		} else {
-			$response = $storiesApi->bySlug($slugOrUuid, $request);
-		}
 
-		return $response;
+        if (Str::isUuid($slugOrUuid)) {
+            $response = $storiesApi->byUuid(new Uuid($slugOrUuid), $request);
+        } else {
+            $response = $storiesApi->bySlug($slugOrUuid, $request);
+        }
+
+        if ($response->rels && $this->resolveRelations) {
+            $story = $response->story;
+
+            foreach ($this->resolveRelations as $relation) {
+                $relationsField = Str::of($relation)->explode('.')->last();
+
+                if (!isset($story['content'][$relationsField]) || !is_array($story['content'][$relationsField])) {
+                    continue;
+                }
+
+                foreach ($response->rels as $relatedStory) {
+                    $relatedStoryUuid = $relatedStory['uuid'] ?? null;
+
+                    if (!$relatedStoryUuid) {
+                        continue;
+                    }
+
+                    foreach ($story['content'][$relationsField] as $key => $value) {
+                        if ($value === $relatedStoryUuid) {
+                            $story['content'][$relationsField][$key] = $relatedStory;
+                        }
+                    }
+                }
+            }
+
+            $response = new StoryResponse([
+                'story' => $story,
+                'cv' => $response->cv,
+                'rels' => $response->rels,
+                'rel_uuids' => $response->relUuids,
+                'links' => $response->links,
+            ]);
+        }
+
+        return $response;
 	}
 }

@@ -35,7 +35,6 @@ abstract class Folder
 {
     use HasChildClasses;
 
-    public int $currentPage = 0;
     public int $totalStories = 0;
     public ?Collection $stories = null;
 
@@ -362,6 +361,10 @@ abstract class Folder
     public function paginate($page = null, string $pageName = 'page'): LengthAwarePaginator
     {
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+        if ($this->stories === null || $this->page !== $page) {
+            $this->page($page)->read();
+        }
 
         return new LengthAwarePaginator(
             $this->stories,
