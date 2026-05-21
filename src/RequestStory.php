@@ -45,7 +45,7 @@ class RequestStory
 	public function get($slugOrUuid): mixed
 	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
-			$response = $this->makeRequest($slugOrUuid);
+			$response = $this->makeRequest($slugOrUuid)->story;
 		} else {
             $cache = Cache::store(config('storyblok.sb_cache_driver'));
 
@@ -56,11 +56,11 @@ class RequestStory
             $api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
 
             $response = $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
-                return $this->makeRequest($slugOrUuid);
+                return $this->makeRequest($slugOrUuid)->story;
             });
 		}
 
-		return $response->story;
+		return $response;
 	}
 
 	/**
