@@ -270,8 +270,9 @@ class Storyblok extends BaseTransformer
     {
         $filters = '';
 
+        // A raw filter string
         if (array_key_exists('filters', $this->transformations)) {
-            dd('ff');
+            $filters .= ':' . $this->transformations['filters'];
         }
 
         if (array_key_exists('format', $this->transformations)) {
