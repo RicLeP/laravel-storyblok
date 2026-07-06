@@ -6,9 +6,6 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/riclep/laravel-storyblok/Tests)
 ![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/riclep/laravel-storyblok/php)
 
-[![Build](https://img.shields.io/scrutinizer/build/g/riclep/laravel-storyblok?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
-[![Quality Score](https://img.shields.io/scrutinizer/g/riclep/laravel-storyblok.svg?style=flat-square)](https://scrutinizer-ci.com/g/riclep/laravel-storyblok)
-
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/M4M2C42W6)
 [![Twitter](https://img.shields.io/twitter/follow/riclep.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=riclep)
 
