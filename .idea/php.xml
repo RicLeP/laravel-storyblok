@@ -2,7 +2,7 @@
 <project version="4">
   <component name="MessDetector">
     <phpmd_settings>
-      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="d850b1e3-1775-4ffc-a16a-f92fd6453843" timeout="30000" />
+      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="0f88d60c-a487-4afc-b503-f6b2eac92660" timeout="30000" />
     </phpmd_settings>
   </component>
   <component name="MessDetectorOptionsConfiguration">
@@ -16,7 +16,7 @@
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="d850b1e3-1775-4ffc-a16a-f92fd6453843" timeout="30000" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="0f88d60c-a487-4afc-b503-f6b2eac92660" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -181,6 +181,17 @@
       <path value="$PROJECT_DIR$/vendor/thecodingmachine/safe" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php85" />
       <path value="$PROJECT_DIR$/vendor/scrivo/highlight.php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php86" />
+      <path value="$PROJECT_DIR$/vendor/laravel/boost" />
+      <path value="$PROJECT_DIR$/vendor/laravel/mcp" />
+      <path value="$PROJECT_DIR$/vendor/laravel/roster" />
+      <path value="$PROJECT_DIR$/vendor/storyblok/php-content-api-client" />
+      <path value="$PROJECT_DIR$/vendor/oskarstark/trimmed-non-empty-string" />
+      <path value="$PROJECT_DIR$/vendor/storyblok/php-management-api-client" />
+      <path value="$PROJECT_DIR$/vendor/oskarstark/enum-helper" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-deepclone" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
