@@ -74,6 +74,10 @@ class Storyblok extends BaseTransformer
             $this->format('webp');
         }
 
+        // fit-in and a manual crop are mutually exclusive - drop any crop
+        // left over from a prior zoomCrop() call
+        unset($this->transformations['crop']);
+
         return $this;
     }
 
@@ -167,45 +171,73 @@ class Storyblok extends BaseTransformer
     }
 
     /**
-     * Zooms and crops an image based on focal point. If there is no focal point it will use the center of the image
+     * Works out a crop box around the focal point (or image centre) at the
+     * given zoom level, storing it for buildUrl() to render. Chainable.
      *
-     * @param int $zoomLevel
      * @param int $width
      * @param int $height
-     * @return string
+     * @param int $zoom Percentage, 100 = fills the frame with no extra
+     *                  magnification. Values below 100 are clamped to 100.
+     * @return $this
      */
-    public function zoomCrop(int $zoomLevel, int $width, int $height): string
+    public function zoomCrop(int $width, int $height, int $zoom = 100): self
     {
-        if ($this->transformations === 'svg') {
-            return $this->assetDomain($this->image->content()['filename']);
+        $zoom = max($zoom, 100);
+
+        $imageWidth = $this->width();
+        $imageHeight = $this->height();
+        $targetRatio = $width / $height;
+
+        if ($imageWidth / $imageHeight > $targetRatio) {
+            $baseCropHeight = $imageHeight;
+            $baseCropWidth = $imageHeight * $targetRatio;
+        } else {
+            $baseCropWidth = $imageWidth;
+            $baseCropHeight = $imageWidth / $targetRatio;
         }
 
-        if ($this->width() >= $this->height()) {
-            $cropBuffer = $this->width() * 100 / $zoomLevel;
-        } else {
-            $cropBuffer = $this->height() * 100 / $zoomLevel;
-        }
+        $cropWidth = min($baseCropWidth * (100 / $zoom), $imageWidth);
+        $cropHeight = min($baseCropHeight * (100 / $zoom), $imageHeight);
 
         if ($this->image->focus) {
             $focalPointCoords = explode('x', explode(':', $this->image->focus)[0]);
-            $focalPoint = [$focalPointCoords[0], $focalPointCoords[1]];
+            $focalPoint = [(float) $focalPointCoords[0], (float) $focalPointCoords[1]];
         } else {
-            $focalPoint = [$this->width() / 2, $this->height() / 2];
+            $focalPoint = [$imageWidth / 2, $imageHeight / 2];
         }
 
-        $cropLeft = max(round($focalPoint[0] - $cropBuffer / 2), 0);
-        $cropTop = max(round($focalPoint[1] - $cropBuffer / 2), 0);
-        $cropRight = min(round($cropLeft + $cropBuffer), $this->width());
-        $cropBottom = min(round($cropTop + $cropBuffer), $this->height());
+        $cropLeft = $focalPoint[0] - $cropWidth / 2;
+        $cropTop = $focalPoint[1] - $cropHeight / 2;
 
-        $croppedUrl = '/' . $cropLeft . "x" . $cropTop . ":" . $cropRight . "x" . $cropBottom . "/" . $width . "x" . $height;
-
-
-        if ($this->hasFilters()) {
-            $croppedUrl .= $this->applyFilters();
+        if ($cropLeft < 0) {
+            $cropLeft = 0;
+        } elseif ($cropLeft + $cropWidth > $imageWidth) {
+            $cropLeft = $imageWidth - $cropWidth;
         }
 
-        return $this->assetDomain($croppedUrl);
+        if ($cropTop < 0) {
+            $cropTop = 0;
+        } elseif ($cropTop + $cropHeight > $imageHeight) {
+            $cropTop = $imageHeight - $cropHeight;
+        }
+
+        $this->transformations = array_merge($this->transformations, [
+            'width' => $width,
+            'height' => $height,
+            'crop' => [
+                'left' => (int) round($cropLeft),
+                'top' => (int) round($cropTop),
+                'right' => (int) round($cropLeft + $cropWidth),
+                'bottom' => (int) round($cropTop + $cropHeight),
+            ],
+        ]);
+
+        // a manual crop and Storyblok's own focal filter both position the
+        // image within the frame - stacking them would apply the shift twice,
+        // so drop any focus transformation a prior resize() call may have set
+        unset($this->transformations['focus']);
+
+        return $this;
     }
 
     /**
@@ -221,7 +253,10 @@ class Storyblok extends BaseTransformer
 
         $transforms = '';
 
-        if (array_key_exists('fit-in', $this->transformations)) {
+        if (array_key_exists('crop', $this->transformations)) {
+            $crop = $this->transformations['crop'];
+            $transforms .= '/' . $crop['left'] . 'x' . $crop['top'] . ':' . $crop['right'] . 'x' . $crop['bottom'];
+        } elseif (array_key_exists('fit-in', $this->transformations)) {
             $transforms .= '/fit-in';
         }
 
