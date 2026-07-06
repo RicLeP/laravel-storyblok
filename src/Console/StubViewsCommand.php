@@ -5,8 +5,8 @@ namespace Riclep\Storyblok\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Riclep\Storyblok\Traits\HasChildClasses;
-use Storyblok\ApiException;
-use Storyblok\ManagementClient;
+use Storyblok\ManagementApi\Endpoints\ComponentApi;
+use Storyblok\ManagementApi\ManagementApiClient;
 
 class StubViewsCommand extends Command
 {
@@ -46,13 +46,13 @@ class StubViewsCommand extends Command
 	{
 		$this->makeDirectories();
 
-		$client = new ManagementClient(
-            apiKey:config('storyblok.oauth_token'),
-            apiEndpoint: config('storyblok.management_api_base_url'),
-            ssl: config('storyblok.use_ssl'),
+		$managementClient = new ManagementApiClient(
+            personalAccessToken: config('storyblok.oauth_token'),
         );
 
-		$components = collect($client->get('spaces/' . config('storyblok.space_id') . '/components/')->getBody()['components']);
+		$componentApi = new ComponentApi($managementClient, config('storyblok.space_id'));
+
+		$components = collect($componentApi->all()->toArray()['components']);
 
 		$components->each(function ($component) {
 			$path = resource_path('views/' . str_replace('.', '/', config('storyblok.view_path')) . 'blocks/');
@@ -118,51 +118,22 @@ class StubViewsCommand extends Command
 	protected function writeBlade($field, int|string $name, string $body): string
 	{
 		if (!str_starts_with($name, 'tab-')) {
-			switch ($field['type']) {
-				case 'options':
-				case 'bloks':
-					$body .= "\t" . '@if ($block->' . $name . ')' . "\n";
-					$body .= "\t\t" . '@foreach ($block->' . $name . ' as $childBlock)' . "\n";
-					$body .= "\t\t\t" . '{{ $childBlock->render() }}' . "\n";
-					$body .= "\t\t" . '@endforeach' . "\n";
-					$body .= "\t" . '@endif' . "\n";
-					break;
-				case 'datetime':
-					$body .= "\t" . '<time datetime="{{ $block->' . $name . '->content()->toIso8601String() }}">{{ $block->' . $name . ' }}</time>' . "\n";
-					break;
-				case 'number':
-				case 'text':
-					$body .= "\t" . '<p>{{ $block->' . $name . ' }}</p>' . "\n";
-					break;
-				case 'multilink':
-					$body .= "\t" . '<a href="{{ $block->' . $name . '->cached_url }}"></a>' . "\n";
-					break;
-				case 'textarea':
-				case 'richtext':
-					$body .= "\t" . '<div>{!! $block->' . $name . ' !!}</div>' . "\n";
-					break;
-				case 'asset':
-					if (array_key_exists('filetypes', $field) && in_array('images', $field['filetypes'], true)) {
-						$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
-						$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100) }}" width="{{ $block->' . $name . '->width() }}" height="{{ $block->' . $name . '->height() }}" alt="{{ $block->' . $name . '->alt() }}">' . "\n";
-						$body .= "\t" . '@endif' . "\n";
-					} else {
-						$body .= "\t" . '<a href="{{ $block->' . $name . ' }}">Download</a>' . "\n";
-					}
-					break;
-				case 'image':
-					$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
-					$body .= "\t\t" . '<img src="{{ $block->' . $name . '->transform()->resize(100, 100)->format(\'webp\', 60) }}" width="{{ $block->' . $name . '->width() }}" height="{{ $block->' . $name . '->height() }}" alt="{{ $block->' . $name . '->alt() }}">' . "\n";
-					$body .= "\t" . '@endif' . "\n";
-					break;
-				case 'file':
-					$body .= "\t" . '@if ($block->' . $name . '->hasFile())' . "\n";
-					$body .= "\t\t" . '<a href="{{ $block->' . $name . ' }}">{{ $block->' . $name . '->filename }}</a>' . "\n";
-					$body .= "\t" . '@endif' . "\n";
-					break;
-				default:
-					$body .= "\t" . '{{ $block->' . $name . ' }}' . "\n";
-			}
+			$stub = match ($field['type']) {
+				'options', 'bloks' => 'bloks',
+				'datetime' => 'datetime',
+				'number', 'text' => 'text',
+				'multilink' => 'multilink',
+				'textarea', 'richtext' => 'textarea',
+				'asset' => (array_key_exists('filetypes', $field) && in_array('images', $field['filetypes'], true)) ? 'asset_image' : 'asset_file',
+				'image' => 'image',
+				'file' => 'file',
+				default => 'default',
+			};
+
+			$content = file_get_contents(__DIR__ . '/stubs/fields/' . $stub . '.stub');
+			$content = str_replace('#NAME#', $name, $content);
+
+			$body .= "\t" . str_replace("\n", "\n\t", trim($content)) . "\n";
 		}
 
 		$body .= "\n";

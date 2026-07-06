@@ -6,15 +6,22 @@ namespace Riclep\Storyblok;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Storyblok\ApiException;
+use Storyblok\Api\Domain\Value\Dto\Version;
+use Storyblok\Api\Domain\Value\Resolver\Relation;
+use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
+use Storyblok\Api\Domain\Value\Resolver\ResolveLinks;
+use Storyblok\Api\Domain\Value\Uuid;
+use Storyblok\Api\Request\StoryRequest;
+use Storyblok\Api\Response\StoryResponse;
+use Storyblok\Api\StoriesApi;
 
 class RequestStory
 {
 	/**
-	 * @var string|null A comma delimited string of relations to resolve matching: component_name.field_name
+	 * @var array|null A comma delimited string of relations to resolve matching: component_name.field_name
 	 * @see https://www.storyblok.com/tp/using-relationship-resolving-to-include-other-content-entries
 	 */
-	protected ?string $resolveRelations = null;
+	protected ?array $resolveRelations = null;
 
 
 	/**
@@ -34,12 +41,11 @@ class RequestStory
 	 *
 	 * @param $slugOrUuid
 	 * @return mixed
-	 * @throws ApiException
 	 */
 	public function get($slugOrUuid): mixed
 	{
 		if (request()->has('_storyblok') || !config('storyblok.cache')) {
-			$response = $this->makeRequest($slugOrUuid);
+			$response = $this->makeRequest($slugOrUuid)->story;
 		} else {
             $cache = Cache::store(config('storyblok.sb_cache_driver'));
 
@@ -50,11 +56,11 @@ class RequestStory
             $api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
 
             $response = $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
-                return $this->makeRequest($slugOrUuid);
+                return $this->makeRequest($slugOrUuid)->story;
             });
 		}
 
-		return $response['story'];
+		return $response;
 	}
 
 	/**
@@ -64,7 +70,7 @@ class RequestStory
 	 */
 	public function resolveRelations($resolveRelations): void
 	{
-		$this->resolveRelations = implode(',', $resolveRelations);
+		$this->resolveRelations = $resolveRelations;
 	}
 
 	/**
@@ -82,35 +88,74 @@ class RequestStory
 	 * Makes the API request
 	 *
 	 * @param $slugOrUuid
-	 * @return array
-	 * @throws ApiException
+	 * @return StoryResponse
 	 */
-	private function makeRequest($slugOrUuid): array
+	private function makeRequest($slugOrUuid): StoryResponse
 	{
-		$storyblokClient = resolve('Storyblok\Client');
+		$storyblokClient = resolve('Storyblok\Api\StoryblokClient');
+		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
 
+		$withRelations = new RelationCollection();
 		if ($this->resolveRelations) {
-			$storyblokClient = $storyblokClient->resolveRelations($this->resolveRelations);
+			foreach ($this->resolveRelations as $relation) {
+				$withRelations->add(new Relation($relation));
+			}
 		}
 
+		$resolveLinks = new ResolveLinks();
 		if (config('storyblok.resolve_links')) {
-			$storyblokClient = $storyblokClient->resolveLinks(config('storyblok.resolve_links'));
+            // TODO broken
+			$resolveLinks = ResolveLinks::from(config('storyblok.resolve_links'));
 		}
 
-		if ($this->language) {
-			$storyblokClient = $storyblokClient->language($this->language);
-		}
+		$request = new StoryRequest(
+			language: $this->language ?: 'default',
+			version: config('storyblok.draft') ? Version::Draft : Version::Published,
+			withRelations: $withRelations,
+			resolveLinks: $resolveLinks,
+		);
 
-		if ($this->fallbackLanguage) {
-			$storyblokClient = $storyblokClient->fallbackLanguage($this->fallbackLanguage);
-		}
 
-		if (Str::isUuid($slugOrUuid)) {
-			$storyblokClient =  $storyblokClient->getStoryByUuid($slugOrUuid);
-		} else {
-			$storyblokClient =  $storyblokClient->getStoryBySlug($slugOrUuid);
-		}
+        if (Str::isUuid($slugOrUuid)) {
+            $response = $storiesApi->byUuid(new Uuid($slugOrUuid), $request);
+        } else {
+            $response = $storiesApi->bySlug($slugOrUuid, $request);
+        }
 
-		return $storyblokClient->getBody();
+        if ($response->rels && $this->resolveRelations) {
+            $story = $response->story;
+
+            foreach ($this->resolveRelations as $relation) {
+                $relationsField = Str::of($relation)->explode('.')->last();
+
+                if (!isset($story['content'][$relationsField]) || !is_array($story['content'][$relationsField])) {
+                    continue;
+                }
+
+                foreach ($response->rels as $relatedStory) {
+                    $relatedStoryUuid = $relatedStory['uuid'] ?? null;
+
+                    if (!$relatedStoryUuid) {
+                        continue;
+                    }
+
+                    foreach ($story['content'][$relationsField] as $key => $value) {
+                        if ($value === $relatedStoryUuid) {
+                            $story['content'][$relationsField][$key] = $relatedStory;
+                        }
+                    }
+                }
+            }
+
+            $response = new StoryResponse([
+                'story' => $story,
+                'cv' => $response->cv,
+                'rels' => $response->rels,
+                'rel_uuids' => $response->relUuids,
+                'links' => $response->links,
+            ]);
+        }
+
+        return $response;
 	}
 }

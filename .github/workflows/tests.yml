@@ -17,8 +17,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.3, 8.4]
-        laravel: ['10.*', '11.*', '12.*', '13.*']
+        php: [8.3, 8.4, 8.5]
+        laravel: ['11.*', '12.*', '13.*']
+        include:
+          - laravel: '11.*'
+            testbench: '9.*'
+          - laravel: '12.*'
+            testbench: '10.*'
+          - laravel: '13.*'
+            testbench: '11.*'
 
     steps:
       - name: Checkout code
@@ -28,12 +35,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, json
+          extensions: dom, curl, libxml, mbstring, zip
           coverage: xdebug
+          cache: composer
 
       - name: Install dependencies
         run: |
-          composer require "illuminate/support:${{ matrix.laravel }}" --no-update
+          if [[ "${{ matrix.laravel }}" == "10.*" ]]; then
+            composer remove "laravel/boost" --dev --no-update --no-interaction
+          fi
+          composer require "illuminate/support:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-update
           composer update --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests

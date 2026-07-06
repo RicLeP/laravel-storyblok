@@ -1,0 +1,3 @@
+@if ($block->#NAME#->hasFile())
+	<a href="{{ $block->#NAME# }}">{{ $block->#NAME#->filename }}</a>
+@endif
