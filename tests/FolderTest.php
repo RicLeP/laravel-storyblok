@@ -11,8 +11,7 @@ use Riclep\Storyblok\Tests\Fixtures\Folders\SortedFolder;
 
 class FolderTest extends TestCase
 {
-	/** @test */
-	public function can_get_total_stories() {
+    public function test_can_get_total_stories() {
 		$folder = new Folder();
 		$folder->read();
 
@@ -23,24 +22,21 @@ class FolderTest extends TestCase
 		$this->assertEquals(0, $folder2->totalStories);
 	}
 
-	/** @test */
-	public function can_get_total_stories_for_this_page() {
+    public function test_can_get_total_stories_for_this_page() {
 		$folder = new Folder();
 		$folder->read();
 
 		$this->assertEquals(4, $folder->count());
 	}
 
-	/** @test */
-	public function will_return_zero_stories_for_empty_folder() {
+    public function test_will_return_zero_stories_for_empty_folder() {
 		$folder = new EmptyFolder();
 		$folder->read();
 
 		$this->assertEquals(0, $folder->count());
 	}
 
-	/** @test */
-	public function can_get_folder_stories() {
+    public function test_can_get_folder_stories() {
 		$folder = new Folder();
 		$folder->read();
 
@@ -48,92 +44,82 @@ class FolderTest extends TestCase
 		$this->assertInstanceOf(Page::class, $folder->stories[0]);
 	}
 
-	/** @test */
-	public function can_paginate_folder() {
+    public function test_can_paginate_folder() {
 		$folder = new Folder();
 		$folder->read();
 
 		$this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $folder->paginate());
 	}
 
-	/** @test */
-	public function can_use_fluent_access() {
+    public function test_can_use_fluent_access() {
 		$folder = new Folder();
 		$folder->slug('services')->desc()->perPage(5);
-		$settings = $this::callMethod($folder, 'getSettings');
+		$request = $folder->makeRequest()->toArray();
 
 		$this->assertEquals([
-			'is_startpage' => false,
+			'language' => 'default',
 			'sort_by' => 'published_at:desc',
 			'starts_with' => 'services',
-			'page' => 0,
+			'page' => 1,
 			'per_page' => 5,
-		], $settings);
+		], $request);
 
 
 		$folder2 = new Folder();
-		$folder2->slug('services')->sort('content.name')->asc();
+		$folder2->slug('services')->asc('content.name');
 
-		$settings2 = $this::callMethod($folder2, 'getSettings');
+		$request2 = $folder2->makeRequest()->toArray();
 
 		$this->assertEquals([
-			'is_startpage' => false,
+			'language' => 'default',
 			'sort_by' => 'content.name:asc',
 			'starts_with' => 'services',
-			'page' => 0,
+			'page' => 1,
 			'per_page' => 10,
-		], $settings2);
+		], $request2);
 	}
 
-	/** @test */
-	public function can_set_settings() {
+    public function test_can_set_fluent_settings() {
 		$folder = new Folder();
-		$folder->settings([
-			'is_startpage' => false,
-			'starts_with' => 'services',
-			'per_page' => 7,
-		]);
-		$settings = $this::callMethod($folder, 'getSettings');
+		$folder->isStartpage(false)
+			->slug('services')
+			->perPage(7);
+
+		$request = $folder->makeRequest()->toArray();
 
 		$this->assertEquals([
-			'is_startpage' => false,
-			'sort_by' => 'published_at:desc',
+			'language' => 'default',
+			'is_startpage' => 0,
 			'starts_with' => 'services',
-			'page' => 0,
+			'page' => 1,
 			'per_page' => 7,
-		], $settings);
+		], $request);
 	}
 
-	/** @test */
-	public function can_add_settings_in_folder_constructor() {
+    public function test_can_add_settings_in_folder_constructor() {
 		$folder = new SortedFolder();
-		$settings = $this::callMethod($folder, 'getSettings');
+		$request = $folder->makeRequest()->toArray();
 
 		$this->assertEquals([
-			'is_startpage' => false,
+			'language' => 'default',
 			'sort_by' => 'content.date:desc',
-			'starts_with' => '',
-			'page' => 0,
+			'page' => 1,
 			'per_page' => 17,
-		], $settings);
+		], $request);
 
 
 		$folder2 = new SortedFolder();
 
-		// calling settings overrides the settings in the constructor if the constructor uses
-		// a settings array
-		$folder2->settings([
-			'per_page' => 8,
-		]);
-		$settings2 = $this::callMethod($folder2, 'getSettings');
+		// calling perPage overrides the settings in the constructor
+		$folder2->perPage(8);
+		$request2 = $folder2->makeRequest()->toArray();
 
 		$this->assertEquals([
-			'is_startpage' => false,
-			'sort_by' => 'published_at:desc',
-			'starts_with' => '',
-			'page' => 0,
+			'language' => 'default',
+			'sort_by' => 'content.date:desc',
+			'page' => 1,
 			'per_page' => 8,
-		], $settings2);
+		], $request2);
 	}
 }
 
