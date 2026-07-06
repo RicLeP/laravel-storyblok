@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Riclep\Storyblok;
 
 use Illuminate\Support\Arr;
@@ -16,485 +15,443 @@ use Riclep\Storyblok\Fields\RichText;
 use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Traits\HasChildClasses;
 use Riclep\Storyblok\Traits\HasMeta;
-
+use Storyblok\Api\Domain\Value\Dto\Version;
 use Storyblok\Api\Domain\Value\Filter\Filters\AnyInArrayFilter;
 use Storyblok\Api\Domain\Value\Filter\Filters\InFilter;
 use Storyblok\Api\Domain\Value\Resolver\Relation;
-use Storyblok\Api\Domain\Value\Resolver\RelationCollection;
 use Storyblok\Api\Request\StoriesRequest;
 use Storyblok\Api\StoriesApi;
+use Storyblok\ApiException;
 
 class Block implements \IteratorAggregate, \JsonSerializable
 {
-	use HasChildClasses;
-	use HasMeta;
+    use HasChildClasses;
+    use HasMeta;
 
-	/**
-	 * @var bool resolve UUID relations automatically
-	 */
-	public bool $_autoResolveRelations = false;
+    /**
+     * @var bool resolve UUID relations automatically
+     */
+    public bool $_autoResolveRelations = false;
 
-	/**
-	 * @var array list of field names containing relations to resolve
-	 */
-	public array $_resolveRelations = [];
+    /**
+     * @var array list of field names containing relations to resolve
+     */
+    public array $_resolveRelations = [];
 
-	/**
-	 * @var bool Remove unresolved relations such as those that 404
-	 */
-	public bool $_filterRelations = true;
+    /**
+     * @var bool Remove unresolved relations such as those that 404
+     */
+    public bool $_filterRelations = true;
 
-	/**
-	 * @var array the path of nested components
-	 */
-	public array $_componentPath = [];
+    /**
+     * @var array the path of nested components
+     */
+    public array $_componentPath = [];
 
-	/**
-	 * @var array the path of nested components
-	 */
-	protected array $_casts = [];
+    /**
+     * @var array the path of nested components
+     */
+    protected array $_casts = [];
 
-	/**
-	 * @var Collection all the fields for the Block
-	 */
-	protected Collection $_fields;
+    /**
+     * @var Collection all the fields for the Block
+     */
+    protected Collection $_fields;
 
-	/**
-	 * @var Page|Block reference to the parent Block or Page
-	 */
-	protected mixed $_parent;
+    /**
+     * @var Page|Block reference to the parent Block or Page
+     */
+    protected mixed $_parent;
 
-	/**
-	 * @var array default values for fields
-	 */
-	protected array $_defaults = [];
+    /**
+     * @var array default values for fields
+     */
+    protected array $_defaults = [];
 
-	/**
-	 * Takes the Block’s content and a reference to the parent
-	 * @param $content
-	 * @param $parent
-	 */
-	public function __construct($content, $parent = null)
-	{
-		$this->_parent = $parent;
-		$this->preprocess($content);
+    /**
+     * Takes the Block’s content and a reference to the parent
+     */
+    public function __construct($content, $parent = null)
+    {
+        $this->_parent = $parent;
+        $this->preprocess($content);
 
-		if ($parent) {
-			$this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
-		}
+        if ($parent) {
+            $this->_componentPath = array_merge($parent->_componentPath, [Str::lower($this->meta()['component'])]);
+        }
 
-		$this->processFields();
+        $this->processFields();
 
-		if (method_exists($this, 'fieldsReady')) {
-			$this->fieldsReady();
-		}
+        if (method_exists($this, 'fieldsReady')) {
+            $this->fieldsReady();
+        }
 
-		// run automatic traits - methods matching initTraitClassName()
-		foreach (class_uses_recursive($this) as $trait) {
-			if (method_exists($this, $method = 'init' . class_basename($trait))) {
-				$this->{$method}();
-			}
-		}
-	}
+        // run automatic traits - methods matching initTraitClassName()
+        foreach (class_uses_recursive($this) as $trait) {
+            if (method_exists($this, $method = 'init'.class_basename($trait))) {
+                $this->{$method}();
+            }
+        }
+    }
 
-	/**
-	 * Returns the every field of content
-	 *
-	 * @return Collection
-	 */
-	public function content(): Collection
-	{
-		$fields = $this->_fields;
+    /**
+     * Returns the every field of content
+     */
+    public function content(): Collection
+    {
+        $fields = $this->_fields;
 
-		foreach ($fields as $key => $field) {
-			if ($field === null) {
-				$fields[$key] = $this->_defaults[$key] ?? null;
-			}
-		}
+        foreach ($fields as $key => $field) {
+            if ($field === null) {
+                $fields[$key] = $this->_defaults[$key] ?? null;
+            }
+        }
 
-		return $fields;
-	}
+        return $fields;
+    }
 
-	/**
-	 * Checks if this Block’s fields contain the specified key
-	 *
-	 * @param $key
-	 * @return bool
-	 */
-	public function has($key): bool
-	{
-		return $this->_fields->has($key);
-	}
+    /**
+     * Checks if this Block’s fields contain the specified key
+     */
+    public function has($key): bool
+    {
+        return $this->_fields->has($key);
+    }
 
-	/**
-	 * Checks if a ‘Blocks’ fieldtype contains a specific block component
-	 * Pass the $field that contains the blocks and the component type to search for
-	 *
-	 * @param $field
-	 * @param $component
-	 * @return boolean
-	 */
-	public function hasChildBlock($field, $component): bool
-	{
-		return $this->content()[$field]->contains(function($item) use ($component) {
-			return $item->meta('component') === $component;
-		});
-	}
+    /**
+     * Checks if a ‘Blocks’ fieldtype contains a specific block component
+     * Pass the $field that contains the blocks and the component type to search for
+     */
+    public function hasChildBlock($field, $component): bool
+    {
+        return $this->content()[$field]->contains(function ($item) use ($component) {
+            return $item->meta('component') === $component;
+        });
+    }
 
-	/**
-	 * Returns the parent Block
-	 *
-	 * @return Block
-	 */
-	public function parent(): Block|Page|null
-	{
-		return $this->_parent;
-	}
+    /**
+     * Returns the parent Block
+     *
+     * @return Block
+     */
+    public function parent(): Block|Page|null
+    {
+        return $this->_parent;
+    }
 
-	/**
-	 * Returns the page this Block belongs to
-	 *
-	 * @return Block
-	 */
-	public function page(): Block|Page|null
-	{
-		if ($this->parent() instanceof Page) {
-			return $this->parent();
-		}
+    /**
+     * Returns the page this Block belongs to
+     *
+     * @return Block
+     */
+    public function page(): Block|Page|null
+    {
+        if ($this->parent() instanceof Page) {
+            return $this->parent();
+        }
 
-		return $this->parent()->page();
-	}
+        return $this->parent()->page();
+    }
 
-	/**
-	 * Returns the first matching view, passing it the Block and optional data
-	 *
-	 * @param array $with
-	 * @return View
-	 * @throws UnableToRenderException
-	 */
-	public function render(array $with = []): View
-	{
-		return $this->renderUsing($this->views(), $with);
-	}
+    /**
+     * Returns the first matching view, passing it the Block and optional data
+     *
+     * @throws UnableToRenderException
+     */
+    public function render(array $with = []): View
+    {
+        return $this->renderUsing($this->views(), $with);
+    }
 
-	/**
-	 * Pass an array of views rendering the first match, passing it the Block and optional data
-	 *
-	 * @param array|string $views
-	 * @param array $with
-	 * @return View
-	 * @throws UnableToRenderException
-	 */
-	public function renderUsing(array|string $views, array $with = []): View
-	{
-		try {
-			return view()->first(Arr::wrap($views), array_merge(['block' => $this], $with));
-		} catch (\Exception $exception) {
-			throw new UnableToRenderException('None of the views in the given array exist.', $this);
-		}
-	}
+    /**
+     * Pass an array of views rendering the first match, passing it the Block and optional data
+     *
+     * @throws UnableToRenderException
+     */
+    public function renderUsing(array|string $views, array $with = []): View
+    {
+        try {
+            return view()->first(Arr::wrap($views), array_merge(['block' => $this], $with));
+        } catch (\Exception $exception) {
+            throw new UnableToRenderException('None of the views in the given array exist.', $this);
+        }
+    }
 
-	/**
-	 * Returns an array of views for the Block based on page’s content type and
-	 * block’s $componentPath. First are page specific views starting with the
-	 * page’s content type followed by those using the block’s component path
-	 *
-	 * Example:
-	 *
-	 * $componentPath = ['page', 'product', 'heroes', 'hero'];
-	 *
-	 * [
-	 *	"storyblok.pages.product.blocks.heroes.hero"
-	 *	"storyblok.pages.product.blocks.hero"
-	 *	"storyblok.blocks.heroes.hero"
-	 *	"storyblok.blocks.product.hero"
-	 *	"storyblok.blocks.hero"
-	 * ]
-	 *
-	 * It is recommended to start with the most generic view and create more
-	 * specific ones as and when required
-	 *
-	 * @return array
-	 */
-	public function views(): array
-	{
-		$componentPath = $this->_componentPath;
-		array_pop($componentPath);
+    /**
+     * Returns an array of views for the Block based on page’s content type and
+     * block’s $componentPath. First are page specific views starting with the
+     * page’s content type followed by those using the block’s component path
+     *
+     * Example:
+     *
+     * $componentPath = ['page', 'product', 'heroes', 'hero'];
+     *
+     * [
+     *	"storyblok.pages.product.blocks.heroes.hero"
+     *	"storyblok.pages.product.blocks.hero"
+     *	"storyblok.blocks.heroes.hero"
+     *	"storyblok.blocks.product.hero"
+     *	"storyblok.blocks.hero"
+     * ]
+     *
+     * It is recommended to start with the most generic view and create more
+     * specific ones as and when required
+     */
+    public function views(): array
+    {
+        $componentPath = $this->_componentPath;
+        array_pop($componentPath);
 
-		$views = array_filter(array_map(function($path) {
-			if ($path !== 'page') {
-				return config('storyblok.view_path') . 'blocks.' . $path . '.' . $this->component();
-			}
-
-			return null;
-		}, $componentPath));
-
-		$views = array_reverse($views);
-
-		$views[] = config('storyblok.view_path') . 'blocks.' . $this->component();
-
-		$themeViews = $views;
-
-		$themeViews = array_filter(array_map(function($view) {
-			$theme = $this->page()?->block()->component();
-
-			if (!strpos($view, $theme)) {
-				return str_replace('blocks.', 'pages.' . $theme . '.blocks.', $view);
-			}
-
-			return null;
-		}, $themeViews));
-
-		return array_merge($themeViews, $views);
-	}
-
-	/**
-	 * Returns a component X generations previous
-	 *
-	 * @param $generation int
-	 * @return mixed
-	 */
-	public function ancestorComponentName(int $generation): mixed
-	{
-		return $this->_componentPath[count($this->_componentPath) - ($generation + 1)];
-	}
-
-	/**
-	 * Checks if the current component is a child of another
-	 *
-	 * @param $parent string
-	 * @return bool
-	 */
-	public function isChildOf(string $parent): bool
-	{
-		return $this->_componentPath[count($this->_componentPath) - 2] === $parent;
-	}
-
-	/**
-	 * Checks if the component is an ancestor of another
-	 *
-	 * @param $parent string
-	 * @return bool
-	 */
-	public function isAncestorOf(string $parent): bool
-	{
-		return in_array($parent, $this->parent()->_componentPath, true);
-	}
-
-	/**
-	 * Returns the current Block’s component name from Storyblok
-	 *
-	 * @return string
-	 */
-	public function component(): string
-	{
-		return $this->_meta['component'];
-	}
-
-
-	/**
-	 * Returns the HTML comment required for making this Block clickable in
-	 * Storyblok’s visual editor. Don’t forget to set comments to true in
-	 * your Vue.js app configuration.
-	 *
-     * @param $attribute bool return a data-* attribute or comment for editor link
-	 * @return string
-	 */
-	public function editorLink($attribute = false): string
-	{
-		if (array_key_exists('_editable', $this->_meta) && config('storyblok.edit_mode')) {
-            if ($attribute) {
-                return 'data-blok-c=\'' . str_replace(['<!--#storyblok#', '-->'], '', $this->_meta['_editable']) . '\'';
+        $views = array_filter(array_map(function ($path) {
+            if ($path !== 'page') {
+                return config('storyblok.view_path').'blocks.'.$path.'.'.$this->component();
             }
 
-			return $this->_meta['_editable'];
-		}
+            return null;
+        }, $componentPath));
 
-		return '';
-	}
+        $views = array_reverse($views);
 
+        $views[] = config('storyblok.view_path').'blocks.'.$this->component();
 
-	/**
-	 * Magic accessor to pull content from the _fields collection. Works just like
-	 * Laravel’s model accessors. Matches public methods with the follow naming
-	 * convention getSomeFieldAttribute() - called via $block->some_field
-	 *
-	 * @param $key
-	 * @return null|string
-	 */
-	public function __get($key) {
-		$accessor = 'get' . Str::studly($key) . 'Attribute';
+        $themeViews = $views;
 
-		if (method_exists($this, $accessor)) {
-			return $this->$accessor();
-		}
+        $themeViews = array_filter(array_map(function ($view) {
+            $theme = $this->page()?->block()->component();
 
-		if (array_key_exists($key, $this->_defaults) && $this->has($key) && !$this->_fields[$key]) {
-			return $this->_defaults[$key];
-		}
+            if (! strpos($view, $theme)) {
+                return str_replace('blocks.', 'pages.'.$theme.'.blocks.', $view);
+            }
 
-		if ($this->has($key)) {
-			return $this->_fields[$key];
-		}
+            return null;
+        }, $themeViews));
 
-		return null;
-	}
+        return array_merge($themeViews, $views);
+    }
 
-	/**
-	 * Casts the Block as a string - json serializes the $_fields Collection
-	 *
-	 * @return string
-	 */
-	public function __toString(): string
-	{
-		return (string) $this->jsonSerialize();
-	}
+    /**
+     * Returns a component X generations previous
+     *
+     * @param  $generation  int
+     */
+    public function ancestorComponentName(int $generation): mixed
+    {
+        return $this->_componentPath[count($this->_componentPath) - ($generation + 1)];
+    }
 
-	/**
-	 * Loops over every field to get the ball rolling
-	 */
-	private function processFields(): void
-	{
-		$this->_fields->transform(fn($field, $key) => $this->getFieldType($field, $key));
-	}
+    /**
+     * Checks if the current component is a child of another
+     *
+     * @param  $parent  string
+     */
+    public function isChildOf(string $parent): bool
+    {
+        return $this->_componentPath[count($this->_componentPath) - 2] === $parent;
+    }
 
-	/**
-	 * Converts fields into Field Classes based on various properties of their content
-	 *
-	 * @param $field
-	 * @param $key
-	 * @return array|Collection|mixed|Asset|Image|MultiAsset|RichText|Table
-	 * @throws \Storyblok\ApiException
-	 */
-	private function getFieldType($field, $key): mixed
-	{
-		return (new FieldFactory())->build($this, $field, $key);
-	}
+    /**
+     * Checks if the component is an ancestor of another
+     *
+     * @param  $parent  string
+     */
+    public function isAncestorOf(string $parent): bool
+    {
+        return in_array($parent, $this->parent()->_componentPath, true);
+    }
 
-	/**
-	 * Storyblok returns fields and other meta content at the same level so
-	 * let’s do a little tidying up first
-	 *
-	 * @param $content
-	 */
-	private function preprocess($content): void
-	{
-		// run pre-process traits - methods matching preprocessTraitClassName()
-		foreach (class_uses_recursive($this) as $trait) {
-			if (method_exists($this, $method = 'preprocess' . class_basename($trait))) {
-				$content = $this->{$method}($content);
-			}
-		}
+    /**
+     * Returns the current Block’s component name from Storyblok
+     */
+    public function component(): string
+    {
+        return $this->_meta['component'];
+    }
 
-		$fields = ['_editable', '_uid', 'component'];
+    /**
+     * Returns the HTML comment required for making this Block clickable in
+     * Storyblok’s visual editor. Don’t forget to set comments to true in
+     * your Vue.js app configuration.
+     *
+     * @param  $attribute  bool return a data-* attribute or comment for editor link
+     */
+    public function editorLink($attribute = false): string
+    {
+        if (array_key_exists('_editable', $this->_meta) && config('storyblok.edit_mode')) {
+            if ($attribute) {
+                return 'data-blok-c=\''.str_replace(['<!--#storyblok#', '-->'], '', $this->_meta['_editable']).'\'';
+            }
 
-		$this->_fields = collect(array_diff_key($content, array_flip($fields)));
+            return $this->_meta['_editable'];
+        }
 
-		// remove non-content keys
-		$this->_meta = array_intersect_key($content, array_flip($fields));
-	}
+        return '';
+    }
 
-	/**
-	 * Casting Block to JSON
-	 *
-	 * @return Collection|mixed
-	 */
-	public function jsonSerialize(): mixed
-	{
-		return $this->content();
-	}
+    /**
+     * Magic accessor to pull content from the _fields collection. Works just like
+     * Laravel’s model accessors. Matches public methods with the follow naming
+     * convention getSomeFieldAttribute() - called via $block->some_field
+     *
+     * @return null|string
+     */
+    public function __get($key)
+    {
+        $accessor = 'get'.Str::studly($key).'Attribute';
 
-	/**
-	 * Let’s up loop over the fields in Blade without needing to
-	 * delve deep into the content collection
-	 *
-	 * @return \Traversable
-	 */
-	public function getIterator(): \Traversable {
-		return $this->_fields;
-	}
+        if (method_exists($this, $accessor)) {
+            return $this->$accessor();
+        }
 
-	/**
-	 * @param RequestStory $requestStory
-	 * @param $relation
-	 * @param $className
-	 * @return mixed|null
-	 */
-	public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
-	{
-		try {
-			$response = $requestStory->get($relation);
+        if (array_key_exists($key, $this->_defaults) && $this->has($key) && ! $this->_fields[$key]) {
+            return $this->_defaults[$key];
+        }
 
-			if (!$className) {
-				$class = $this->getChildClassName('Block', $response['content']['component']);
-			} else {
-				$class = $className;
-			}
+        if ($this->has($key)) {
+            return $this->_fields[$key];
+        }
 
-			$relationClass = new $class($response['content'], $this);
+        return null;
+    }
 
-			$relationClass->addMeta([
-				'name' => $response['name'],
-				'published_at' => $response['published_at'],
-				'full_slug' => $response['full_slug'],
-				'page_uuid' => $relation,
-			]);
+    /**
+     * Casts the Block as a string - json serializes the $_fields Collection
+     */
+    public function __toString(): string
+    {
+        return (string) $this->jsonSerialize();
+    }
 
-			return $relationClass;
-		} catch (\Exception $e) {
-			return null;
-		}
-	}
+    /**
+     * Loops over every field to get the ball rolling
+     */
+    private function processFields(): void
+    {
+        $this->_fields->transform(fn ($field, $key) => $this->getFieldType($field, $key));
+    }
 
-	/**
-	 * Returns an inverse relationship to the current Block. For example if Service has a Multi-Option field
-	 * relationship to People, on People you can request all the Services it has been related to
-	 *
-	 * @param string $foreignRelationshipField
-	 * @param string $foreignRelationshipType
-	 * @param array|null $components
-	 * @param array|null $options
-     * @param array|null $resolveRelations
-	 * @return array
-	 */
+    /**
+     * Converts fields into Field Classes based on various properties of their content
+     *
+     * @return array|Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+     *
+     * @throws ApiException
+     */
+    private function getFieldType($field, $key): mixed
+    {
+        return (new FieldFactory)->build($this, $field, $key);
+    }
+
+    /**
+     * Storyblok returns fields and other meta content at the same level so
+     * let’s do a little tidying up first
+     */
+    private function preprocess($content): void
+    {
+        // run pre-process traits - methods matching preprocessTraitClassName()
+        foreach (class_uses_recursive($this) as $trait) {
+            if (method_exists($this, $method = 'preprocess'.class_basename($trait))) {
+                $content = $this->{$method}($content);
+            }
+        }
+
+        $fields = ['_editable', '_uid', 'component'];
+
+        $this->_fields = collect(array_diff_key($content, array_flip($fields)));
+
+        // remove non-content keys
+        $this->_meta = array_intersect_key($content, array_flip($fields));
+    }
+
+    /**
+     * Casting Block to JSON
+     *
+     * @return Collection|mixed
+     */
+    public function jsonSerialize(): mixed
+    {
+        return $this->content();
+    }
+
+    /**
+     * Let’s up loop over the fields in Blade without needing to
+     * delve deep into the content collection
+     */
+    public function getIterator(): \Traversable
+    {
+        return $this->_fields;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getRelation(RequestStory $requestStory, $relation, $className = null): mixed
+    {
+        try {
+            $response = $requestStory->get($relation);
+
+            if (! $className) {
+                $class = $this->getChildClassName('Block', $response['content']['component']);
+            } else {
+                $class = $className;
+            }
+
+            $relationClass = new $class($response['content'], $this);
+
+            $relationClass->addMeta([
+                'name' => $response['name'],
+                'published_at' => $response['published_at'],
+                'full_slug' => $response['full_slug'],
+                'page_uuid' => $relation,
+            ]);
+
+            return $relationClass;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns an inverse relationship to the current Block. For example if Service has a Multi-Option field
+     * relationship to People, on People you can request all the Services it has been related to
+     */
     public function inverseRelation(string $foreignRelationshipField, string $foreignRelationshipType = 'multi', ?array $components = null, ?array $options = null, ?array $resolveRelations = null): array
     {
         $storyblokClient = resolve('Storyblok\Api\StoryblokClient');
-		$storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
+        $storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
 
-		$filter = null;
-		$pageUuid = $this->meta('page_uuid') ?? $this->page()->uuid();
+        $filter = null;
+        $pageUuid = $this->meta('page_uuid') ?? $this->page()->uuid();
 
         if ($foreignRelationshipType === 'single') {
-			$filter = new InFilter($foreignRelationshipField, $pageUuid);
+            $filter = new InFilter($foreignRelationshipField, $pageUuid);
         } else {
-			$filter = new AnyInArrayFilter($foreignRelationshipField, [$pageUuid]);
-		}
+            $filter = new AnyInArrayFilter($foreignRelationshipField, [$pageUuid]);
+        }
 
-		$request = new StoriesRequest(
-			version: config('storyblok.draft') ? \Storyblok\Api\Domain\Value\Dto\Version::Draft : \Storyblok\Api\Domain\Value\Dto\Version::Published,
-		);
+        $request = new StoriesRequest(
+            version: config('storyblok.draft') ? Version::Draft : Version::Published,
+        );
 
-		$request->filters->add($filter);
+        $request->filters->add($filter);
 
         if ($components) {
-			$request->filters->add(new InFilter('component', $components));
+            $request->filters->add(new InFilter('component', $components));
         }
 
-		// Handle other options if they are compatible with StoriesRequest
-		if ($options) {
-			// This is a bit tricky as $options was a raw array for the old client.
-			// We might need to manually map some common ones or just merge into the request if possible.
-			// For now, let's assume they might be using some standard Storyblok parameters.
-		}
+        // Handle other options if they are compatible with StoriesRequest
+        if ($options) {
+            // This is a bit tricky as $options was a raw array for the old client.
+            // We might need to manually map some common ones or just merge into the request if possible.
+            // For now, let's assume they might be using some standard Storyblok parameters.
+        }
 
         if ($resolveRelations) {
-			foreach ($resolveRelations as $relation) {
-				$request->withRelations->add(new Relation($relation));
-			}
+            foreach ($resolveRelations as $relation) {
+                $request->withRelations->add(new Relation($relation));
+            }
         }
 
-        if (request()->has('_storyblok') || !config('storyblok.cache')) {
+        if (request()->has('_storyblok') || ! config('storyblok.cache')) {
             $response = $storiesApi->all($request);
 
             $result = [
@@ -506,7 +463,7 @@ class Block implements \IteratorAggregate, \JsonSerializable
 
             $uniqueTag = md5(serialize($request->toArray()));
 
-            $result = Cache::store(config('storyblok.sb_cache_driver'))->remember($foreignRelationshipField . '-' . $foreignRelationshipType . '-' . $apiHash . '-' . $uniqueTag, config('storyblok.cache_duration') * 60, function () use ($storiesApi, $request) {
+            $result = Cache::store(config('storyblok.sb_cache_driver'))->remember($foreignRelationshipField.'-'.$foreignRelationshipType.'-'.$apiHash.'-'.$uniqueTag, config('storyblok.cache_duration') * 60, function () use ($storiesApi, $request) {
                 $response = $storiesApi->all($request);
 
                 return [
@@ -526,13 +483,11 @@ class Block implements \IteratorAggregate, \JsonSerializable
         ];
     }
 
-	/**
-	 * Returns the casts on this Block
-	 *
-	 * @return array
-	 */
-	public function getCasts(): array
-	{
-		return $this->_casts;
-	}
+    /**
+     * Returns the casts on this Block
+     */
+    public function getCasts(): array
+    {
+        return $this->_casts;
+    }
 }

@@ -2,57 +2,57 @@
 
 namespace Riclep\Storyblok\Tests;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as Orchestra;
 use ReflectionClass;
 use Riclep\Storyblok\StoryblokServiceProvider;
 
-
-
 class TestCase extends Orchestra
 {
+    protected function getPackageProviders($app)
+    {
+        return [StoryblokServiceProvider::class];
+    }
 
+    /**
+     * Define environment setup.
+     *
+     * @param  Application  $app
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('storyblok.component_class_namespace', 'Riclep\Storyblok\Tests\Fixtures\\');
+        $app['config']->set('storyblok.view_path');
 
-	protected function getPackageProviders($app)
-	{
-		return [StoryblokServiceProvider::class];
-	}
+        $app['config']->set('seo.default_title', 'Default title from config');
+        $app['config']->set('seo.default_description', 'Default description from config');
 
-	/**
-	 * Define environment setup.
-	 *
-	 * @param  \Illuminate\Foundation\Application  $app
-	 * @return void
-	 */
-	protected function getEnvironmentSetUp($app)
-	{
-		$app['config']->set('storyblok.component_class_namespace', 'Riclep\Storyblok\Tests\Fixtures\\');
-		$app['config']->set('storyblok.view_path');
+        $viewPath = str_replace('..', '', __DIR__.DIRECTORY_SEPARATOR);
 
-		$app['config']->set('seo.default_title', 'Default title from config');
-		$app['config']->set('seo.default_description', 'Default description from config');
+        $app['config']->set('view.paths', array_merge(config('view.paths'), [$viewPath]));
+    }
 
-		$viewPath = str_replace('..', '', __DIR__ . DIRECTORY_SEPARATOR);
+    protected function makePage($file = null)
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/'.($file ?: 'all-fields.json')), true);
 
-		$app['config']->set('view.paths', array_merge(config('view.paths'), [$viewPath]));
-	}
+        if ($file) {
+            $class = config('storyblok.component_class_namespace').'Pages\\'.Str::studly($story['story']['content']['component']);
+        } else {
+            $class = config('storyblok.component_class_namespace').'Page';
+        }
 
-	protected function makePage($file = null) {
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/' . ($file ?: 'all-fields.json')), true);
+        return new $class($story['story']);
+    }
 
-		if ($file) {
-			$class = config('storyblok.component_class_namespace') . 'Pages\\' . Str::studly($story['story']['content']['component']);
-		} else {
-			$class = config('storyblok.component_class_namespace') . 'Page';
-		}
+    public static function callMethod($obj, $name, array $args = [])
+    {
+        $class = new ReflectionClass($obj);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
 
-		return new $class($story['story']);
-	}
-
-	public static function callMethod($obj, $name, array $args = []) {
-		$class = new ReflectionClass($obj);
-		$method = $class->getMethod($name);
-		$method->setAccessible(true);
-		return $method->invokeArgs($obj, $args);
-	}
+        return $method->invokeArgs($obj, $args);
+    }
 }

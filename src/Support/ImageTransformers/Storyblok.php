@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 
 class Storyblok extends BaseTransformer
 {
-
     /**
      * Performs any actions needed once the object is created
      * and any preprocessing is completed
@@ -23,9 +22,6 @@ class Storyblok extends BaseTransformer
     /**
      * Resizes the image and sets the focal point
      *
-     * @param int $width
-     * @param int $height
-     * @param string|null $focus
      * @return $this
      */
     public function resize(int $width = 0, int $height = 0, ?string $focus = null): self
@@ -55,9 +51,6 @@ class Storyblok extends BaseTransformer
     /**
      * Fits the image in the given width and height
      *
-     * @param int $width
-     * @param int $height
-     * @param string $fill
      * @return $this
      */
     public function fitIn(int $width = 0, int $height = 0, string $fill = 'transparent'): self
@@ -84,8 +77,6 @@ class Storyblok extends BaseTransformer
     /**
      * Set the image format you want returned
      *
-     * @param string $format
-     * @param int|null $quality
      * @return $this
      */
     public function format(string $format, ?int $quality = null): self
@@ -121,7 +112,6 @@ class Storyblok extends BaseTransformer
     /**
      * Set the image blur amount
      *
-     * @param int $amount
      * @return $this
      */
     public function blur(int $amount): self
@@ -136,7 +126,6 @@ class Storyblok extends BaseTransformer
     /**
      * Set the image brightness, use negative values to darken
      *
-     * @param int $amount
      * @return $this
      */
     public function brightness(int $amount): self
@@ -151,15 +140,15 @@ class Storyblok extends BaseTransformer
     /**
      * Rotate the image, the allowed values are 90, 180 and 270
      *
-     * @param int $amount
      * @return $this
+     *
      * @throws \Exception
      */
     public function rotate(int $amount): self
     {
         $allowedRotations = [90, 180, 270];
 
-        if (!in_array($amount, $allowedRotations)) {
+        if (! in_array($amount, $allowedRotations)) {
             throw new \Exception('Invalid rotation amount. Must be 90, 180 or 270');
         }
 
@@ -174,10 +163,8 @@ class Storyblok extends BaseTransformer
      * Works out a crop box around the focal point (or image centre) at the
      * given zoom level, storing it for buildUrl() to render. Chainable.
      *
-     * @param int $width
-     * @param int $height
-     * @param int $zoom Percentage, 100 = fills the frame with no extra
-     *                  magnification. Values below 100 are clamped to 100.
+     * @param  int  $zoom  Percentage, 100 = fills the frame with no extra
+     *                     magnification. Values below 100 are clamped to 100.
      * @return $this
      */
     public function zoomCrop(int $width, int $height, int $zoom = 100): self
@@ -242,8 +229,6 @@ class Storyblok extends BaseTransformer
 
     /**
      * Creates the Storyblok image service URL
-     *
-     * @return string
      */
     public function buildUrl(): string
     {
@@ -255,13 +240,13 @@ class Storyblok extends BaseTransformer
 
         if (array_key_exists('crop', $this->transformations)) {
             $crop = $this->transformations['crop'];
-            $transforms .= '/' . $crop['left'] . 'x' . $crop['top'] . ':' . $crop['right'] . 'x' . $crop['bottom'];
+            $transforms .= '/'.$crop['left'].'x'.$crop['top'].':'.$crop['right'].'x'.$crop['bottom'];
         } elseif (array_key_exists('fit-in', $this->transformations)) {
             $transforms .= '/fit-in';
         }
 
         if (array_key_exists('width', $this->transformations)) {
-            $transforms .= '/' . $this->transformations['width'] . 'x' . $this->transformations['height'];
+            $transforms .= '/'.$this->transformations['width'].'x'.$this->transformations['height'];
         }
 
         if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'smart') {
@@ -277,8 +262,6 @@ class Storyblok extends BaseTransformer
 
     /**
      * Checks if any filters were applied to the transformation
-     *
-     * @return bool
      */
     protected function hasFilters(): bool
     {
@@ -289,6 +272,7 @@ class Storyblok extends BaseTransformer
                 if ($key === 'focus' && $this->transformations['focus'] !== 'focal-point') {
                     continue;
                 }
+
                 return true;
             }
         }
@@ -298,8 +282,6 @@ class Storyblok extends BaseTransformer
 
     /**
      * Applies the filters to the image service URL
-     *
-     * @return string
      */
     protected function applyFilters(): string
     {
@@ -307,35 +289,35 @@ class Storyblok extends BaseTransformer
 
         // A raw filter string
         if (array_key_exists('filters', $this->transformations)) {
-            $filters .= ':' . $this->transformations['filters'];
+            $filters .= ':'.$this->transformations['filters'];
         }
 
         if (array_key_exists('format', $this->transformations)) {
-            $filters .= ':format(' . $this->transformations['format'] . ')';
+            $filters .= ':format('.$this->transformations['format'].')';
         }
 
         if (array_key_exists('quality', $this->transformations)) {
-            $filters .= ':quality(' . $this->transformations['quality'] . ')';
+            $filters .= ':quality('.$this->transformations['quality'].')';
         }
 
         if (array_key_exists('fill', $this->transformations)) {
-            $filters .= ':fill(' . $this->transformations['fill'] . ')';
+            $filters .= ':fill('.$this->transformations['fill'].')';
         }
 
         if (array_key_exists('focus', $this->transformations) && $this->transformations['focus'] === 'focal-point' && $this->image->content()['focus']) {
-            $filters .= ':focal(' . $this->image->content()['focus'] . ')';
+            $filters .= ':focal('.$this->image->content()['focus'].')';
         }
 
         if (array_key_exists('blur', $this->transformations)) {
-            $filters .= ':blur(' . $this->transformations['blur'] . ')';
+            $filters .= ':blur('.$this->transformations['blur'].')';
         }
 
         if (array_key_exists('brightness', $this->transformations)) {
-            $filters .= ':brightness(' . $this->transformations['brightness'] . ')';
+            $filters .= ':brightness('.$this->transformations['brightness'].')';
         }
 
         if (array_key_exists('rotate', $this->transformations)) {
-            $filters .= ':rotate(' . $this->transformations['rotate'] . ')';
+            $filters .= ':rotate('.$this->transformations['rotate'].')';
         }
 
         if (array_key_exists('grayscale', $this->transformations)) {
@@ -343,7 +325,7 @@ class Storyblok extends BaseTransformer
         }
 
         if ($filters) {
-            $filters = '/filters' . $filters;
+            $filters = '/filters'.$filters;
         }
 
         return $filters;
@@ -352,8 +334,6 @@ class Storyblok extends BaseTransformer
     /**
      * Extracts meta details from the image. With Storyblok we can get a
      * few things from the URL
-     *
-     * @return void
      */
     protected function extractMetaDetails(): void
     {
@@ -382,16 +362,13 @@ class Storyblok extends BaseTransformer
 
     /**
      * Sets the asset domain
-     *
-     * @param $options
-     * @return string
      */
     protected function assetDomain($options = null): string
     {
         $resource = str_replace(config('storyblok.asset_domain'), config('storyblok.image_service_domain'), $this->image->content()['filename']);
 
         if ($options) {
-            return $resource . '/m' . $options;
+            return $resource.'/m'.$options;
         }
 
         return $resource;

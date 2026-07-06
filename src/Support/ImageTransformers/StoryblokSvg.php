@@ -2,11 +2,10 @@
 
 namespace Riclep\Storyblok\Support\ImageTransformers;
 
-use Illuminate\Support\Str;
-
 class StoryblokSvg extends BaseTransformer
 {
-    public function buildUrl(): string {
+    public function buildUrl(): string
+    {
         return $this->assetDomain();
     }
 
@@ -41,9 +40,6 @@ class StoryblokSvg extends BaseTransformer
 
     /**
      * Sets the asset domain
-     *
-     * @param $options
-     * @return string
      */
     protected function assetDomain($options = null): string
     {

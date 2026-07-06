@@ -2,7 +2,7 @@
 
 namespace Riclep\Storyblok\Tests;
 
-
+use Composer\InstalledVersions;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\AssetLink;
 use Riclep\Storyblok\Fields\DateTime;
@@ -16,6 +16,8 @@ use Riclep\Storyblok\Fields\Table;
 use Riclep\Storyblok\Fields\Textarea;
 use Riclep\Storyblok\Fields\UrlLink;
 use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
+use Riclep\Storyblok\Support\ImageTransformers\StoryblokLegacy;
+use Riclep\Storyblok\Support\TipTapFigure;
 use Riclep\Storyblok\Tests\Fixtures\Blocks\NullBlock;
 use Riclep\Storyblok\Tests\Fixtures\Fields\AssetWithAccessor;
 use Riclep\Storyblok\Tests\Fixtures\Fields\CustomDate;
@@ -25,333 +27,310 @@ use Riclep\Storyblok\Tests\Fixtures\Fields\WithImage;
 
 class FieldTest extends TestCase
 {
-	private function getFieldContents($field) {
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/all-fields.json'), true);
-		return $story['story']['content'][$field];
-	}
+    private function getFieldContents($field)
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/all-fields.json'), true);
 
-	public function test_can_read_text()
-	{
-		$field = $this->getFieldContents('text');
-		$this->assertEquals('text', (string) $field);
-	}
+        return $story['story']['content'][$field];
+    }
 
+    public function test_can_read_text()
+    {
+        $field = $this->getFieldContents('text');
+        $this->assertEquals('text', (string) $field);
+    }
 
-	public function test_can_convert_text_area_to_html()
-	{
-		$field = new Textarea($this->getFieldContents('textarea'), null);
-		$this->assertEquals('<p>textarea</p><p>textarea</p>', (string) $field);
-	}
+    public function test_can_convert_text_area_to_html()
+    {
+        $field = new Textarea($this->getFieldContents('textarea'), null);
+        $this->assertEquals('<p>textarea</p><p>textarea</p>', (string) $field);
+    }
 
+    public function test_can_convert_markdown_to_html()
+    {
+        $field = new Markdown($this->getFieldContents('markdown'), null);
+        $this->assertEquals("<p><strong>markdown</strong>\nmarkdown</p>\n", (string) $field);
+    }
 
-	public function test_can_convert_markdown_to_html()
-	{
-		$field = new Markdown($this->getFieldContents('markdown'), null);
-		$this->assertEquals("<p><strong>markdown</strong>\nmarkdown</p>\n", (string) $field);
-	}
+    public function test_can_convert_rich_text_to_string()
+    {
+        $field = new RichText($this->getFieldContents('richtext'), null);
 
+        $this->assertEquals('<p><strong>textarea</strong></p><p>richtext</p>', (string) $field);
+    }
 
-	public function test_can_convert_rich_text_to_string()
-	{
-		$field = new RichText($this->getFieldContents('richtext'), null);
+    public function test_can_convert_blocks_in_rich_text()
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/richtext.json'), true);
+        $content = $story['story']['content']['body'];
 
-		$this->assertEquals('<p><strong>textarea</strong></p><p>richtext</p>', (string) $field);
-	}
+        config(['storyblok.view_path' => 'Fixtures.views.']);
 
+        //	dd($content);
 
-	public function test_can_convert_blocks_in_rich_text()
-	{
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
-		$content =  $story['story']['content']['body'];
+        $field = new RichText($content, new NullBlock([], null));
 
-		config(['storyblok.view_path' => 'Fixtures.views.']);
+        $this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[3]);
+        $this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $field->content()[4]);
+        $this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[5]);
+    }
 
-	//	dd($content);
+    public function test_can_convert_blocks_in_rich_text_to_html()
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/richtext.json'), true);
+        $content = $story['story']['content']['body'];
 
-		$field = new RichText($content, new NullBlock([], null));
+        config(['storyblok.view_path' => 'Fixtures.views.']);
 
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[3]);
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Block', $field->content()[4]);
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Blocks\Person', $field->content()[5]);
-	}
+        $field = new RichText($content, new NullBlock([], null));
 
+        $this->assertEquals('<p>hello some copy</p><p><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption"><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg"></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+    }
 
-	public function test_can_convert_blocks_in_rich_text_to_html()
-	{
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
-		$content =  $story['story']['content']['body'];
-
-		config(['storyblok.view_path' => 'Fixtures.views.']);
-
-		$field = new RichText($content, new NullBlock([], null));
-
-		$this->assertEquals('<p>hello some copy</p><p><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption"><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg"></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
-	}
-
-
-	public function test_can_use_tiptap_figure_in_rich_text()
-	{
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
-		$content =  $story['story']['content']['body'];
+    public function test_can_use_tiptap_figure_in_rich_text()
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/richtext.json'), true);
+        $content = $story['story']['content']['body'];
 
         config(['storyblok.view_path' => 'Fixtures.views.']);
 
         app()['config']->set('storyblok.tiptap',
             [
                 'extensions' => [
-                    new \Storyblok\Tiptap\Extension\Storyblok(),
-                    new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+                    new \Storyblok\Tiptap\Extension\Storyblok,
+                    new TipTapFigure, // use the figure plugin instead of the default img
                 ],
             ]
         );
 
-		$field = new RichText($content, new NullBlock([], null));
+        $field = new RichText($content, new NullBlock([], null));
 
-		$this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption" width="800" height="534"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg" width="1728" height="1018"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
-	}
+        $this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg" alt="alt" title="Caption" width="800" height="534"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg" width="1728" height="1018"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+    }
 
-
-	public function test_can_use_tiptap_figure_in_rich_text_with_transforms()
-	{
-		$story = json_decode(file_get_contents(__DIR__ . '/Fixtures/richtext.json'), true);
-		$content =  $story['story']['content']['body'];
+    public function test_can_use_tiptap_figure_in_rich_text_with_transforms()
+    {
+        $story = json_decode(file_get_contents(__DIR__.'/Fixtures/richtext.json'), true);
+        $content = $story['story']['content']['body'];
 
         config(['storyblok.view_path' => 'Fixtures.views.']);
 
         app()['config']->set('storyblok.tiptap',
             [
                 'extensions' => [
-                    new \Storyblok\Tiptap\Extension\Storyblok(),
-                    new \Riclep\Storyblok\Support\TipTapFigure(), // use the figure plugin instead of the default img
+                    new \Storyblok\Tiptap\Extension\Storyblok,
+                    new TipTapFigure, // use the figure plugin instead of the default img
                 ],
                 'figure-transformation' => [
                     'width' => 100,
                     'height' => 100, // set to null to preserve ratio height when scaling
                     'filters' => 'filters:quality(80)', // see: https://www.storyblok.com/docs/api/image-service
-                ]
+                ],
             ]
         );
 
-		$field = new RichText($content, new NullBlock([], null));
+        $field = new RichText($content, new NullBlock([], null));
 
-		$this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg/m/100x100/filters:quality(80)" alt="alt" title="Caption" width="100" height="100"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg/m/100x100/filters:quality(80)" width="100" height="100"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
-	}
+        $this->assertEquals('<p>hello some copy</p><p><figure><img src="https://a.storyblok.com/f/12345/800x534/660d4c7a29/image.jpg/m/100x100/filters:quality(80)" alt="alt" title="Caption" width="100" height="100"><figcaption>Caption</figure><figure><img src="https://a.storyblok.com/f/12345/1728x1018/0242182b48/image.jpg/m/100x100/filters:quality(80)" width="100" height="100"></figure></p><p><strong>and here </strong></p>this is a person called testthis is a buttonthis is a person called name<p>lookkkkk</p>', (string) $field);
+    }
 
+    public function test_can_convert_date_to_carbon()
+    {
+        $field = new DateTime($this->getFieldContents('datetime'), null);
 
-	public function test_can_convert_date_to_carbon()
-	{
-		$field = new DateTime($this->getFieldContents('datetime'), null);
+        $this->assertInstanceOf('Carbon\Carbon', $field->content());
+    }
 
-		$this->assertInstanceOf('Carbon\Carbon', $field->content());
-	}
+    public function test_can_set_default_date_format()
+    {
+        $field = new DateTime($this->getFieldContents('datetime'), null);
 
+        $this->assertEquals('20:57:00 1 July 2020', (string) $field);
+    }
 
-	public function test_can_set_default_date_format()
-	{
-		$field = new DateTime($this->getFieldContents('datetime'), null);
+    public function test_can_set_date_format_with_property()
+    {
+        $field = new CustomDate($this->getFieldContents('datetime'), null);
 
-		$this->assertEquals('20:57:00 1 July 2020', (string) $field);
-	}
+        $this->assertEquals('01/07/2020', (string) $field);
+    }
 
+    public function test_empty_dates_return_null()
+    {
+        $field = new DateTime('', null);
 
-	public function test_can_set_date_format_with_property()
-	{
-		$field = new CustomDate($this->getFieldContents('datetime'), null);
+        $this->assertNull($field->content());
+        $this->assertEquals('', (string) $field);
+    }
 
-		$this->assertEquals('01/07/2020', (string) $field);
-	}
+    public function test_can_get_asset_as_url()
+    {
+        $field = new Asset($this->getFieldContents('asset'), null);
+        $this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
+    }
 
+    public function test_can_get_image_asset_as_url()
+    {
+        $field = new Image($this->getFieldContents('asset_image'), null);
 
-	public function test_empty_dates_return_null()
-	{
-		$field = new DateTime('', null);
+        $this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+    }
 
-		$this->assertNull($field->content());
-		$this->assertEquals('', (string) $field);
-	}
+    public function test_can_get_image_asset_as_url_with_custom_domain()
+    {
+        config()->set('storyblok.asset_domain', 'custom.asset.domain');
+        $field = new Image($this->getFieldContents('asset_image'), null);
 
+        $this->assertEquals('https://custom.asset.domain/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+    }
 
-	public function test_can_get_asset_as_url()
-	{
-		$field = new Asset($this->getFieldContents('asset'), null);
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
-	}
+    public function test_can_get_image_asset_dimensions()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
 
+        $this->assertEquals(960, $field->width());
+        $this->assertEquals(1280, $field->height());
+    }
 
-	public function test_can_get_image_asset_as_url()
-	{
-		$field = new Image($this->getFieldContents('asset_image'), null);
+    public function test_can_get_original_image_url()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
 
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
-	}
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+    }
 
+    public function test_can_resize_image()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->resize(234, 432);
 
-	public function test_can_get_image_asset_as_url_with_custom_domain()
-	{
-		config()->set('storyblok.asset_domain', 'custom.asset.domain');
-		$field = new Image($this->getFieldContents('asset_image'), null);
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/234x432', (string) $field);
 
-		$this->assertEquals('https://custom.asset.domain/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
-	}
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->resize(800, 200, 'smart');
 
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/800x200/smart', (string) $field2);
 
-	public function test_can_get_image_asset_dimensions()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
+        $field2 = new Image($this->getFieldContents('image'), null);
+        $field2 = $field2->transform()->resize(800, 200, 'focal-point');
 
-		$this->assertEquals(960, $field->width());
-		$this->assertEquals(1280, $field->height());
-	}
+        $this->assertEquals('https://a.storyblok.com/f/96945/1600x793/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg/m/800x200/filters:focal(350x426:351x427)', (string) $field2);
+    }
 
+    public function test_can_resize_image_with_legacy_driver()
+    {
+        config()->set('storyblok.image_transformer', StoryblokLegacy::class);
+        config()->set('storyblok.image_service_domain', 'img2.storyblok.com');
 
-	public function test_can_get_original_image_url()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->resize(234, 432);
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
-	}
+        $this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
 
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->resize(800, 200, 'smart');
 
-	public function test_can_resize_image()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->resize(234, 432);
+        $this->assertEquals('//img2.storyblok.com/800x200/smart/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/234x432', (string) $field);
+        $field2 = new Image($this->getFieldContents('image'), null);
+        $field2 = $field2->transform()->resize(800, 200, 'focal-point');
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->resize(800, 200, 'smart');
+        $this->assertEquals('//img2.storyblok.com/800x200/filters:focal(350x426:351x427)/f/96945/1600x793/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg', (string) $field2);
+    }
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/800x200/smart', (string) $field2);
+    public function test_can_set_image_format()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->format('png');
 
-		$field2 = new Image($this->getFieldContents('image'), null);
-		$field2 = $field2->transform()->resize(800, 200, 'focal-point');
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:format(png)', (string) $field);
 
-		$this->assertEquals('https://a.storyblok.com/f/96945/1600x793/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg/m/800x200/filters:focal(350x426:351x427)', (string) $field2);
-	}
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->format('jpg', 10);
 
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:format(jpg):quality(10)', (string) $field2);
 
-	public function test_can_resize_image_with_legacy_driver()
-	{
-		config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\StoryblokLegacy::class);
-		config()->set('storyblok.image_service_domain', 'img2.storyblok.com');
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->format('jpg', 10)->resize(10, 10);
 
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->resize(234, 432);
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/10x10/filters:format(jpg):quality(10)', (string) $field3);
+    }
 
-		$this->assertEquals('//img2.storyblok.com/234x432/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+    public function test_can_fit_image()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->fitIn(400, 400, 'ff0000');
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->resize(800, 200, 'smart');
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:fill(ff0000)', (string) $field);
 
-		$this->assertEquals('//img2.storyblok.com/800x200/smart/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field2);
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->fitIn(400, 400, 'transparent');
 
-		$field2 = new Image($this->getFieldContents('image'), null);
-		$field2 = $field2->transform()->resize(800, 200, 'focal-point');
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:format(webp):fill(transparent)', (string) $field2);
 
-		$this->assertEquals('//img2.storyblok.com/800x200/filters:focal(350x426:351x427)/f/96945/1600x793/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg', (string) $field2);
-	}
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->fitIn(400, 400, 'transparent')->format('webp');
 
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:format(webp):fill(transparent)', (string) $field3);
+    }
 
-	public function test_can_set_image_format()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->format('png');
+    public function test_can_use_custom_image_service_domain()
+    {
+        config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:format(png)', (string) $field);
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->fitIn(400, 400, 'ff0000');
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->format('jpg', 10);
+        $this->assertEquals('https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:fill(ff0000)', (string) $field);
+    }
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:format(jpg):quality(10)', (string) $field2);
+    public function test_can_use_custom_image_service_domain_with_legacy_driver()
+    {
+        config()->set('storyblok.image_transformer', StoryblokLegacy::class);
+        config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
 
-		$field3 = new Image($this->getFieldContents('hero'), null);
-		$field3 = $field3->transform()->format('jpg', 10)->resize(10, 10);
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->fitIn(400, 400, 'ff0000');
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/10x10/filters:format(jpg):quality(10)', (string) $field3);
-	}
+        $this->assertEquals('//custom.imageservice.domain/fit-in/400x400/filters:fill(ff0000)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
+    }
 
+    public function test_can_get_image_details()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
 
-	public function test_can_fit_image()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->fitIn(400, 400, 'ff0000');
+        $this->assertEquals(960, $field->width());
+        $this->assertEquals(1280, $field->height());
+        $this->assertEquals('image/jpeg', $field->mime());
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:fill(ff0000)', (string) $field);
+        $field1 = $field->transform()->format('png');
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->fitIn(400, 400, 'transparent');
+        //		dd($field1);
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:format(webp):fill(transparent)', (string) $field2);
+        $this->assertEquals(960, $field1->width());
+        $this->assertEquals(1280, $field1->height());
+        $this->assertEquals('image/png', $field1->mime());
 
-		$field3 = new Image($this->getFieldContents('hero'), null);
-		$field3 = $field3->transform()->fitIn(400, 400, 'transparent')->format('webp');
+        $field2 = $field->transform()->resize(100, 200)->format('png');
 
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:format(webp):fill(transparent)', (string) $field3);
-	}
+        $this->assertEquals(100, $field2->width());
+        $this->assertEquals(200, $field2->height());
 
+        // test we can read the original dimensions
+        $this->assertEquals(960, $field2->width(true));
+        $this->assertEquals(1280, $field2->height(true));
+        $this->assertEquals('image/jpeg', $field2->mime(true));
+    }
 
-	public function test_can_use_custom_image_service_domain()
-	{
-		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
-
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->fitIn(400, 400, 'ff0000');
-
-		$this->assertEquals('https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/fit-in/400x400/filters:fill(ff0000)', (string) $field);
-	}
-
-
-	public function test_can_use_custom_image_service_domain_with_legacy_driver()
-	{
-		config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\StoryblokLegacy::class);
-		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
-
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->fitIn(400, 400, 'ff0000');
-
-		$this->assertEquals('//custom.imageservice.domain/fit-in/400x400/filters:fill(ff0000)/f/87028/960x1280/31a1d8dc75/bottle.jpg', (string) $field);
-	}
-
-
-	public function test_can_get_image_details()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(960, $field->width());
-		$this->assertEquals(1280, $field->height());
-		$this->assertEquals('image/jpeg', $field->mime());
-
-		$field1 = $field->transform()->format('png');
-
-//		dd($field1);
-
-		$this->assertEquals(960, $field1->width());
-		$this->assertEquals(1280, $field1->height());
-		$this->assertEquals('image/png', $field1->mime());
-
-		$field2 = $field->transform()->resize(100, 200)->format('png');
-
-		$this->assertEquals(100, $field2->width());
-		$this->assertEquals(200, $field2->height());
-
-		// test we can read the original dimensions
-		$this->assertEquals(960, $field2->width(true));
-		$this->assertEquals(1280, $field2->height(true));
-		$this->assertEquals('image/jpeg', $field2->mime(true));
-	}
-
-
-	public function test_can_get_image_meta()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
+    public function test_can_get_image_meta()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
 
         $this->assertEquals('Alt', $field->alt());
         $this->assertEquals('Copyright', $field->copyright());
         $this->assertEquals('Name', $field->name());
         $this->assertEquals('Source', $field->source());
         $this->assertEquals('Title', $field->title());
-
 
         $field2 = new Image($this->getFieldContents('asset'), null);
 
@@ -362,42 +341,36 @@ class FieldTest extends TestCase
         $this->assertEquals('Default', $field2->title('Default'));
     }
 
+    public function test_transparent_filled_images_have_correct_format()
+    {
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform()->fitIn(10, 10, 'transparent');
 
-	public function test_transparent_filled_images_have_correct_format()
-	{
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform()->fitIn(10, 10, 'transparent');
+        $this->assertEquals('image/webp', $field->mime());
 
-		$this->assertEquals('image/webp', $field->mime());
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->fitIn(10, 10, 'transparent')->format('webp');
 
+        $this->assertEquals('image/webp', $field2->mime());
+    }
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->fitIn(10, 10, 'transparent')->format('webp');
+    public function test_can_use_a_named_transformation()
+    {
 
-		$this->assertEquals('image/webp', $field2->mime());
-	}
+        $field = new HeroImage($this->getFieldContents('hero'), null);
+        $field->transform('mobile');
 
+        $this->assertInstanceOf(Storyblok::class, $field->transform('mobile')['src']);
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)', (string) $field->transform('mobile')['src']);
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile')['src']->format('png'));
+        $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile'));
+    }
 
+    public function test_can_get_create_picture_elements()
+    {
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-	public function test_can_use_a_named_transformation()
-	{
-
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-		$field->transform('mobile');
-
-		$this->assertInstanceOf(Storyblok::class, $field->transform('mobile')['src']);
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)', (string) $field->transform('mobile')['src']);
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile')['src']->format('png'));
-		$this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(png)', (string) $field->transform('mobile'));
-	}
-
-
-
-	public function test_can_get_create_picture_elements()
-	{
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
@@ -405,33 +378,32 @@ class FieldTest extends TestCase
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-			, str_replace("\t", '', $field->picture('Some alt text with "')));
+            , str_replace("\t", '', $field->picture('Some alt text with "')));
 
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
 
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-			, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile')));
+            , str_replace("\t", '', $field->picture('Some alt text with "', 'mobile')));
 
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
 
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" alt="Some alt text with &quot;"  class="laravel storyblok"  id="some-id" >
 </picture>
 PICTURE
-			, str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
-	}
+            , str_replace("\t", '', $field->picture('Some alt text with "', 'mobile', ['class' => 'laravel storyblok', 'id' => 'some-id'])));
+    }
 
+    public function test_can_set_picture_element_transforms()
+    {
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-	public function test_can_set_picture_element_transforms()
-	{
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/200x200/filters:format(webp)" type="image/webp" media="(min-width: 400px)">
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
@@ -439,61 +411,59 @@ PICTURE
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-			, str_replace("\t", '', $field->setTransformations([
-				'mobile' => [
-					'src' => $field->transform()->resize(200, 200)->format('webp'),
-					'media' => '(min-width: 400px)',
-				],
-				'desktop' => [
-					'src' => $field->transform()->resize(500, 400),
-					'media' => '(min-width: 1200px)',
-				],
-			])->picture('Some alt text with "')));
+            , str_replace("\t", '', $field->setTransformations([
+                'mobile' => [
+                    'src' => $field->transform()->resize(200, 200)->format('webp'),
+                    'media' => '(min-width: 400px)',
+                ],
+                'desktop' => [
+                    'src' => $field->transform()->resize(500, 400),
+                    'media' => '(min-width: 1200px)',
+                ],
+            ])->picture('Some alt text with "')));
 
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/400x400" type="image/jpeg" media="(min-width: 800px)">
 
 <img src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/200x200/filters:format(webp)" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-			, str_replace("\t", '', $field->setTransformations([
-				'mobile' => [
-					'src' => $field->transform()->resize(200, 200)->format('webp'),
-					'media' => '(min-width: 400px)',
-				],
-				'desktop' => [
-					'src' => $field->transform()->resize(400, 400),
-					'media' => '(min-width: 800px)',
-				],
-			])->picture('Some alt text with "', 'mobile')));
-	}
+            , str_replace("\t", '', $field->setTransformations([
+                'mobile' => [
+                    'src' => $field->transform()->resize(200, 200)->format('webp'),
+                    'media' => '(min-width: 400px)',
+                ],
+                'desktop' => [
+                    'src' => $field->transform()->resize(400, 400),
+                    'media' => '(min-width: 800px)',
+                ],
+            ])->picture('Some alt text with "', 'mobile')));
+    }
 
+    public function test_can_create_transform_as_new_instance()
+    {
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-	public function test_can_create_transform_as_new_instance()
-	{
-		$field = new HeroImage($this->getFieldContents('hero'), null);
+        $newInstance = $field->setTransformations([
+            'mobile' => [
+                'src' => $field->transform()->resize(200, 200)->format('webp'),
+                'media' => '(min-width: 400px)',
+            ],
+        ], false);
 
-		$newInstance = $field->setTransformations([
-			'mobile' => [
-				'src' => $field->transform()->resize(200, 200)->format('webp'),
-				'media' => '(min-width: 400px)',
-			]
-		], false);
+        $this->assertInstanceOf(HeroImage::class, $newInstance);
+        $this->assertNotEquals($newInstance, $field);
+    }
 
-		$this->assertInstanceOf(HeroImage::class, $newInstance);
-		$this->assertNotEquals($newInstance, $field);
-	}
+    public function test_can_get_create_picture_element_with_custom_domains()
+    {
+        config()->set('storyblok.asset_domain', 'custom.asset.domain');
+        config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
 
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-	public function test_can_get_create_picture_element_with_custom_domains()
-	{
-		config()->set('storyblok.asset_domain', 'custom.asset.domain');
-		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
-
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(<<<'PICTURE'
+        $this->assertEquals(<<<'PICTURE'
 <picture>
 <source srcset="https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400" type="image/jpeg" media="(min-width: 1200px)">
 <source srcset="https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp)" type="image/webp" media="(min-width: 600px)">
@@ -501,36 +471,31 @@ PICTURE
 <img src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 </picture>
 PICTURE
-, str_replace("\t", '', $field->picture('Some alt text with "')));
-	}
+            , str_replace("\t", '', $field->picture('Some alt text with "')));
+    }
 
+    public function test_can_create_img_srcset()
+    {
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-
-	public function test_can_create_img_srcset()
-	{
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(<<<'SRCSET'
+        $this->assertEquals(<<<'SRCSET'
 <img srcset=" https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w,  https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w, " sizes="  (min-width: 1200px) 500px,    (min-width: 600px) 100px,  " src="https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 SRCSET
-			, str_replace("\t", '', $field->srcset('Some alt text with "')));
-	}
+            , str_replace("\t", '', $field->srcset('Some alt text with "')));
+    }
 
+    public function test_can_create_img_srcset_with_custom_domains()
+    {
+        config()->set('storyblok.asset_domain', 'custom.asset.domain');
+        config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
 
-	public function test_can_create_img_srcset_with_custom_domains()
-	{
-		config()->set('storyblok.asset_domain', 'custom.asset.domain');
-		config()->set('storyblok.image_service_domain', 'custom.imageservice.domain');
+        $field = new HeroImage($this->getFieldContents('hero'), null);
 
-		$field = new HeroImage($this->getFieldContents('hero'), null);
-
-		$this->assertEquals(<<<'SRCSET'
+        $this->assertEquals(<<<'SRCSET'
 <img srcset=" https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/500x400 500w,  https://custom.imageservice.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/100x120/filters:format(webp) 100w, " sizes="  (min-width: 1200px) 500px,    (min-width: 600px) 100px,  " src="https://custom.asset.domain/f/87028/960x1280/31a1d8dc75/bottle.jpg" alt="Some alt text with &quot;" >
 SRCSET
-			, str_replace("\t", '', $field->srcset('Some alt text with "')));
-	}
-
-
+            , str_replace("\t", '', $field->srcset('Some alt text with "')));
+    }
 
     public function test_can_apply_grayscale_filter()
     {
@@ -540,7 +505,6 @@ SRCSET
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:grayscale()', (string) $field3);
     }
 
-
     public function test_can_apply_rotate_filter()
     {
         $field3 = new Image($this->getFieldContents('hero'), null);
@@ -548,7 +512,6 @@ SRCSET
 
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:rotate(90)', (string) $field3);
     }
-
 
     public function test_can_apply_blur_filter()
     {
@@ -558,7 +521,6 @@ SRCSET
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:blur(20)', (string) $field3);
     }
 
-
     public function test_can_apply_brightness_filter()
     {
         $field3 = new Image($this->getFieldContents('hero'), null);
@@ -566,7 +528,6 @@ SRCSET
 
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:brightness(20)', (string) $field3);
     }
-
 
     public function test_can_apply_many_filters()
     {
@@ -576,7 +537,6 @@ SRCSET
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/filters:blur(20):brightness(20):rotate(90):grayscale()', (string) $field3);
     }
 
-
     public function test_can_apply_many_filters_and_resize()
     {
         $field3 = new Image($this->getFieldContents('hero'), null);
@@ -585,77 +545,71 @@ SRCSET
         $this->assertEquals('https://a.storyblok.com/f/87028/960x1280/31a1d8dc75/bottle.jpg/m/200x200/filters:blur(20):brightness(20):rotate(90):grayscale()', (string) $field3);
     }
 
+    public function test_can_use_imgix_driver()
+    {
+        config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\Imgix::class);
+        config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
+        config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
+        $imgxVersion = InstalledVersions::getPrettyVersion('imgix/imgix-php');
 
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transform();
 
-	public function test_can_use_imgix_driver()
-	{
-		config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\Imgix::class);
-		config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
-		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
-        $imgxVersion = \Composer\InstalledVersions::getPrettyVersion('imgix/imgix-php');
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?ixlib=php-'.$imgxVersion.'&s=', (string) $field);
 
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transform();
+        $field2 = new Image($this->getFieldContents('hero'), null);
+        $field2 = $field2->transform()->resize(200, 200);
 
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=200&ixlib=php-'.$imgxVersion.'&w=200&s=', (string) $field2);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?ixlib=php-' . $imgxVersion. '&s=', (string) $field);
+        $field3 = new Image($this->getFieldContents('hero'), null);
+        $field3 = $field3->transform()->resize(200, 200)->fit('min');
 
-		$field2 = new Image($this->getFieldContents('hero'), null);
-		$field2 = $field2->transform()->resize(200, 200);
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fit=min&h=200&ixlib=php-'.$imgxVersion.'&w=200&s=', (string) $field3);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=200&ixlib=php-' . $imgxVersion . '&w=200&s=', (string) $field2);
+        $field4 = new Image($this->getFieldContents('hero'), null);
+        $field4 = $field4->transform()->resize(200, 200)->fit('fillmax', ['fill-color' => '#f00']);
 
-		$field3 = new Image($this->getFieldContents('hero'), null);
-		$field3 = $field3->transform()->resize(200, 200)->fit('min');
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fill-color=%23f00&fit=fillmax&h=200&ixlib=php-'.$imgxVersion.'&w=200&s=', (string) $field4);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fit=min&h=200&ixlib=php-' . $imgxVersion . '&w=200&s=', (string) $field3);
+        $field4 = new Image($this->getFieldContents('hero'), null);
+        $field4 = $field4->transform()->resize(300, 200)->fit('min')->crop('faces');
 
-		$field4 = new Image($this->getFieldContents('hero'), null);
-		$field4 = $field4->transform()->resize(200, 200)->fit('fillmax', ['fill-color' => '#f00']);
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?crop=faces&fit=min&h=200&ixlib=php-'.$imgxVersion.'&w=300&s=', (string) $field4);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fill-color=%23f00&fit=fillmax&h=200&ixlib=php-' . $imgxVersion . '&w=200&s=', (string) $field4);
+        $field5 = new Image($this->getFieldContents('hero'), null);
+        $field5 = $field5->transform()->resize(300, 200)->format('auto');
 
-		$field4 = new Image($this->getFieldContents('hero'), null);
-		$field4 = $field4->transform()->resize(300, 200)->fit('min')->crop('faces');
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?auto=format&h=200&ixlib=php-'.$imgxVersion.'&w=300&s=', (string) $field5);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?crop=faces&fit=min&h=200&ixlib=php-' . $imgxVersion . '&w=300&s=', (string) $field4);
+        $field6 = new Image($this->getFieldContents('hero'), null);
+        $field6 = $field6->transform()->resize(300, 200)->format('png');
 
-		$field5 = new Image($this->getFieldContents('hero'), null);
-		$field5 = $field5->transform()->resize(300, 200)->format('auto');
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fm=png&h=200&ixlib=php-'.$imgxVersion.'&w=300&s=', (string) $field6);
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?auto=format&h=200&ixlib=php-' . $imgxVersion . '&w=300&s=', (string) $field5);
+        $field7 = new Image($this->getFieldContents('hero'), null);
+        $field7 = $field7->transform()->options(['width' => 100, 'rot' => 46]);
 
-		$field6 = new Image($this->getFieldContents('hero'), null);
-		$field6 = $field6->transform()->resize(300, 200)->format('png');
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?ixlib=php-'.$imgxVersion.'&rot=46&width=100&s=', (string) $field7);
+    }
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?fm=png&h=200&ixlib=php-' . $imgxVersion . '&w=300&s=', (string) $field6);
+    public function test_can_get_asset_url_with_accessor()
+    {
+        $field = new AssetWithAccessor($this->getFieldContents('asset'), null);
+        $this->assertEquals('fdp.sllec-doolb/4736f15f79/007x007/18625/f/moc.kolbyrots.a//:sptth', $field->filename_backwards);
+    }
 
-		$field7 = new Image($this->getFieldContents('hero'), null);
-		$field7 = $field7->transform()->options(['width' => 100, 'rot' => 46]);
+    public function test_can_check_asset_has_file()
+    {
+        $field = new Asset($this->getFieldContents('asset'), null);
+        $this->assertTrue($field->hasFile());
 
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?ixlib=php-' . $imgxVersion . '&rot=46&width=100&s=', (string) $field7);
-	}
+        $field = new Asset($this->getFieldContents('asset_empty'), null);
+        $this->assertFalse($field->hasFile());
+        $this->assertEquals((string) $field, '');
 
-
-
-	public function test_can_get_asset_url_with_accessor()
-	{
-		$field = new AssetWithAccessor($this->getFieldContents('asset'), null);
-		$this->assertEquals('fdp.sllec-doolb/4736f15f79/007x007/18625/f/moc.kolbyrots.a//:sptth', $field->filename_backwards);
-	}
-
-
-	public function test_can_check_asset_has_file()
-	{
-		$field = new Asset($this->getFieldContents('asset'), null);
-		$this->assertTrue($field->hasFile());
-
-		$field = new Asset($this->getFieldContents('asset_empty'), null);
-		$this->assertFalse($field->hasFile());
-		$this->assertEquals((string) $field, '');
-
-		$field = new Asset(json_decode(
-			'{
+        $field = new Asset(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -664,193 +618,174 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertFalse($field->hasFile());
-	}
+        $this->assertFalse($field->hasFile());
+    }
 
+    public function test_can_check_multi_asset_has_files()
+    {
+        $page = $this->makePage('custom-page.json');
+        $block = $page->block(); // any parent block will do for testing
 
-	public function test_can_check_multi_asset_has_files()
-	{
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will do for testing
+        $field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
+        $this->assertTrue($field->hasFiles());
 
-		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
-		$this->assertTrue($field->hasFiles());
+        $field = new MultiAsset($this->getFieldContents('multi_assets_empty'), $block);
+        $this->assertFalse($field->hasFiles());
+    }
 
-		$field = new MultiAsset($this->getFieldContents('multi_assets_empty'), $block);
-		$this->assertFalse($field->hasFiles());
-	}
+    public function test_can_use_array_access_on_multi_asset()
+    {
+        $page = $this->makePage('custom-page.json');
+        $block = $page->block(); // any parent block will do for testing
 
+        $field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
+        $this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
 
-	public function test_can_use_array_access_on_multi_asset()
-	{
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will do for testing
+        $this->assertTrue($field->offsetExists(3));
+        $this->assertFalse($field->offsetExists(4));
 
-		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
-		$this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
+        $this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->offsetGet(1));
 
-		$this->assertTrue($field->offsetExists(3));
-		$this->assertFalse($field->offsetExists(4));
+        $this->assertEquals(0, $field->key());
 
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->offsetGet(1));
+        $field->next();
 
-		$this->assertEquals(0, $field->key());
+        $this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->current());
 
-		$field->next();
+        $field->next();
+        $this->assertEquals(2, $field->key());
 
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field->current());
+        $field->rewind();
+        $this->assertEquals(0, $field->key());
 
-		$field->next();
-		$this->assertEquals(2, $field->key());
+        $this->assertTrue($field->valid());
+        $this->assertEquals(4, $field->count());
 
-		$field->rewind();
-		$this->assertEquals(0, $field->key());
+        $this->assertArrayHasKey(2, $field);
+        $field->offsetUnset(2);
+        $this->assertArrayNotHasKey(2, $field);
+        $this->assertEquals(3, $field->count());
 
-		$this->assertTrue($field->valid());
-		$this->assertEquals(4, $field->count());
+        $field->offsetSet(2, 'hello');
+        $this->assertEquals('hello', $field[2]);
 
-		$this->assertArrayHasKey(2, $field);
-		$field->offsetUnset(2);
-		$this->assertArrayNotHasKey(2, $field);
-		$this->assertEquals(3, $field->count());
+        $field->offsetSet(3, 'hello2');
+        $this->assertEquals('hello2', $field[3]);
 
-		$field->offsetSet(2, 'hello');
-		$this->assertEquals('hello', $field[2]);
+        $field->offsetSet(null, 'hello3');
+        $this->assertEquals('hello3', $field[4]);
 
-		$field->offsetSet(3, 'hello2');
-		$this->assertEquals('hello2', $field[3]);
+        $this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg,https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
+    }
 
-		$field->offsetSet(null, 'hello3');
-		$this->assertEquals('hello3', $field[4]);
+    public function test_can_use_array_access_on_multi_asset_with_custom_domain()
+    {
+        config()->set('storyblok.asset_domain', 'custom.asset.domain');
 
+        $page = $this->makePage('custom-page.json');
+        $block = $page->block(); // any parent block will for for testing
 
-		$this->assertEquals('https://a.storyblok.com/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg,https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.pdf', (string) $field);
-	}
+        $field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
+        $this->assertEquals('https://custom.asset.domain/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
+    }
 
+    public function test_can_make_assets_from_multi_asset()
+    {
+        $page = $this->makePage('custom-page.json');
+        $block = $page->block(); // any parent block will for for testing
 
-	public function test_can_use_array_access_on_multi_asset_with_custom_domain()
-	{
-		config()->set('storyblok.asset_domain', 'custom.asset.domain');
+        $field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
+        $this->assertInstanceOf('Riclep\Storyblok\Fields\Image', $field[0]);
+        $this->assertInstanceOf('Riclep\Storyblok\Fields\Asset', $field[1]);
+    }
 
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will for for testing
+    public function test_can_get_email_link_address()
+    {
+        $field = new EmailLink($this->getFieldContents('link_email'), null);
+        $this->assertEquals('ric@sirric.co.uk', (string) $field);
+    }
 
-		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
-		$this->assertEquals('https://custom.asset.domain/f/52681/1000x875/7ced1a10b2/blow-dry-mobile.jpg', $field[0]->filename);
-	}
+    public function test_can_get_asset_link_url()
+    {
+        $field = new AssetLink($this->getFieldContents('link_asset'), null);
+        $this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
+    }
 
+    public function test_can_get_url_link_url()
+    {
+        $field = new UrlLink($this->getFieldContents('link_url'), null);
+        $this->assertEquals('https://sirric.co.uk', (string) $field);
+    }
 
-	public function test_can_make_assets_from_multi_asset()
-	{
-		$page = $this->makePage('custom-page.json');
-		$block = $page->block(); // any parent block will for for testing
+    public function test_can_get_story_link_url()
+    {
+        $field = new StoryLink($this->getFieldContents('link_story'), null);
+        $this->assertEquals('key-people/primary-contact', (string) $field);
+    }
 
-		$field = new MultiAsset($this->getFieldContents('multi_assets'), $block);
-		$this->assertInstanceOf('Riclep\Storyblok\Fields\Image', $field[0]);
-		$this->assertInstanceOf('Riclep\Storyblok\Fields\Asset', $field[1]);
-	}
+    public function test_can_get_story_link_url_with_anchor()
+    {
+        $field = new StoryLink($this->getFieldContents('link_anchor'), null);
+        $this->assertEquals('key-people/primary-contact#the-anchor', (string) $field);
+    }
 
+    public function test_can_use_custom_field_class()
+    {
+        $page = $this->makePage();
+        $block = $page->block();
 
-	public function test_can_get_email_link_address()
-	{
-		$field = new EmailLink($this->getFieldContents('link_email'), null);
-		$this->assertEquals('ric@sirric.co.uk', (string) $field);
-	}
+        $this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\Hero', $block->hero);
+    }
 
+    public function test_can_transform_image_url_with_imgix()
+    {
+        config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\Imgix::class);
+        config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
+        config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
+        $imgxVersion = InstalledVersions::getPrettyVersion('imgix/imgix-php');
+        $field = new Imgix($this->getFieldContents('imgix'), null);
+        $field = $field->transform()->resize(1000, 300);
 
-	public function test_can_get_asset_link_url()
-	{
-		$field = new AssetLink($this->getFieldContents('link_asset'), null);
-		$this->assertEquals('https://a.storyblok.com/f/52681/700x700/97f51f6374/blood-cells.jpg', (string) $field);
-	}
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-'.$imgxVersion.'&w=1000&s=', $field->buildUrl());
 
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-'.$imgxVersion.'&w=1000&s=', (string) $field);
+    }
 
-	public function test_can_get_url_link_url()
-	{
-		$field = new UrlLink($this->getFieldContents('link_url'), null);
-		$this->assertEquals('https://sirric.co.uk', (string) $field);
-	}
+    public function test_can_change_image_transformer_to_imgix()
+    {
+        config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
+        config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
+        $imgxVersion = InstalledVersions::getPrettyVersion('imgix/imgix-php');
+        $field = new Image($this->getFieldContents('hero'), null);
+        $field = $field->transformer(\Riclep\Storyblok\Support\ImageTransformers\Imgix::class)->transform()->resize(1000, 300);
 
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-'.$imgxVersion.'&w=1000&s=', $field->buildUrl());
 
-	public function test_can_get_story_link_url()
-	{
-		$field = new StoryLink($this->getFieldContents('link_story'), null);
-		$this->assertEquals('key-people/primary-contact', (string) $field);
-	}
+        $this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-'.$imgxVersion.'&w=1000&s=', (string) $field);
+    }
 
+    public function test_can_convert_table_fields_to_html()
+    {
+        $field = new Table($this->getFieldContents('table'), null);
 
-	public function test_can_get_story_link_url_with_anchor()
-	{
-		$field = new StoryLink($this->getFieldContents('link_anchor'), null);
-		$this->assertEquals('key-people/primary-contact#the-anchor', (string) $field);
-	}
+        $this->assertEquals('<table ><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field);
 
+        $this->assertEquals('<table class="class class--2"><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field->cssClass('class class--2'));
 
-	public function test_can_use_custom_field_class()
-	{
-		$page = $this->makePage();
-		$block = $page->block();
+        $field2 = new Table($this->getFieldContents('table'), null);
 
-		$this->assertInstanceOf('Riclep\Storyblok\Tests\Fixtures\Fields\Hero', $block->hero);
-	}
+        $this->assertEquals('<table ><caption>caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption('caption'));
 
+        $this->assertEquals('<table ><caption class="caption class">caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption(['caption', 'caption class']));
+    }
 
-	public function test_can_transform_image_url_with_imgix()
-	{
-		config()->set('storyblok.image_transformer', \Riclep\Storyblok\Support\ImageTransformers\Imgix::class);
-		config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
-		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
-        $imgxVersion = \Composer\InstalledVersions::getPrettyVersion('imgix/imgix-php');
-		$field = new Imgix($this->getFieldContents('imgix'), null);
-		$field = $field->transform()->resize(1000, 300);
-
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-' . $imgxVersion . '&w=1000&s=', $field->buildUrl());
-
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fthecuriosityofachild.com%2Fimg%2Flogo-thats-not-canon.png?h=300&ixlib=php-' . $imgxVersion . '&w=1000&s=', (string) $field);
-	}
-
-
-	public function test_can_change_image_transformer_to_imgix()
-	{
-		config()->set('storyblok.imgix_domain', 'bwi.imgix.net');
-		config()->set('storyblok.imgix_token', 'aGd45SE3kRWezggD');
-        $imgxVersion = \Composer\InstalledVersions::getPrettyVersion('imgix/imgix-php');
-		$field = new Image($this->getFieldContents('hero'), null);
-		$field = $field->transformer(\Riclep\Storyblok\Support\ImageTransformers\Imgix::class)->transform()->resize(1000, 300);
-
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-' . $imgxVersion . '&w=1000&s=', $field->buildUrl());
-
-		$this->assertStringStartsWith('https://bwi.imgix.net/https%3A%2F%2Fa.storyblok.com%2Ff%2F87028%2F960x1280%2F31a1d8dc75%2Fbottle.jpg?h=300&ixlib=php-' . $imgxVersion . '&w=1000&s=', (string) $field);
-	}
-
-
-	public function test_can_convert_table_fields_to_html()
-	{
-		$field = new Table($this->getFieldContents('table'), null);
-
-		$this->assertEquals('<table ><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field);
-
-		$this->assertEquals('<table class="class class--2"><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field->cssClass('class class--2'));
-
-
-		$field2 = new Table($this->getFieldContents('table'), null);
-
-		$this->assertEquals('<table ><caption>caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption('caption'));
-
-		$this->assertEquals('<table ><caption class="caption class">caption</caption><thead><tr><th>title</th><th>title 2</th></tr></thead><tbody><tr><td>value</td><td>value 2</td></tr></tbody></table>', (string) $field2->caption(['caption', 'caption class']));
-	}
-
-
-
-
-
-	public function test_can_set_focal_point()
-	{
-		// default
-		$field = new Image(json_decode(
-			'{
+    public function test_can_set_focal_point()
+    {
+        // default
+        $field = new Image(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -860,14 +795,14 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertEquals('center', $field->focalPointAlignment());
-		$this->assertEquals('left', $field->focalPointAlignment('left'));
+        $this->assertEquals('center', $field->focalPointAlignment());
+        $this->assertEquals('left', $field->focalPointAlignment('left'));
 
-		// left top
-		$field2 = new Image(json_decode(
-			'{
+        // left top
+        $field2 = new Image(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -877,15 +812,14 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertEquals('25% 17%', $field2->focalPointAlignment());
-		$this->assertEquals('left top', $field2->focalPointAlignment('center', true));
+        $this->assertEquals('25% 17%', $field2->focalPointAlignment());
+        $this->assertEquals('left top', $field2->focalPointAlignment('center', true));
 
-
-		// center center
-		$field3 = new Image(json_decode(
-			'{
+        // center center
+        $field3 = new Image(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -895,15 +829,14 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertEquals('34% 34%', $field3->focalPointAlignment());
-		$this->assertEquals('center center', $field3->focalPointAlignment('center', true));
+        $this->assertEquals('34% 34%', $field3->focalPointAlignment());
+        $this->assertEquals('center center', $field3->focalPointAlignment('center', true));
 
-
-		// right bottom
-		$field4 = new Image(json_decode(
-			'{
+        // right bottom
+        $field4 = new Image(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -913,19 +846,17 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertEquals('73% 99%', $field4->focalPointAlignment());
-		$this->assertEquals('right bottom', $field4->focalPointAlignment('center', true));
-	}
+        $this->assertEquals('73% 99%', $field4->focalPointAlignment());
+        $this->assertEquals('right bottom', $field4->focalPointAlignment('center', true));
+    }
 
-
-
-	public function test_can_add_with_content()
-	{
-		// default
-		$field = new WithImage(json_decode(
-			'{
+    public function test_can_add_with_content()
+    {
+        // default
+        $field = new WithImage(json_decode(
+            '{
 				"id": 1223942,
 				"alt": null,
 				"name": "",
@@ -935,9 +866,8 @@ SRCSET
 				"copyright": null,
 				"fieldtype": "asset"
 			}', true
-		), null);
+        ), null);
 
-		$this->assertEquals('<img src="https://a.storyblok.com/f/96945/100x100/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg class="some-class">', (string) $field->with(['class' => 'some-class']));
-	}
-
+        $this->assertEquals('<img src="https://a.storyblok.com/f/96945/100x100/c55f649622/2020-ar-fusionacusoft-letterbox-2.jpg class="some-class">', (string) $field->with(['class' => 'some-class']));
+    }
 }

@@ -7,144 +7,129 @@ use Imgix\UrlBuilder;
 
 class Imgix extends BaseTransformer
 {
+    /**
+     * Resize the image to the given dimensions
+     *
+     * @return $this
+     */
+    public function resize(int $width = 0, int $height = 0): self
+    {
+        $this->transformations = array_merge($this->transformations, [
+            'w' => $width,
+            'h' => $height,
+        ]);
 
-	/**
-	 * Resize the image to the given dimensions
-	 *
-	 * @param int $width
-	 * @param int $height
-	 * @return $this
-	 */
-	public function resize(int $width = 0, int $height = 0): self
-	{
-		$this->transformations = array_merge($this->transformations, [
-			'w' => $width,
-			'h' => $height,
-		]);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Fit the image in the given dimensions
+     *
+     * @return $this
+     */
+    public function fit(string $mode, array $options = []): self
+    {
+        $this->transformations = array_merge($this->transformations, [
+            'fit' => $mode,
+        ]);
 
-	/**
-	 * Fit the image in the given dimensions
-	 *
-	 * @param string $mode
-	 * @param array $options
-	 * @return $this
-	 */
-	public function fit(string $mode, array $options = []): self
-	{
-		$this->transformations = array_merge($this->transformations, [
-			'fit' => $mode
-		]);
+        $this->transformations = array_merge($this->transformations, $options);
 
-		$this->transformations = array_merge($this->transformations, $options);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Specify the crop type to use for the image
+     *
+     * @return $this
+     */
+    public function crop(string $mode, array $options = []): self
+    {
+        $this->transformations = array_merge($this->transformations, [
+            'crop' => $mode,
+        ]);
 
-	/**
-	 * Specify the crop type to use for the image
-	 *
-	 * @param string $mode
-	 * @param array $options
-	 * @return $this
-	 */
-	public function crop(string $mode, array $options = []): self
-	{
-		$this->transformations = array_merge($this->transformations, [
-			'crop' => $mode
-		]);
+        $this->transformations = array_merge($this->transformations, $options);
 
-		$this->transformations = array_merge($this->transformations, $options);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Set the image format you want returned
+     *
+     * @return $this
+     */
+    public function format(string $format, ?int $quality = null): self
+    {
+        if ($format === 'auto') {
+            $this->transformations = array_merge($this->transformations, [
+                'auto' => 'format',
+            ]);
+        } else {
+            $this->transformations = array_merge($this->transformations, [
+                'fm' => $format,
+            ]);
 
-	/**
-	 * Set the image format you want returned
-	 *
-	 * @param string $format
-	 * @param int|null $quality
-	 * @return $this
-	 */
-	public function format(string $format, ?int $quality = null): self
-	{
-		if ($format === 'auto') {
-			$this->transformations = array_merge($this->transformations, [
-				'auto' => 'format',
-			]);
-		} else {
-			$this->transformations = array_merge($this->transformations, [
-				'fm' => $format,
-			]);
+            if ($quality !== null) {
+                $this->transformations = array_merge($this->transformations, [
+                    'q' => $quality,
+                ]);
+            }
+        }
 
-			if ($quality !== null) {
-				$this->transformations = array_merge($this->transformations, [
-					'q' => $quality,
-				]);
-			}
-		}
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Manually set any options you want for the transformation as
+     * and array of key value pairs
+     *
+     * @return $this
+     */
+    public function options(array $options): self
+    {
+        $this->transformations = array_merge($this->transformations, $options);
 
-	/**
-	 * Manually set any options you want for the transformation as
-	 * and array of key value pairs
-	 *
-	 * @param array $options
-	 * @return $this
-	 */
-	public function options(array $options): self
-	{
-		$this->transformations = array_merge($this->transformations, $options);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Returns an imgix URL using their builder
+     */
+    public function buildUrl(): string
+    {
+        $builder = new UrlBuilder(config('storyblok.imgix_domain'));
+        $builder->setUseHttps(true);
+        $builder->setSignKey(config('storyblok.imgix_token'));
 
+        return $builder->createURL($this->image->content()['filename'], $this->transformations);
+    }
 
-	/**
-	 * Returns an imgix URL using their builder
-	 *
-	 * @return string
-	 */
-	public function buildUrl(): string
-	{
-		$builder = new UrlBuilder(config('storyblok.imgix_domain'));
-		$builder->setUseHttps(true);
-		$builder->setSignKey(config('storyblok.imgix_token'));
+    /**
+     * Gets the image meta from the given Storyblok URL
+     */
+    protected function extractMetaDetails(): void
+    {
+        $path = $this->image->content()['filename'];
 
-		return $builder->createURL($this->image->content()['filename'], $this->transformations);
-	}
+        preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
 
-	/**
-	 * Gets the image meta from the given Storyblok URL
-	 *
-	 * @return void
-	 */
-	protected function extractMetaDetails(): void
-	{
-		$path = $this->image->content()['filename'];
-
-		preg_match_all('/(?<width>\d+)x(?<height>\d+).+\.(?<extension>[a-z]{3,4})/mi', $path, $dimensions, PREG_SET_ORDER, 0);
-
-		if ($dimensions) {
-			if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
-				$this->meta = [
+        if ($dimensions) {
+            if (Str::endsWith(strtolower($this->image->content()['filename']), '.svg')) {
+                $this->meta = [
                     'height' => $dimensions[0]['height'],
                     'width' => $dimensions[0]['width'],
-					'extension' => 'svg',
-					'mime' => 'image/svg+xml',
-				];
-			} else {
-				$this->meta = [
-					'height' => $dimensions[0]['height'],
-					'width' => $dimensions[0]['width'],
-					'extension' => strtolower($dimensions[0]['extension']),
-					'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
-				];
-			}
-		}
-	}
+                    'extension' => 'svg',
+                    'mime' => 'image/svg+xml',
+                ];
+            } else {
+                $this->meta = [
+                    'height' => $dimensions[0]['height'],
+                    'width' => $dimensions[0]['width'],
+                    'extension' => strtolower($dimensions[0]['extension']),
+                    'mime' => $this->setMime(strtolower($dimensions[0]['extension'])),
+                ];
+            }
+        }
+    }
 }

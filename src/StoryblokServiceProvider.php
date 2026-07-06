@@ -17,27 +17,27 @@ class StoryblokServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-		$this->loadRoutesFrom(__DIR__.'/routes/api.php');
+        $this->loadRoutesFrom(__DIR__.'/routes/api.php');
 
-		$this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-storyblok');
+        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-storyblok');
 
         if ($this->app->runningInConsole()) {
-			$this->publishes([
-				__DIR__.'/../config/storyblok.php' => config_path('storyblok.php'),
-				__DIR__ . '/../stubs/Page.stub' => app_path('Storyblok') . '/Page.php',
-				__DIR__ . '/../stubs/Block.stub' => app_path('Storyblok') . '/Block.php',
-				__DIR__ . '/../stubs/Asset.stub' => app_path('Storyblok') . '/Asset.php',
-				__DIR__ . '/../stubs/Folder.stub' => app_path('Storyblok') . '/Folder.php',
-			], 'storyblok');
+            $this->publishes([
+                __DIR__.'/../config/storyblok.php' => config_path('storyblok.php'),
+                __DIR__.'/../stubs/Page.stub' => app_path('Storyblok').'/Page.php',
+                __DIR__.'/../stubs/Block.stub' => app_path('Storyblok').'/Block.php',
+                __DIR__.'/../stubs/Asset.stub' => app_path('Storyblok').'/Asset.php',
+                __DIR__.'/../stubs/Folder.stub' => app_path('Storyblok').'/Folder.php',
+            ], 'storyblok');
         }
 
-		$this->commands([
-			BlockMakeCommand::class,
-			BlockSyncCommand::class,
-			FolderMakeCommand::class,
-			PageMakeCommand::class,
-			StubViewsCommand::class
-		]);
+        $this->commands([
+            BlockMakeCommand::class,
+            BlockSyncCommand::class,
+            FolderMakeCommand::class,
+            PageMakeCommand::class,
+            StubViewsCommand::class,
+        ]);
     }
 
     /**
@@ -49,33 +49,33 @@ class StoryblokServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/storyblok.php', 'storyblok');
 
         // Register the main class to use with the facade
-		$this->app->singleton('storyblok', function () {
-			return new Storyblok;
-		});
+        $this->app->singleton('storyblok', function () {
+            return new Storyblok;
+        });
 
-		////////////TODO should this be a middleware?
-	    $storyblokRequest = request()->get('_storyblok_tk');
-		if (!empty($storyblokRequest)) {
-			$pre_token = $storyblokRequest['space_id'] . ':' . config('storyblok.api_preview_key') . ':' . $storyblokRequest['timestamp'];
-			$token = sha1($pre_token);
-			if ($token == $storyblokRequest['token'] && (int)$storyblokRequest['timestamp'] > strtotime('now') - 3600) {
-				config(['storyblok.edit_mode' => true]);
-				config(['storyblok.draft' => true]);
-			}
-		}
+        // //////////TODO should this be a middleware?
+        $storyblokRequest = request()->get('_storyblok_tk');
+        if (! empty($storyblokRequest)) {
+            $pre_token = $storyblokRequest['space_id'].':'.config('storyblok.api_preview_key').':'.$storyblokRequest['timestamp'];
+            $token = sha1($pre_token);
+            if ($token == $storyblokRequest['token'] && (int) $storyblokRequest['timestamp'] > strtotime('now') - 3600) {
+                config(['storyblok.edit_mode' => true]);
+                config(['storyblok.draft' => true]);
+            }
+        }
 
-	    // register the Storyblok client, checking if we are in edit more of the dev requests draft content
-	    $client = new StoryblokClient(
-            (config('storyblok.use_ssl') ? 'https://' : 'http://') . config('storyblok.delivery_api_base_url'),
-			config('storyblok.draft') ? config('storyblok.api_preview_key') : config('storyblok.api_public_key'),
-	    );
+        // register the Storyblok client, checking if we are in edit more of the dev requests draft content
+        $client = new StoryblokClient(
+            (config('storyblok.use_ssl') ? 'https://' : 'http://').config('storyblok.delivery_api_base_url'),
+            config('storyblok.draft') ? config('storyblok.api_preview_key') : config('storyblok.api_public_key'),
+        );
 
-	    // This singleton allows to retrieve the driver set has default from the manager
-	    $this->app->singleton('image-transformer.driver', function ($app) {
-		    return $app['image-transformer']->driver();
-	    });
+        // This singleton allows to retrieve the driver set has default from the manager
+        $this->app->singleton('image-transformer.driver', function ($app) {
+            return $app['image-transformer']->driver();
+        });
 
-		$this->app->instance('Storyblok\Api\StoryblokClient', $client);
-		$this->app->alias('Storyblok\Api\StoryblokClient', 'Storyblok\Client');
+        $this->app->instance('Storyblok\Api\StoryblokClient', $client);
+        $this->app->alias('Storyblok\Api\StoryblokClient', 'Storyblok\Client');
     }
 }

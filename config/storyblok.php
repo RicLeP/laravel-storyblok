@@ -1,5 +1,7 @@
 <?php
 
+use Riclep\Storyblok\Support\ImageTransformers\Storyblok;
+
 return [
 
     /*
@@ -65,7 +67,7 @@ return [
     */
     'use_ssl' => true,
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Storyblok draft mode
     |--------------------------------------------------------------------------
@@ -123,7 +125,7 @@ return [
     | Specifies how many minutes to cache responses from Storkyblok for.
     |
     */
-    'cache_duration' => env('STORYBLOK_DURATION',60),
+    'cache_duration' => env('STORYBLOK_DURATION', 60),
 
     /*
     |--------------------------------------------------------------------------
@@ -216,7 +218,7 @@ return [
     | The class used for transforming images Fields / image URLs
     |
     */
-    'image_transformer' => \Riclep\Storyblok\Support\ImageTransformers\Storyblok::class,
+    'image_transformer' => Storyblok::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -228,7 +230,7 @@ return [
     | if the image should be transformed or not.
     |
     */
-    'image_extensions' => ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.heic', '.avif'],/*
+    'image_extensions' => ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.jfif', '.heic', '.avif'], /*
 
     |--------------------------------------------------------------------------
     | TipTap settings for the RichText field
@@ -258,11 +260,11 @@ return [
             }
             */
         ],
-//        'figure-transformation' => [
-//            'width' => 100,
-//            'height' => 100, // set to null to preserve ratio height when scaling
-//            'filters' => 'filters:quality(80)', // see: https://www.storyblok.com/docs/api/image-service
-//        ]
+        //        'figure-transformation' => [
+        //            'width' => 100,
+        //            'height' => 100, // set to null to preserve ratio height when scaling
+        //            'filters' => 'filters:quality(80)', // see: https://www.storyblok.com/docs/api/image-service
+        //        ]
     ],
 
     /*

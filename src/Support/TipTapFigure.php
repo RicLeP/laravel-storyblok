@@ -45,7 +45,7 @@ class TipTapFigure extends Node
             $width = config('storyblok.tiptap.figure-transformation.width', 0);
             $height = config('storyblok.tiptap.figure-transformation.height', 0);
 
-            $url = $src . '/m/' . $width . 'x' . $height . '/' . config('storyblok.tiptap.figure-transformation.filters', '');
+            $url = $src.'/m/'.$width.'x'.$height.'/'.config('storyblok.tiptap.figure-transformation.filters', '');
 
             $imageAttributes['src'] = $url;
         } else {
@@ -64,19 +64,19 @@ class TipTapFigure extends Node
         $figureChildren = [
             'img',
             $imageAttributes,
-            0
+            0,
         ];
 
         if ($node->attrs->title) {
             $figureChildren[] = [
                 'figcaption',
-                0
+                0,
             ];
         }
 
         return [
             'figure',
-            $figureChildren
+            $figureChildren,
         ];
     }
 }

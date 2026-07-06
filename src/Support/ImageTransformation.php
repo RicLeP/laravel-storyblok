@@ -6,61 +6,40 @@ use ArrayAccess;
 
 class ImageTransformation implements ArrayAccess
 {
+    public function __construct(protected array $transformation) {}
 
-	/**
-	 * @param array $transformation
-	 */
-	public function __construct(protected array $transformation) {
-	}
+    public function offsetExists($offset): bool
+    {
+        return isset($this->$transformation[$offset]);
+    }
 
-	/**
-	 * @param $offset
-	 * @return bool
-	 */
-	public function offsetExists($offset): bool
-	{
-		return isset($this->$transformation[$offset]);
-	}
+    /**
+     * @return mixed|null
+     */
+    public function offsetGet($offset): mixed
+    {
+        return $this->transformation[$offset] ?? null;
+    }
 
-	/**
-	 * @param $offset
-	 * @return mixed|null
-	 */
-	public function offsetGet($offset): mixed
-	{
-		return $this->transformation[$offset] ?? null;
-	}
+    public function offsetSet($offset, $value): void
+    {
+        if (is_null($offset)) {
+            $this->transformation[] = $value;
+        } else {
+            $this->transformation[$offset] = $value;
+        }
+    }
 
-	/**
-	 * @param $offset
-	 * @param $value
-	 * @return void
-	 */
-	public function offsetSet($offset, $value): void
-	{
-		if (is_null($offset)) {
-			$this->transformation[] = $value;
-		} else {
-			$this->transformation[$offset] = $value;
-		}
-	}
+    public function offsetUnset($offset): void
+    {
+        unset($this->transformation[$offset]);
+    }
 
-	/**
-	 * @param $offset
-	 * @return void
-	 */
-	public function offsetUnset($offset): void
-	{
-		unset($this->transformation[$offset]);
-	}
-
-	/**
-	 * Allows direct access to the Image Transformer object and it’s __toString
-	 *
-	 * @return string
-	 */
-	public function __toString(): string
-	{
-		return (string) $this->transformation['src'];
-	}
+    /**
+     * Allows direct access to the Image Transformer object and it’s __toString
+     */
+    public function __toString(): string
+    {
+        return (string) $this->transformation['src'];
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace Riclep\Storyblok\Tests;
 
+use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 use Riclep\Storyblok\Exceptions\DenylistedUrlException;
 use Riclep\Storyblok\Http\Controllers\StoryblokController;
 use Riclep\Storyblok\StoryblokFacade;
@@ -16,7 +18,7 @@ class StoryblokControllerTest extends TestCase
         parent::setUp();
 
         // Create a fresh controller instance for each test
-        $this->controller = new StoryblokController();
+        $this->controller = new StoryblokController;
 
         // Create a proper mock Page object
         $mockPage = \Mockery::mock('Riclep\Storyblok\Page');
@@ -40,8 +42,8 @@ class StoryblokControllerTest extends TestCase
     public function test_it_allows_non_denylisted_slugs()
     {
         // Regular URLs should be allowed
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('normal-page'));
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('blog/article'));
+        $this->assertInstanceOf(View::class, $this->controller->show('normal-page'));
+        $this->assertInstanceOf(View::class, $this->controller->show('blog/article'));
     }
 
     public function test_it_blocks_well_known_urls()
@@ -83,8 +85,8 @@ class StoryblokControllerTest extends TestCase
     public function test_it_allows_other_user_urls()
     {
         // The regex should only match the exact pattern, not similar ones
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('user/123'));
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('user/123/view'));
+        $this->assertInstanceOf(View::class, $this->controller->show('user/123'));
+        $this->assertInstanceOf(View::class, $this->controller->show('user/123/view'));
     }
 
     public function test_it_blocks_forbidden_file_extensions()
@@ -96,17 +98,19 @@ class StoryblokControllerTest extends TestCase
     public function test_it_allows_urls_with_similar_endings()
     {
         // Should allow URLs that don't exactly match the forbidden extensions
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('my-php-article'));
-        $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('sql-tutorial'));
+        $this->assertInstanceOf(View::class, $this->controller->show('my-php-article'));
+        $this->assertInstanceOf(View::class, $this->controller->show('sql-tutorial'));
     }
 
     public function test_it_flushes_cache_when_destroying()
     {
         // Mock the Cache facade
         Cache::shouldReceive('store')->andReturnSelf();
-        Cache::shouldReceive('getStore')->andReturn(new class {
-            public function __instanceof($class) {
-                return $class === \Illuminate\Cache\TaggableStore::class;
+        Cache::shouldReceive('getStore')->andReturn(new class
+        {
+            public function __instanceof($class)
+            {
+                return $class === TaggableStore::class;
             }
         });
 

@@ -2,7 +2,4 @@
 
 namespace Riclep\Storyblok\Events;
 
-interface PublishingEvent
-{
-
-}
+interface PublishingEvent {}

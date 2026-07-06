@@ -3,9 +3,9 @@
 namespace Riclep\Storyblok\Exceptions;
 
 use Exception;
-use Spatie\Ignition\Contracts\Solution;
 use Spatie\Ignition\Contracts\BaseSolution;
 use Spatie\Ignition\Contracts\ProvidesSolution;
+use Spatie\Ignition\Contracts\Solution;
 
 class DenylistedUrlException extends Exception implements ProvidesSolution
 {
@@ -18,11 +18,8 @@ class DenylistedUrlException extends Exception implements ProvidesSolution
 
     /**
      * Create a new DenylistedUrlException instance.
-     *
-     * @param string $url
-     * @param string $message
      */
-    public function __construct(string $url, string $message = "")
+    public function __construct(string $url, string $message = '')
     {
         $this->url = $url;
         $message = $message ?: "The URL '{$url}' is denylisted and cannot be accessed";
@@ -32,8 +29,6 @@ class DenylistedUrlException extends Exception implements ProvidesSolution
 
     /**
      * Get the solution for this exception.
-     *
-     * @return \Spatie\Ignition\Contracts\Solution
      */
     public function getSolution(): Solution
     {
@@ -46,8 +41,6 @@ class DenylistedUrlException extends Exception implements ProvidesSolution
 
     /**
      * Get the denylisted URL.
-     *
-     * @return string
      */
     public function getUrl(): string
     {

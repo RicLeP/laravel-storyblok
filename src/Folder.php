@@ -36,47 +36,73 @@ abstract class Folder
     use HasChildClasses;
 
     public int $totalStories = 0;
+
     public ?Collection $stories = null;
 
     protected bool $startPage = false;
+
     protected string $language = 'default';
+
     protected int $page = 1;
+
     protected int $perPage = 10;
+
     protected ?SortBy $sortBy = null;
+
     protected ?Slug $startsWith = null;
+
     protected ?string $contentType = null;
+
     protected ?Version $version = null;
+
     protected ?string $searchTerm = null;
+
     protected Pagination $pagination;
+
     protected FilterCollection $filters;
+
     protected FieldCollection $excludeFields;
+
     protected TagCollection $withTags;
+
     protected IdCollection $excludeIds;
+
     protected RelationCollection $withRelations;
+
     protected ResolveLinks $resolveLinks;
+
     protected SlugCollection $excludeSlugs;
+
     protected ?PublishedAtGt $publishedAtGt = null;
+
     protected ?PublishedAtLt $publishedAtLt = null;
+
     protected ?FirstPublishedAtGt $firstPublishedAtGt = null;
+
     protected ?FirstPublishedAtLt $firstPublishedAtLt = null;
+
     protected ?UpdatedAtGt $updatedAtGt = null;
+
     protected ?UpdatedAtLt $updatedAtLt = null;
+
     protected SlugCollection $bySlugs;
+
     protected ?StoryLevel $level = null;
+
     protected ?bool $isStartpage = null;
 
     protected string $cacheKey = 'folder-';
 
     public function __construct()
     {
-        $this->filters = new FilterCollection();
-        $this->excludeFields = new FieldCollection();
-        $this->withTags = new TagCollection();
-        $this->excludeIds = new IdCollection();
-        $this->withRelations = new RelationCollection();
-        $this->resolveLinks = new ResolveLinks();
-        $this->excludeSlugs = new SlugCollection();
-        $this->bySlugs = new SlugCollection();
+        $this->filters = new FilterCollection;
+        $this->excludeFields = new FieldCollection;
+        $this->withTags = new TagCollection;
+        $this->excludeIds = new IdCollection;
+        $this->withRelations = new RelationCollection;
+        $this->resolveLinks = new ResolveLinks;
+        $this->excludeSlugs = new SlugCollection;
+        $this->bySlugs = new SlugCollection;
 
         $this->pagination = new Pagination(page: $this->page, perPage: $this->perPage);
 
@@ -330,14 +356,14 @@ abstract class Folder
 
     protected function get()
     {
-        if (request()->has('_storyblok') || !config('storyblok.cache')) {
+        if (request()->has('_storyblok') || ! config('storyblok.cache')) {
             $response = $this->doRequest();
         } else {
             $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
             $requestHash = hash('xxh128', serialize($this->makeRequest()));
 
             $response = Cache::store(config('storyblok.sb_cache_driver'))->remember(
-                $this->cacheKey . ($this->startsWith?->value ?? '') . '-' . $apiHash . '-' . $requestHash,
+                $this->cacheKey.($this->startsWith?->value ?? '').'-'.$apiHash.'-'.$requestHash,
                 config('storyblok.cache_duration') * 60,
                 function () {
                     return $this->doRequest();

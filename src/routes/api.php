@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use Riclep\Storyblok\Http\Controllers\StoryblokController;
 use Riclep\Storyblok\Http\Controllers\WebhookController;
 
@@ -16,6 +15,6 @@ use Riclep\Storyblok\Http\Controllers\WebhookController;
 |
 */
 
-Route::post('/api/laravel-storyblok/clear-storyblok-cache', StoryblokController::class . '@destroy')->name('storyblok.clear-cache');
+Route::post('/api/laravel-storyblok/clear-storyblok-cache', StoryblokController::class.'@destroy')->name('storyblok.clear-cache');
 
-Route::post('/api/laravel-storyblok/webhook/publish', WebhookController::class . '@publish');
+Route::post('/api/laravel-storyblok/webhook/publish', WebhookController::class.'@publish');

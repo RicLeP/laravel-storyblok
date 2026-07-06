@@ -3,6 +3,7 @@
 namespace Riclep\Storyblok;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Riclep\Storyblok\Fields\Asset;
 use Riclep\Storyblok\Fields\Image;
@@ -16,10 +17,7 @@ class FieldFactory
     /**
      * Works out what class should be used for the given block’s content
      *
-     * @param $block
-     * @param $field
-     * @param $key
-     * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+     * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
      */
     public function build($block, $field, $key): mixed
     {
@@ -33,14 +31,14 @@ class FieldFactory
         if (Str::isUuid($field) && ($block->_autoResolveRelations || in_array($key, $block->_resolveRelations, true) || array_key_exists($key, $block->_resolveRelations))) {
 
             if (array_key_exists($key, $block->_resolveRelations)) {
-                return $block->getRelation(new RequestStory(), $field, $block->_resolveRelations[$key]);
+                return $block->getRelation(new RequestStory, $field, $block->_resolveRelations[$key]);
             }
 
-            return $block->getRelation(new RequestStory(), $field);
+            return $block->getRelation(new RequestStory, $field);
         }
 
         // complex fields
-        if (is_array($field) && !empty($field)) {
+        if (is_array($field) && ! empty($field)) {
             return $this->arrayField($block, $field, $key);
         }
 
@@ -53,22 +51,17 @@ class FieldFactory
         return $field;
     }
 
-    /**
-     * @param $block
-     * @param $field
-     * @param $key
-     * @return mixed
-     */
     protected function classField($block, $field, $key): mixed
     {
         // does the Block assign any $_casts? This is key (field) => value (class)
         if (array_key_exists($key, $block->getCasts())) {
             $casts = $block->getCasts();
+
             return new $casts[$key]($field, $block);
         }
 
         // find Fields specific to this Block matching: BlockNameFieldName
-        if ($class = $block->getChildClassName('Field', $block->component() . '_' . $key)) {
+        if ($class = $block->getChildClassName('Field', $block->component().'_'.$key)) {
             return new $class($field, $block);
         }
 
@@ -83,20 +76,17 @@ class FieldFactory
     /**
      * If given an array field we need more processing to determine the class
      *
-     * @param $block
-     * @param $field
-     * @param $key
-     * @return \Illuminate\Support\Collection|mixed|Asset|Image|MultiAsset|RichText|Table
+     * @return Collection|mixed|Asset|Image|MultiAsset|RichText|Table
      */
     protected function arrayField($block, $field, $key): mixed
     {
         // match link fields
         if (array_key_exists('linktype', $field)) {
-            if ($class = $this->getDefaultOverrideClassName(Str::studly($field['linktype']) . 'Link')) {
+            if ($class = $this->getDefaultOverrideClassName(Str::studly($field['linktype']).'Link')) {
                 return new $class($field, $block);
             }
 
-            $class = 'Riclep\Storyblok\Fields\\' . Str::studly($field['linktype']) . 'Link';
+            $class = 'Riclep\Storyblok\Fields\\'.Str::studly($field['linktype']).'Link';
 
             return new $class($field, $block);
         }
@@ -153,16 +143,17 @@ class FieldFactory
         return $field;
     }
 
-    protected function relationField($block, $field, $key) {
+    protected function relationField($block, $field, $key)
+    {
         // it’s an array of relations - request them if we’re auto or manual resolving
         if (Str::isUuid($field[0])) {
             if ($block->_autoResolveRelations || array_key_exists($key, $block->_resolveRelations) || in_array($key, $block->_resolveRelations, true)) {
 
                 // they’re passing a custom class
                 if (array_key_exists($key, $block->_resolveRelations)) {
-                    $relations = collect($field)->transform(fn($relation) => $block->getRelation(new RequestStory(), $relation, $block->_resolveRelations[$key]));
+                    $relations = collect($field)->transform(fn ($relation) => $block->getRelation(new RequestStory, $relation, $block->_resolveRelations[$key]));
                 } else {
-                    $relations = collect($field)->transform(fn($relation) => $block->getRelation(new RequestStory(), $relation));
+                    $relations = collect($field)->transform(fn ($relation) => $block->getRelation(new RequestStory, $relation));
                 }
 
                 if ($block->_filterRelations) {
@@ -211,9 +202,6 @@ class FieldFactory
 
     /**
      * Check if given string is a string image field
-     *
-     * @param  $filename
-     * @return boolean
      */
     public function isStringImageField($filename): bool
     {
@@ -224,9 +212,6 @@ class FieldFactory
 
     /**
      * Check if given string is a string image field
-     *
-     * @param  $filename
-     * @return boolean
      */
     public function isSvgImageField($filename): bool
     {
@@ -237,15 +222,12 @@ class FieldFactory
 
     /**
      * Checks for the existence of classes to override the default field types
-     *
-     * @param  $name
-     * @return string|null
      */
     public function getDefaultOverrideClassName($name): ?string
     {
         foreach (Arr::wrap(config('storyblok.component_class_namespace')) as $namespace) {
-            if (class_exists($namespace . 'Fields\\Default\\' . Str::studly($name))) {
-                return $namespace . 'Fields\\Default\\' . Str::studly($name);
+            if (class_exists($namespace.'Fields\\Default\\'.Str::studly($name))) {
+                return $namespace.'Fields\\Default\\'.Str::studly($name);
             }
         }
 
