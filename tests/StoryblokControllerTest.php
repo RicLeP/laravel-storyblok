@@ -37,81 +37,70 @@ class StoryblokControllerTest extends TestCase
         ]]);
     }
 
-    /** @test */
-    public function it_allows_non_denylisted_slugs()
+    public function test_it_allows_non_denylisted_slugs()
     {
         // Regular URLs should be allowed
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('normal-page'));
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('blog/article'));
     }
 
-    /** @test */
-    public function it_blocks_well_known_urls()
+    public function test_it_blocks_well_known_urls()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('another-bad-slug');
     }
 
-    /** @test */
-    public function it_blocks_other_well_known_urls()
+    public function test_it_blocks_other_well_known_urls()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('.well-known/something-else');
     }
 
-    /** @test */
-    public function it_blocks_exact_match_denylisted_slugs()
+    public function test_it_blocks_exact_match_denylisted_slugs()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('.well-known/traffic-advice');
     }
 
-    /** @test */
-    public function it_blocks_regex_pattern_for_admin_urls()
+    public function test_it_blocks_regex_pattern_for_admin_urls()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('admin/dashboard');
     }
 
-    /** @test */
-    public function it_blocks_nested_admin_urls()
+    public function test_it_blocks_nested_admin_urls()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('admin/users/permissions');
     }
 
-    /** @test */
-    public function it_blocks_user_edit_urls()
+    public function test_it_blocks_user_edit_urls()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('user/123/edit');
     }
 
-    /** @test */
-    public function it_allows_other_user_urls()
+    public function test_it_allows_other_user_urls()
     {
         // The regex should only match the exact pattern, not similar ones
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('user/123'));
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('user/123/view'));
     }
 
-    /** @test */
-    public function it_blocks_forbidden_file_extensions()
+    public function test_it_blocks_forbidden_file_extensions()
     {
         $this->expectException(DenylistedUrlException::class);
         $this->controller->show('config.php');
     }
 
-    /** @test */
-    public function it_allows_urls_with_similar_endings()
+    public function test_it_allows_urls_with_similar_endings()
     {
         // Should allow URLs that don't exactly match the forbidden extensions
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('my-php-article'));
         $this->assertInstanceOf(\Illuminate\View\View::class, $this->controller->show('sql-tutorial'));
     }
 
-    /** @test */
-    public function it_flushes_cache_when_destroying()
+    public function test_it_flushes_cache_when_destroying()
     {
         // Mock the Cache facade
         Cache::shouldReceive('store')->andReturnSelf();
