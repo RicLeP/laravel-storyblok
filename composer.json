@@ -40,7 +40,7 @@
         "mockery/mockery": "^1.2",
         "orchestra/testbench": "^9.0|^10.0|^11.0",
         "phpstan/phpstan": "^2.2",
-        "phpunit/phpunit": "^10|^11.5.3|^12.5.12"
+        "phpunit/phpunit": "13.2.4"
     },
     "autoload": {
         "psr-4": {
