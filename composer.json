@@ -30,7 +30,7 @@
         "storyblok/php-content-api-client": "^1.0",
         "storyblok/php-management-api-client": "^1.0",
         "spatie/laravel-ignition": "^2.8",
-        "spatie/schema-org": "^3.3|^4.0",
+        "spatie/schema-org": "5.0.1",
         "storyblok/php-tiptap-extension": "^1.0"
     },
     "require-dev": {
