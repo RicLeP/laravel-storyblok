@@ -58,7 +58,7 @@ class RequestStory
         return $response;
     }
 
-    private function cacheKey(string $slugOrUuid): string
+    protected function cacheKey(string $slugOrUuid): string
     {
         $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
         $language = $this->language ?: 'default';
@@ -90,7 +90,7 @@ class RequestStory
     /**
      * Makes the API request
      */
-    private function makeRequest($slugOrUuid): StoryResponse
+    protected function makeRequest($slugOrUuid): StoryResponse
     {
         $storyblokClient = resolve('Storyblok\Api\StoryblokClient');
         $storiesApi = new StoriesApi($storyblokClient, config('storyblok.draft') ? 'draft' : 'published');
