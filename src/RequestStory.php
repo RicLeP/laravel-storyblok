@@ -49,13 +49,22 @@ class RequestStory
 
             $api_hash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
 
-            $response = $cache->remember($slugOrUuid . '_' . $api_hash, config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
+            $response = $cache->remember($this->cacheKey($slugOrUuid), config('storyblok.cache_duration') * 60, function () use ($slugOrUuid) {
                 return $this->makeRequest($slugOrUuid);
             });
 		}
 
 		return $response['story'];
 	}
+
+    protected function cacheKey(string $slugOrUuid): string
+    {
+        $apiHash = md5(config('storyblok.api_public_key') ?? config('storyblok.api_preview_key'));
+        $language = $this->language ?: 'default';
+        $fallbackLanguage = $this->fallbackLanguage ?: 'none';
+
+        return $slugOrUuid.'_'.$language.'_'.$fallbackLanguage.'_'.$apiHash;
+    }
 
 	/**
 	 * Prepares the relations so the format is correct for the API call
@@ -85,7 +94,7 @@ class RequestStory
 	 * @return array
 	 * @throws ApiException
 	 */
-	private function makeRequest($slugOrUuid): array
+	protected function makeRequest($slugOrUuid): array
 	{
 		$storyblokClient = resolve('Storyblok\Client');
 
