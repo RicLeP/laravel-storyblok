@@ -104,8 +104,10 @@ class RequestStory
 
         $resolveLinks = new ResolveLinks;
         if (config('storyblok.resolve_links')) {
-            // TODO broken
-            $resolveLinks = ResolveLinks::from(config('storyblok.resolve_links'));
+            $resolveLinks = ResolveLinks::fromArray([
+                'type' => config('storyblok.resolve_links'),
+                'level' => 1,
+            ]);
         }
 
         $request = new StoryRequest(
